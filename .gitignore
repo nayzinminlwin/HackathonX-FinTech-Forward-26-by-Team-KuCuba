@@ -1,0 +1,93 @@
+# Editor, OS, and local tooling
+*.class
+*.log
+*.pyc
+*.swp
+*.tmp
+*.bak
+*.orig
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.Atom/
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+.vscode-test/
+migrate_working_dir/
+
+# IDE metadata
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter and Dart generated files
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub/
+.pub-cache/
+build/
+coverage/
+
+# Generated documentation and package artifacts
+**/doc/api/
+*.pdf
+
+# Symbolication and obfuscation artifacts
+app.*.symbols
+app.*.map.json
+
+# Android build outputs and local config
+/android/.gradle/
+/android/app/debug/
+/android/app/profile/
+/android/app/release/
+/android/build/
+/android/local.properties
+/android/key.properties
+/android/captures/
+
+# iOS generated files
+/ios/.symlinks/
+/ios/Flutter/App.framework
+/ios/Flutter/Flutter.framework
+/ios/Flutter/Flutter.podspec
+/ios/Flutter/ephemeral/
+/ios/Flutter/Generated.xcconfig
+/ios/Flutter/GeneratedPluginRegistrant.*
+/ios/Pods/
+/ios/.dart_tool/
+
+# macOS generated files
+/macos/Flutter/ephemeral/
+/macos/Flutter/GeneratedPluginRegistrant.swift
+/macos/Pods/
+
+# Linux generated files
+/linux/flutter/ephemeral/
+/linux/flutter/generated_plugin_registrant.cc
+/linux/flutter/generated_plugins.cmake
+
+# Windows generated files
+/windows/flutter/ephemeral/
+/windows/flutter/generated_plugin_registrant.cc
+/windows/flutter/generated_plugins.cmake
+
+# Web build outputs
+/web/.dart_tool/
+/web/build/
+
+# Keep Android Studio generated plugin registrant files ignored everywhere
+GeneratedPluginRegistrant.java
