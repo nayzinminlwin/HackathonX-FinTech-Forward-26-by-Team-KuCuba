@@ -1,0 +1,40 @@
+{
+    "brand": "Bank Islam Malaysia Berhad",
+    "application": "BIMB Mobile",
+    "analysis": {
+        "color_palette": {
+            "primary_brand_color": {
+                "name": "Corporate Red",
+                "hex_estimate": "#ED2321",
+                "significance": "Represents energy, dynamism, and historic cultural significance within Islamic tradition. It serves as the main anchor for branding and primary action items."
+            },
+            "neutral_colors": {
+                "backgrounds": "#FFFFFF",
+                "text_primary": "#1A1A1A",
+                "text_secondary_and_dividers": "#757575",
+                "description": "Clean white background paired with deep charcoal or black for high text contrast. Soft greys are utilized for structural dividers and secondary text to maintain a modern, uncluttered visual layout."
+            }
+        },
+        "typography": {
+            "font_family_type": "Geometric Sans-Serif",
+            "ui_characteristics": [
+                "Highly legible on small digital interfaces",
+                "Clean, modern, and minimal design",
+                "Variable font weights utilized to establish clear visual hierarchy between balance headers and transaction list items"
+            ],
+            "brand_wordmark_style": "Bold sans-serif with sharp geometric apexes matching the corporate BIMB logo."
+        },
+        "theme_and_ui_ux": {
+            "design_concept": "Modern Islamic Fintech",
+            "visual_elements": [
+                "3D 'b' branding emblem integrating dual hidden moon crescents",
+                "Minimalist, cards-based dashboard layout layout to handle financial data cleanly",
+                "Smooth rounded corners on interactive modules and containers"
+            ],
+            "user_experience_focus": {
+                "navigation": "Intuitive, flat architecture designed for fast navigation compared to legacy app iterations.",
+                "tone": "Trustworthy, secure, professional, and contemporary."
+            }
+        }
+    }
+}
