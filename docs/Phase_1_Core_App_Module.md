@@ -44,9 +44,7 @@
 
 ### 1.1 Flutter Project Creation
 
-```bash
-flutter create --project-name kucuba_scam_detector --org com.kucuba --platforms android ./ 
-```
+The Flutter app already exists at the repo root (`pubspec.yaml` → `name: eternal_guardian`, `com.kucuba.eternal_guardian`). Extend this project in place — do not create a second Flutter app or rename the package.
 
 - **Min SDK:** 24 (Android 7.0) — balances modern API access with broad coverage
 - **Target SDK:** 35
@@ -54,63 +52,33 @@ flutter create --project-name kucuba_scam_detector --org com.kucuba --platforms 
 
 ### 1.2 Folder Structure
 
+**Repository root (current + Phase 1 targets):**
+
 ```
-kucuba_scam_detector/
-├── backend/                          # Dart shelf backend (separate entry point)
-│   ├── bin/
-│   │   └── server.dart               # Main server entry
-│   ├── lib/
-│   │   ├── handlers/
-│   │   │   └── analyze_handler.dart  # POST /analyze logic
-│   │   ├── services/
-│   │   │   ├── link_extractor.dart   # Regex URL extraction
-│   │   │   ├── safe_browsing.dart    # Google Safe Browsing client
-│   │   │   └── gemini_service.dart   # Gemini LLM API client
-│   │   └── models/
-│   │       └── analysis_result.dart  # Shared response model
-│   └── pubspec.yaml                  # Backend dependencies
-│
-├── lib/                              # Flutter app
-│   ├── main.dart                     # App entry + Provider setup
-│   ├── app.dart                      # MaterialApp config
-│   │
-│   ├── config/
-│   │   ├── app_config.dart           # Environment flags (useMock, backendUrl)
-│   │   └── api_endpoints.dart        # Centralized endpoint constants
-│   │
-│   ├── theme/
-│   │   ├── bank_islam_theme.dart     # ThemeData from brand JSON
-│   │   ├── app_colors.dart           # Color constants
-│   │   └── app_typography.dart       # TextStyle definitions
-│   │
-│   ├── models/
-│   │   └── analysis_result.dart      # {risk_score, analysis_message}
-│   │
-│   ├── services/
-│   │   ├── api_service.dart          # Dio HTTP client abstraction
-│   │   └── mock_api_service.dart     # Mock responses for demo mode
-│   │
-│   ├── providers/
-│   │   └── analysis_provider.dart    # ChangeNotifier for analysis state
-│   │
-│   ├── screens/
-│   │   └── home_screen.dart          # Main chat-based input screen
-│   │
-│   └── widgets/
-│       ├── analog_meter.dart         # Custom half-circle meter (CustomPainter)
-│       ├── analysis_message_card.dart# Text display for analysis_message
-│       ├── text_input_area.dart      # Multi-line TextInput widget
-│       └── analyze_button.dart       # Styled action button
-│
-├── assets/
-│   └── images/
-│       └── bank_islam_logo.png       # Copied from resources/
-│
-├── resources/                        # Brand assets (existing)
-│   ├── Bank-Islam-LOGO_small.png
-│   └── bank_islam_theme.json
-│
-└── pubspec.yaml                      # Flutter app dependencies
+KuCuba_Project/                       # repo root — Flutter package: eternal_guardian
+├── pubspec.yaml                      # exists
+├── lib/
+│   ├── main.dart                     # exists — refactor per Phase 1
+│   ├── app.dart
+│   ├── config/                       # app_config.dart, api_endpoints.dart
+│   ├── theme/                        # app_colors.dart, app_typography.dart, bank_islam_theme.dart
+│   ├── models/                       # analysis_result.dart
+│   ├── services/                     # api_service.dart, mock_api_service.dart
+│   ├── providers/                    # analysis_provider.dart
+│   ├── screens/                      # home_screen.dart (+ Phase 2 screens later)
+│   └── widgets/                      # analog_meter, analysis_message_card, etc.
+├── assets/images/                    # bank_islam_logo.png (copy from resources/)
+├── backend/                          # create in Phase 1 — Dart Shelf
+│   ├── bin/server.dart
+│   ├── lib/handlers/, lib/services/, lib/models/
+│   └── pubspec.yaml
+├── android/app/src/main/kotlin/com/kucuba/eternal_guardian/
+│   └── MainActivity.kt               # exists
+├── resources/                        # exists — read-only brand reference
+├── docs/AI/rule.md, docs/AI/SKILL.md, docs/Phase_*.md
+├── docs/dev_logs/                    # dev/debug notes (see README.md there)
+├── hackathon/
+└── test/
 ```
 
 ### 1.3 Dependencies (`pubspec.yaml` — Flutter App)
@@ -121,7 +89,7 @@ dependencies:
     sdk: flutter
   provider: ^6.1.2          # State management
   dio: ^5.7.0               # HTTP client
-  google_fonts: ^6.2.1      # Poppins / Inter font
+  google_fonts: ^6.2.1      # Poppins only
   flutter_animate: ^4.5.2   # Micro-animations
 
 dev_dependencies:
@@ -535,7 +503,7 @@ void main() {
 
 | # | File | Est. Time | Priority |
 |---|---|---|---|
-| 1 | `flutter create` + pubspec.yaml setup | 15 min | 🔴 Critical |
+| 1 | Extend existing `eternal_guardian` + `pubspec.yaml` dependencies | 15 min | 🔴 Critical |
 | 2 | `theme/app_colors.dart` | 10 min | 🔴 Critical |
 | 3 | `theme/app_typography.dart` | 10 min | 🔴 Critical |
 | 4 | `theme/bank_islam_theme.dart` | 20 min | 🔴 Critical |

@@ -42,7 +42,7 @@ _The base testing ground and fallback application interface._
 
 - **FR 1.1 Multi-line Input:** A main screen featuring a `TextInput` area capable of accepting multi-line strings (representing copied conversational blocks).
 - **FR 1.2 Action Trigger:** An "Analyze" button to trigger the `POST /analyze` API call.
-- **FR 1.3 Asynchronous UI States:** - _Idle:_ Empty input, meter at 0.
+- **FR 1.3 Asynchronous UI States:** - _Idle:_ Empty input; meter hidden until the first analysis completes.
   - _Loading:_ A skeleton loader or spinner replaces the meter while awaiting the backend response. Button is disabled to prevent duplicate calls.
 - **FR 1.4 Analog Meter UI Component:** A custom SVG or Canvas-based half-circle analog meter.
   - **Zones:** 1-30 (Green/Safe), 31-70 (Yellow/Caution), 71-100 (Red/Danger).
@@ -54,7 +54,7 @@ _The base testing ground and fallback application interface._
 _The frictionless "Eternal Guardian" feature triggered natively from other apps._
 
 - **FR 2.1 OS Intent Registration:** The Android `AndroidManifest.xml` must register an `<intent-filter>` for `ACTION_SEND` with `mimeType="text/plain"`. This ensures the app appears in the share menu of apps like WhatsApp.
-- **FR 2.2 Overlay Architecture:** The activity handling the intent must use a `BottomSheet` or a Dialog theme with a transparent background so it renders _over_ the current app (e.g., WhatsApp) rather than opening a full-screen app window.
+- **FR 2.2 Overlay Architecture:** The share intent is handled by the existing `MainActivity` with a transparent theme. The UI is a **bottom-sheet-style panel** built with a full-screen transparent `Scaffold` and a manual bottom-aligned container — **not** Flutter `showModalBottomSheet` (tap-to-dismiss cannot be disabled). The panel renders _over_ the current app (e.g., WhatsApp) rather than a conventional full-screen takeover.
 - **FR 2.3 Auto-Execution:** Upon receiving the `ACTION_SEND` text payload, the frontend must immediately trigger the `POST /analyze` API call without requiring the user to press an "Analyze" button.
 - **FR 2.4 Reusable UI Components:** The overlay must render the exact same Analog Meter and Message components built in FR 1.4 and FR 1.5.
 - **FR 2.5 Explicit Dismissal & Back Stack:** - Tap-to-dismiss on the background overlay MUST be disabled (`setCancelable(false)`).
@@ -77,4 +77,4 @@ _For handling multiple copied messages when the OS "Share" option is restricted.
 
 - **NFR 1 (Latency):** The end-to-end response time for Phase 2 (from OS Share to meter animating) must target < 2.5 seconds to maintain the "instant" UX feel.
 - **NFR 2 (Cost Optimization):** Step 2 (Safe Browsing) must be strictly enforced before Step 3 (LLM) to prevent expensive token usage on obvious malicious URLs.
-- **NFR 3 (Cross-Platform Framework):** To accommodate the web-developer transitioning to mobile, React Native or Flutter should be used. _Note:_ Native bridging packages will be required for `ACTION_SEND` intents and clipboard/notification management.
+- **NFR 3 (Framework):** **Flutter** (Android-only MVP). Native Kotlin bridging is required for Phase 3 foreground-service notifications; Phase 2 share intents use `receive_sharing_intent` on the existing `MainActivity`.

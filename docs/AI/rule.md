@@ -8,11 +8,12 @@
 
 | # | Principle | Rationale |
 |---|-----------|-----------|
-| 1 | **Plan docs are the source of truth.** | All implementation decisions must trace back to `docs/Phase_1_Core_App_Module.md`, `docs/Phase_2_OS_Share_Sheet_Overlay.md`, `docs/Phase_3_Pinned_Notification_Banner.md`, and `docs/Detailed_System_Requirement_Document.md`. |
-| 2 | **Phases are sequential. Do not skip ahead.** | Phase 2 requires Phase 1 to be complete and working. Phase 3 requires Phase 1's backend layer. Starting a later phase before the earlier one is verified is strictly forbidden. |
+| 1 | **Plan docs are the source of truth.** | All implementation decisions must trace back to `docs/Phase_1_Core_App_Module.md`, `docs/Phase_2_OS_Share_Sheet_Overlay.md`, `docs/Phase_3_Pinned_Notification_Banner.md`, and `docs/Detailed_System_Requirement_Document.md`. Agent guardrails live in `docs/AI/rule.md` (this file). |
+| 2 | **Phases are sequential. Do not skip ahead.** | Phase 2 requires Phase 1 to be complete and verified. Phase 3 requires Phase 2 to be complete and verified (which includes Phase 1's backend layer). Starting a later phase before the earlier one is verified is strictly forbidden. |
 | 3 | **No scope creep.** | Do not add features, screens, or logic that are not in the plan documents. When in doubt, do less. |
 | 4 | **Hackathon context.** | This is a 33-hour hackathon. Favour working, demonstrable code over architectural perfection. Never spend time on "nice-to-have" items if core functionality is not yet verified. |
 | 5 | **Ask before inventing.** | If the plan is ambiguous or a specific decision is not documented, stop and surface the question. Do not silently make an assumption and code around it. |
+| 6 | **Log dev work in `docs/dev_logs/`.** | After coding or debugging: new file for large modules/patches; append small changes to `docs/dev_logs/small_patches.md`. See §12. |
 
 ---
 
@@ -22,10 +23,10 @@
 
 - Place all Flutter/Dart source code under `lib/` following the exact folder layout specified in Phase 1 §1.2.
 - Place all backend (Dart Shelf) code under `backend/` as a separate entry point.
-- Place all native Android (Kotlin) code under `android/app/src/main/kotlin/com/kucuba/kucuba_scam_detector/`.
+- Place all native Android (Kotlin) code under `android/app/src/main/kotlin/com/kucuba/eternal_guardian/`.
 - Place notification XML layouts under `android/app/src/main/res/layout/`.
 - Place drawable resources (e.g., `ic_shield.xml`) under `android/app/src/main/res/drawable/`.
-- Use the package name `com.kucuba` and project name `kucuba_scam_detector` exactly.
+- Use the Android application ID `com.kucuba.eternal_guardian` and Flutter package name `eternal_guardian` exactly (see root `pubspec.yaml`).
 - Keep `resources/` (brand assets) read-only; copy assets to `assets/` when needed by Flutter.
 
 ### 1.2 DO NOT ❌
@@ -111,7 +112,8 @@
 
 ### 4.2 DO NOT ❌
 
-- Do not hardcode hex color strings anywhere outside `app_colors.dart`. Always reference a named token.
+- Do not hardcode hex color strings in Flutter/Dart outside `lib/theme/app_colors.dart`. Always reference `AppColors.*` tokens.
+- Native `android/app/src/main/res/` (layouts, drawables) and Kotlin may use the same hex values as `AppColors` (e.g. `#ED2321`); Flutter must use `AppColors` only.
 - Do not use `Colors.red`, `Colors.blue`, or any `Colors.*` constants directly. Use `AppColors.*`.
 - Do not change the brand color from `#ED2321`. This is Bank Islam's Corporate Red.
 - Do not use any font other than Poppins.
@@ -207,6 +209,7 @@
 - Do not use `flutter_local_notifications` or any Flutter notification plugin. All notification construction is native Kotlin with `NotificationCompat` and `RemoteViews`.
 - Do not register `BOOT_COMPLETED` or auto-start the service on device reboot. This is explicitly out of scope.
 - Do not use `SYSTEM_ALERT_WINDOW` permission. The overlay effect is achieved via a transparent-themed Activity, not a system overlay.
+- Do not implement Phase 3 before Phase 1 and Phase 2 verification gates have passed.
 - Do not implement the foreground service before the `AnalysisApiService` backend layer from Phase 1 is confirmed working.
 - Do not read clipboard content unless the "Analyze Copied Text" button is explicitly tapped. No passive/automatic clipboard monitoring.
 
@@ -280,7 +283,50 @@ Before handing off any phase to the next agent or marking it complete, the follo
 
 ---
 
-## 12. Escalation Rules
+## 12. Development & Debug Logs (`docs/dev_logs/`)
+
+Agents **must** document implementation work and debugging in `docs/dev_logs/`. Do not skip logging because a change “seems small.”
+
+### 12.1 When to create a **new file** (large work)
+
+Create a dedicated markdown file for:
+
+- New modules or major features (e.g. entire `backend/`, Phase 2 overlay, Phase 3 foreground service)
+- Large refactors touching many files
+- Multi-step debug investigations (build failures, intent/share issues, API integration)
+- Anything that would exceed ~30 lines in a log entry
+
+**Naming:** `YYYY-MM-DD_<short-topic>.md` (e.g. `2026-05-22_phase1_backend.md`).
+
+**Suggested sections:** goal, files changed, approach, issues/debug steps, resolution, verification commands run.
+
+### 12.2 When to **append** to the general log (small work)
+
+Append to `docs/dev_logs/small_patches.md` for:
+
+- Single-file or few-line fixes
+- Dependency bumps, lint fixes, copy/theme tweaks
+- Quick config or manifest edits
+- Short debug notes (one root cause + fix)
+
+Add a dated entry at the **top** of the file (newest first). Keep each entry concise (bullet list is fine).
+
+### 12.3 DO ✅
+
+- Log after completing a meaningful chunk of work, or when handing off to another agent.
+- Include **what** changed, **why**, and **how you verified** (e.g. `flutter analyze`, manual test).
+- Record failed attempts and fixes during debugging — not only the final solution.
+- Reference related phase doc sections when relevant (e.g. Phase 2 §3.4).
+
+### 12.4 DO NOT ❌
+
+- Do not put API keys, `.env` values, or full `text_payload` samples in dev logs.
+- Do not create a new file for every one-line change — use `small_patches.md`.
+- Do not leave `docs/dev_logs/` empty after a coding session that changed project behavior.
+
+---
+
+## 13. Escalation Rules
 
 If any of the following situations arise, **stop and report immediately** — do not attempt to silently work around:
 
@@ -293,4 +339,4 @@ If any of the following situations arise, **stop and report immediately** — do
 
 ---
 
-*Last updated: 2026-05-22 | Project: KuCuba — Everywhere Scam Detector (Be U by Bank Islam)*
+*Last updated: 2026-05-22 | Project: KuCuba — Everywhere Scam Detector (Be U by Bank Islam) | Dev logs: `docs/dev_logs/`*
