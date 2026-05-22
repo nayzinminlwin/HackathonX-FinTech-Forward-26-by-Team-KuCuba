@@ -584,6 +584,3 @@ void main() {
 
 > [!NOTE]
 > **Q2:** Should the app have a **splash screen** with the Bank Islam logo, or is jumping straight to the home screen acceptable for the hackathon?
-
-> [!NOTE]
-> **Q3:** Do you want a **history of past scans** (local SQLite storage), or is a single-scan-at-a-time workflow fine for the MVP?

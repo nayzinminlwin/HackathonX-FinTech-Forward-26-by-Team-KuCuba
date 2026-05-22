@@ -57,8 +57,9 @@ _The frictionless "Eternal Guardian" feature triggered natively from other apps.
 - **FR 2.2 Overlay Architecture:** The activity handling the intent must use a `BottomSheet` or a Dialog theme with a transparent background so it renders _over_ the current app (e.g., WhatsApp) rather than opening a full-screen app window.
 - **FR 2.3 Auto-Execution:** Upon receiving the `ACTION_SEND` text payload, the frontend must immediately trigger the `POST /analyze` API call without requiring the user to press an "Analyze" button.
 - **FR 2.4 Reusable UI Components:** The overlay must render the exact same Analog Meter and Message components built in FR 1.4 and FR 1.5.
-- **FR 2.5 Explicit Dismissal (Anti-Accident):** - Tap-to-dismiss on the background overlay MUST be disabled (`setCancelable(false)`).
-  - A clear, prominent "X" Close button or "Done" button must be provided. Pressing this destroys the BottomSheet and returns control to the underlying app natively.
+- **FR 2.5 Explicit Dismissal & Back Stack:** - Tap-to-dismiss on the background overlay MUST be disabled (`setCancelable(false)`).
+  - A clear, prominent "X" Close button or "Done" button must be provided.
+  - Both the UI buttons and the physical Android Back button MUST trigger the same clean dismissal logic (`SystemNavigator.pop()` or `finish()`) to return control to the underlying app natively and avoid unexpected back stack behavior.
 
 ### Phase 3: Pinned Notification Banner (The Clipboard Fallback)
 

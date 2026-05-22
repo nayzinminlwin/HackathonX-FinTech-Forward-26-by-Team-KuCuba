@@ -236,7 +236,8 @@ class _OverlayScreenState extends State<OverlayScreen> {
 - The overlay is **NOT** a Flutter `showModalBottomSheet` (which has built-in tap-to-dismiss)
 - Instead, it's a **full-screen Scaffold** with a manual bottom-aligned container
 - The scrim `GestureDetector` does **nothing** on tap — only the "✕" and "Done" buttons dismiss
-- On dismiss: call `ReceiveSharingIntent.instance.reset()` then `SystemNavigator.pop()` to return to the sharing app
+- **Back Button Handling:** Wrap the `Scaffold` in a `PopScope` to intercept physical Android back button presses. Ensure both the physical back button and the UI "✕"/"Done" buttons trigger the exact same shared dismissal logic.
+- On dismiss: call `ReceiveSharingIntent.instance.reset()` then `SystemNavigator.pop()` to return to the sharing app cleanly, preventing unexpected back stack behavior.
 
 ---
 
