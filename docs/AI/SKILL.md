@@ -9,21 +9,23 @@ description: >-
   and optional Phase 3 native foreground-service notification with
   RemoteViews and Kotlin HttpURLConnection. Use when building or extending this
   hackathon project, scam-analysis UX, hybrid rule+LLM pipelines, or
-  Flutter+Kotlin Android integrations. Always read docs/rule.md and phase
-  plans before coding.
+  Flutter+Kotlin Android integrations. Always read docs/AI/rule.md and phase
+  plans before coding. Apply only in-scope Phase 1–3 work.
 ---
 
 # KuCuba — Everywhere Scam Detector
 
-**Default**: analysis runs through a **local Shelf backend** on port 8080, with **mock mode** enabled so demos work without keys. Phases are **sequential**; do not start Phase 2 until Phase 1 passes its verification gate, or Phase 3 until Phases 1–2 are stable (and only if enough hackathon time remains).
+**Default**: analysis runs through a **local Shelf backend** on port 8080, with **mock mode** enabled so demos work without keys. Phases are **strictly sequential**: Phase 2 only after Phase 1 gate passes; Phase 3 only after Phase 2 gate passes (and only if enough hackathon time remains).
 
 **Source of truth** (in order):
 
-1. `docs/rule.md` — agent guardrails (mandatory)
+1. `docs/AI/rule.md` — agent guardrails (mandatory)
 2. `docs/Phase_1_Core_App_Module.md`
 3. `docs/Phase_2_OS_Share_Sheet_Overlay.md`
 4. `docs/Phase_3_Pinned_Notification_Banner.md`
 5. `docs/Detailed_System_Requirement_Document.md`
+
+On conflict between a plan detail and `rule.md`, stop and escalate — do not assume.
 
 ## Product shape
 
@@ -48,29 +50,25 @@ text_payload
 
 On any failure: `{"risk_score": -1, "analysis_message": "Analysis temporarily unavailable."}` — never empty 5xx body.
 
-## Repository layout
+## Repository layout (current paths — do not rename)
 
-| Area | Role |
+| Path | Role |
 |------|------|
-| `lib/` | Flutter UI, Provider, Dio/mock services, theme, widgets |
-| `backend/` | Dart Shelf server (`bin/server.dart`, handlers, services) |
-| `android/app/src/main/kotlin/com/kucuba/kucuba_scam_detector/` | Phase 3 Kotlin (foreground service, receivers, HTTP) |
-| `android/app/src/main/res/layout/` | Phase 3 `notification_*.xml` RemoteViews |
+| `pubspec.yaml` | Flutter package `eternal_guardian` |
+| `lib/main.dart` | App entry (extend per phase plans) |
+| `lib/` | Flutter UI, Provider, Dio/mock, theme, widgets (add subdirs in Phase 1) |
+| `backend/` | Dart Shelf server (create in Phase 1) |
+| `android/app/src/main/kotlin/com/kucuba/eternal_guardian/` | `MainActivity.kt`; Phase 3 Kotlin here |
+| `android/app/src/main/res/layout/` | Phase 3 `notification_*.xml` |
 | `android/app/src/main/res/drawable/` | e.g. `ic_shield.xml` |
-| `assets/images/` | Bank Islam logo (copy from `resources/`) |
-| `resources/` | Brand JSON + logo (read-only reference) |
-| `docs/` | Phase plans, SRD, `rule.md` |
+| `resources/` | Brand JSON + logo (read-only) |
+| `docs/AI/rule.md`, `docs/AI/SKILL.md` | Agent guardrails |
+| `docs/Phase_*.md`, `docs/Detailed_System_Requirement_Document.md` | Plans + SRD |
+| `docs/dev_logs/` | Development & debug notes (required after coding) |
 
-### Scaffold vs target naming
-
-The repo may still use the default Flutter template (`eternal_guardian`, `com.kucuba.eternal_guardian`). **When implementing Phase 1**, align with the plan:
-
-- Flutter project name: `kucuba_scam_detector`
-- Android package: `com.kucuba`
-- Kotlin package dir: `com/kucuba/kucuba_scam_detector/`
-- `MainActivity` `launchMode`: **`singleTask`** (required for share intents in Phase 2)
-
-Do not invent alternate folder layouts (`features/`, `modules/`).
+- **Application ID:** `com.kucuba.eternal_guardian`
+- **Phase 2:** set `MainActivity` `launchMode` to **`singleTask`** on the existing activity only
+- Do not invent alternate layouts (`features/`, `modules/`) or rename the Flutter package
 
 ## Technology stack (allowed only)
 
@@ -85,10 +83,12 @@ Do not invent alternate folder layouts (`features/`, `modules/`).
 | Permissions (Phase 3) | `permission_handler` `^11.3.1` | `POST_NOTIFICATIONS` on API 33+ |
 | Backend | Shelf `^1.4.2`, shelf_router, dotenv, `google_generative_ai` `^0.4.6` | Separate `backend/pubspec.yaml` |
 | LLM | `gemini-2.0-flash` | `temperature: 0.1`, `responseMimeType: application/json` |
-| Phase 3 HTTP (Kotlin) | `java.net.HttpURLConnection` | Prefer stdlib; avoid okhttp unless insufficient |
+| Phase 3 HTTP (Kotlin) | `java.net.HttpURLConnection` | Default; `okhttp3` only if HttpURLConnection is insufficient |
 | Notifications (Phase 3) | Native `NotificationCompat` + `RemoteViews` | **Not** `flutter_local_notifications` |
 
-**Forbidden**: Riverpod, Bloc, GetX, web stack, `flutter_local_notifications`, `http` in Flutter app, `Colors.*` outside theme tokens, extra API routes unless explicitly requested.
+**Forbidden**: Riverpod, Bloc, GetX, web/React Native, `flutter_local_notifications`, `http` in Flutter app, `Colors.*` / hardcoded hex in Dart outside `AppColors`, `showModalBottomSheet` for Phase 2 overlay, extra API routes, scan history, local DB, iOS, cloud-only features outside phase plans.
+
+**Colors:** Flutter uses `AppColors` only; native `res/` and Kotlin may use matching hex tokens (see `docs/AI/rule.md` §4).
 
 ## API contract (frozen)
 
@@ -241,8 +241,8 @@ main.dart → KuCubaApp → IntentRouter
 
 ### Overlay UX (critical)
 
-- **Not** `showModalBottomSheet`
-- Full-screen `Scaffold`, transparent; bottom white sheet + **non-dismissible** scrim (`GestureDetector` no-op)
+- Bottom-sheet-**style** panel via transparent full-screen `Scaffold` + manual bottom container — **not** `showModalBottomSheet`
+- Full-screen `Scaffold`, transparent; bottom white panel + **non-dismissible** scrim (`GestureDetector` no-op)
 - `PopScope`: back button = same as ✕ / Done
 - Dismiss: `ReceiveSharingIntent.instance.reset()` then **`SystemNavigator.pop()`** — not `Navigator.pop()`
 - Reuse `AnalogMeter` + `AnalysisMessageCard` (optional `compact` param)
@@ -266,7 +266,7 @@ main.dart → KuCubaApp → IntentRouter
 | `ScamDetectorForegroundService.kt` | `START_STICKY`, `IMPORTANCE_LOW` channel |
 | `AnalyzeReceiver.kt` | Clipboard on button tap → HTTP analyze → update notification |
 | `NotificationHelper.kt` | `RemoteViews` idle / scanning / result |
-| `HttpAnalysisClient.kt` | `POST /analyze` via `HttpURLConnection` |
+| `HttpAnalysisClient.kt` | `POST /analyze` via `HttpURLConnection` (okhttp3 fallback only if needed) |
 | `notification_idle.xml` | Analyze button → `PendingIntent` |
 | `notification_scanning.xml` | Indeterminate progress |
 | `notification_result.xml` | Horizontal risk bar + message |
@@ -299,7 +299,7 @@ main.dart → KuCubaApp → IntentRouter
 
 ## Verification gates
 
-Copy checklists from `docs/rule.md` §11 before marking a phase complete.
+Copy checklists from `docs/AI/rule.md` §11 before marking a phase complete.
 
 **Phase 1**: analyze + APK build + mock meter zones + empty input disables button + error retry.
 
@@ -307,16 +307,15 @@ Copy checklists from `docs/rule.md` §11 before marking a phase complete.
 
 **Phase 3** (if built): persistent notification, clipboard button, result bar, clean stop, permission on API 33+.
 
-## Build order (greenfield)
+## Build order (this repo)
 
-1. Read `docs/rule.md` + Phase 1 plan end-to-end
-2. `flutter create --project-name kucuba_scam_detector --org com.kucuba --platforms android`
-3. Theme + config + models + mock service + provider
-4. Widgets + home screen + `main.dart` / `app.dart`
-5. `backend/` Shelf server + `.env.example` (not real keys)
-6. Integration: flip `useMockApi` to `false`, test `curl` + emulator
-7. Phase 2: manifest, package, `IntentRouter`, `OverlayScreen`
-8. Phase 3 only if gates + time allow
+1. Read `docs/AI/rule.md` + Phase 1 plan end-to-end
+2. Extend existing `eternal_guardian` — theme, config, models, mock service, provider
+3. Widgets + home screen; refactor `lib/main.dart` + `app.dart`
+4. Add `backend/` Shelf server + `.env.example` (not real keys)
+5. Integration: flip `useMockApi` to `false`, test `curl` + emulator — **Phase 1 gate**
+6. Phase 2: manifest (`singleTask` + `ACTION_SEND`), `IntentRouter`, `OverlayScreen` — **Phase 2 gate**
+7. Phase 3 only if Phase 2 gate passed and hackathon time allows
 
 ## Commands (reference)
 
@@ -347,20 +346,32 @@ Do not silently workaround:
 5. `pubspec.lock` conflicts requiring unapproved version bumps
 6. Benign input returns `risk_score` outside 1–100 (prompt regression)
 
-## Optional extensions (out of scope unless requested)
+## In scope (apply this skill only to)
 
-- Cloud-deployed backend (Railway/Render/Cloud Run)
-- Splash screen
-- Scan history or local DB
-- iOS build
-- Email/SMS alerts on high risk
-- Production auth/rate limits on `/analyze`
-- Quick-win: HomeScreen **Paste from Clipboard** button (Flutter `Clipboard`) without full foreground service
+| Phase | Deliverables |
+|-------|----------------|
+| **1** | `lib/` app (home, meter, mock/live API), `backend/` Shelf `POST /analyze`, Bank Islam theme |
+| **2** | Share intent on `MainActivity`, `IntentRouter`, overlay (transparent `Scaffold` bottom panel), auto-analyze |
+| **3** | Guardian Mode toggle, foreground service, `RemoteViews` notifications, Kotlin `HttpURLConnection` analyze |
+
+Do not implement items outside the phase plans, SRD, or `docs/AI/rule.md` (e.g. scan history, iOS, splash, cloud deploy, extra API routes, `BOOT_COMPLETED`).
+
+## Development logs (`docs/dev_logs/`)
+
+After implementation or debugging, **write a dev log** (see `docs/AI/rule.md` §12):
+
+| Change size | Where to write |
+|-------------|----------------|
+| **Large** — new module, major feature, big refactor, long debug session | New file: `docs/dev_logs/YYYY-MM-DD_<topic>.md` |
+| **Small** — few files, quick fix, short debug | Append to `docs/dev_logs/small_patches.md` (newest entry at top) |
+
+Include: what changed, why, debug steps if any, verification (`flutter analyze`, tests, manual checks). No secrets or raw user message payloads.
 
 ## Agent workflow summary
 
 1. Confirm which **phase** the user is targeting; refuse to skip ahead.
-2. Re-read `docs/rule.md` for DO/DON'T in that phase.
-3. Match existing code style; minimal diff; no scope creep.
+2. Re-read `docs/AI/rule.md` for DO/DON'T in that phase.
+3. Use existing paths (`eternal_guardian`, `docs/AI/`); minimal diff; no scope creep.
 4. If plan is ambiguous, **ask** — do not assume.
 5. Run verification gate commands before claiming done.
+6. **Document** the session in `docs/dev_logs/` (new file or append to `small_patches.md`).

@@ -1,6 +1,6 @@
 # Phase 2: OS Share-Sheet Overlay — Implementation Plan
 
-> **Scope:** Android share-sheet integration, transparent overlay BottomSheet, auto-analysis on shared text, reuse of Phase 1 widgets.
+> **Scope:** Android share-sheet integration, bottom-sheet-style overlay via transparent `Scaffold` (not `showModalBottomSheet`), auto-analysis on shared text, reuse of Phase 1 widgets.
 > **Estimated Time:** ~8 hours (builds on Phase 1 foundation)
 > **Prerequisite:** Phase 1 must be complete and functional.
 
@@ -21,7 +21,7 @@
 ┌──────────────────────────────────────────────────────┐
 │          Transparent Overlay Activity                │
 │   ┌──────────────────────────────────────────────┐   │
-│   │         BottomSheet (Modal)                  │   │
+│   │    Bottom sheet panel (manual layout)        │   │
 │   │                                              │   │
 │   │   ┌──────────────────────────────────┐       │   │
 │   │   │      Analog Meter (animated)     │       │   │
@@ -49,7 +49,7 @@
 
 **File:** `android/app/src/main/AndroidManifest.xml`
 
-Add a **second activity** entry (or modify the existing `MainActivity` entry) with an intent filter for `ACTION_SEND`:
+Add the `ACTION_SEND` intent filter to the **existing** `MainActivity` entry in `android/app/src/main/AndroidManifest.xml` (do not create a second activity):
 
 ```xml
 <!-- Inside <application> tag, AFTER the existing MainActivity -->
@@ -175,7 +175,7 @@ class _IntentRouterState extends State<IntentRouter> {
 
 ### 3.1 Visual Design
 
-The overlay screen renders a **modal BottomSheet** that:
+The overlay screen renders a **bottom-sheet-style panel** (manual bottom-aligned container inside a transparent `Scaffold`) that:
 - Covers approximately 60-70% of the screen height
 - Has a semi-transparent dark scrim behind it
 - Shows the shared text, meter, and analysis — all within the sheet
@@ -247,7 +247,7 @@ class _OverlayScreenState extends State<OverlayScreen> {
 
 | File | Purpose |
 |---|---|
-| `lib/screens/overlay_screen.dart` | BottomSheet overlay UI with auto-analysis |
+| `lib/screens/overlay_screen.dart` | Share overlay UI (transparent `Scaffold` + bottom panel) with auto-analysis |
 | `lib/screens/intent_router.dart` | Routes between HomeScreen and OverlayScreen based on intent |
 
 ### 4.2 Modified Files
@@ -271,7 +271,7 @@ class _OverlayScreenState extends State<OverlayScreen> {
 | Share intent with empty text | Show "No text received" error state in overlay |
 | Backend unreachable | Show error in overlay with manual "Retry" button |
 | User shares while app is already open | Stream listener catches it, re-routes to overlay |
-| User rotates device during overlay | `configChanges` handles orientation; BottomSheet adjusts height |
+| User rotates device during overlay | `configChanges` handles orientation; bottom panel adjusts height |
 
 ---
 
@@ -303,7 +303,7 @@ class _OverlayScreenState extends State<OverlayScreen> {
 - [ ] Analysis auto-triggers on share (no Analyze button needed) — FR 2.3
 - [ ] Analog meter animates correctly in overlay — FR 2.4
 - [ ] Analysis message displays correctly in overlay — FR 2.4
-- [ ] Tapping outside the BottomSheet does NOT dismiss it — FR 2.5
+- [ ] Tapping outside the bottom sheet panel does NOT dismiss it — FR 2.5
 - [ ] "✕" close button returns to the sharing app — FR 2.5
 - [ ] "Done" button returns to the sharing app — FR 2.5
 - [ ] Sharing while app is already open works correctly

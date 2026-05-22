@@ -2,7 +2,7 @@
 
 > **Scope:** Android Foreground Service, persistent notification with "Analyze Copied Text" button, clipboard reading, background analysis, and in-notification result display with horizontal risk bar.
 > **Estimated Time:** ~10 hours (most complex phase — heavy native Android work)
-> **Prerequisite:** Phase 1 backend service layer must be complete. Phase 2 is independent.
+> **Prerequisite:** Phase 1 and Phase 2 must be complete, verified, and stable (see `docs/AI/rule.md` §11 gates).
 > **Priority:** Stretch goal — implement only after Phase 1 & 2 are stable.
 
 ---
@@ -90,7 +90,7 @@ Phase 3 requires **significant native Android (Kotlin) code** because:
 ```
 
 > [!IMPORTANT]
-> **Key decision:** The notification action button ("Analyze Copied Text") triggers a `BroadcastReceiver` on the native side that reads the clipboard and makes the HTTP call **directly from Kotlin** (using `okhttp3` or `java.net.HttpURLConnection`). This avoids needing to wake up the Flutter engine from a notification tap. The backend URL is passed as an extra to the service.
+> **Key decision:** The notification action button ("Analyze Copied Text") triggers a `BroadcastReceiver` on the native side that reads the clipboard and makes the HTTP call **directly from Kotlin** using **`java.net.HttpURLConnection`** by default. Use `okhttp3` only if `HttpURLConnection` is conclusively insufficient on the test device. This avoids waking the Flutter engine from a notification tap. The backend URL is passed as an extra to the service.
 
 ---
 
@@ -98,7 +98,7 @@ Phase 3 requires **significant native Android (Kotlin) code** because:
 
 ### 2.1 New Kotlin Files
 
-All files in `android/app/src/main/kotlin/com/kucuba/kucuba_scam_detector/`:
+All files in `android/app/src/main/kotlin/com/kucuba/eternal_guardian/`:
 
 #### 2.1.1 `ScamDetectorForegroundService.kt`
 
@@ -429,7 +429,7 @@ Create in `android/app/src/main/res/layout/`:
 class NotificationServiceController {
   static const _channel = MethodChannel('com.kucuba/notification_service');
 
-  /// Start the foreground service (called from app settings or on boot)
+  /// Start the foreground service (called from Guardian Mode toggle in the app — not on device boot)
   static Future<void> startService() async {
     await _channel.invokeMethod('startService', {
       'backend_url': AppConfig.backendBaseUrl,
