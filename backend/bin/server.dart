@@ -1,0 +1,78 @@
+import 'dart:io';
+import 'package:shelf/shelf.dart';
+import 'package:shelf/shelf_io.dart' as shelf_io;
+import 'package:shelf_router/shelf_router.dart';
+import 'package:dotenv/dotenv.dart';
+import 'package:kucuba_backend/handlers/analyze_handler.dart';
+import 'package:kucuba_backend/services/safe_browsing.dart';
+import 'package:kucuba_backend/services/gemini_service.dart';
+
+
+/// CORS middleware that allows Flutter dev (any origin) to call the backend.
+Middleware corsMiddleware() {
+  return (Handler innerHandler) {
+    return (Request request) async {
+      // Handle preflight OPTIONS requests
+      if (request.method == 'OPTIONS') {
+        return Response.ok('', headers: _corsHeaders);
+      }
+
+      final response = await innerHandler(request);
+      return response.change(headers: _corsHeaders);
+    };
+  };
+}
+
+const _corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+void main() async {
+  // --- Load .env ---
+  String geminiKey = '';
+  String safeBrowsingKey = '';
+
+  final envFile = File('.env');
+  if (envFile.existsSync()) {
+    final env = DotEnv()..load(['.env']);
+    geminiKey = env.getOrElse('GEMINI_API_KEY', () => '');
+    safeBrowsingKey = env.getOrElse('SAFE_BROWSING_API_KEY', () => '');
+
+    print('[server] GEMINI_API_KEY loaded: ${geminiKey.isNotEmpty ? "yes" : "EMPTY"}');
+    print('[server] SAFE_BROWSING_API_KEY loaded: ${safeBrowsingKey.isNotEmpty ? "yes" : "EMPTY"}');
+  } else {
+    print('[server] No .env file found — running with empty keys.');
+  }
+
+  // --- Services ---
+  final safeBrowsing = SafeBrowsing(apiKey: safeBrowsingKey);
+
+  GeminiService? geminiService;
+  if (geminiKey.isNotEmpty) {
+    geminiService = GeminiService(apiKey: geminiKey);
+    print('[server] GeminiService initialised with model gemini-2.5-flash.');
+  } else {
+    print('[server] WARNING: GEMINI_API_KEY is empty — Gemini analysis disabled.');
+  }
+
+  // --- Router: single route POST /analyze ---
+  final analyzeHandler = AnalyzeHandler(
+    safeBrowsing: safeBrowsing,
+    geminiService: geminiService,
+  );
+  final router = Router()
+    ..post('/analyze', analyzeHandler.handle);
+
+  // --- Pipeline: logging + CORS + router ---
+  final handler = const Pipeline()
+      .addMiddleware(logRequests())
+      .addMiddleware(corsMiddleware())
+      .addHandler(router.call);
+
+  // --- Start server on 0.0.0.0:8080 ---
+  final server = await shelf_io.serve(handler, '0.0.0.0', 8080);
+  print('[server] KuCuba backend listening on http://${server.address.host}:${server.port}');
+  print('[server] Phase 1 complete: URL extraction + Safe Browsing + Gemini pipeline active.');
+}
