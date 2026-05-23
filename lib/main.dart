@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'app.dart';
 import 'config/app_config.dart';
 import 'providers/analysis_provider.dart';
+import 'providers/stats_provider.dart';
 import 'services/api_service.dart';
 import 'services/mock_api_service.dart';
 
@@ -15,8 +16,11 @@ void main() {
       : LiveApiService();
 
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => AnalysisProvider(apiService),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AnalysisProvider(apiService)),
+        ChangeNotifierProvider(create: (_) => StatsProvider()),
+      ],
       child: const KuCubaApp(),
     ),
   );

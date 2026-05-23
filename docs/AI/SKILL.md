@@ -1,7 +1,7 @@
 ---
 name: kucuba-scam-detector
 description: >-
-  Implements KuCuba ("Everywhere Scam Detector", Be U by Bank Islam): an
+  Implements KuCuba ("Everywhere Scam Detector", Eternal Guardian by Bank Islam): an
   Android-only Flutter app with Bank Islam branding, Provider state, Dio API
   client, CustomPainter analog risk meter, mock/demo mode, Dart Shelf backend
   (POST /analyze with regex URL extraction, Google Safe Browsing, Gemini
