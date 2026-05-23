@@ -1,7 +1,9 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+
 import 'home_screen.dart';
 import 'overlay_screen.dart';
 
@@ -20,28 +22,34 @@ class _IntentRouterState extends State<IntentRouter> {
   @override
   void initState() {
     super.initState();
-    
-    // 1. Check if the app was opened directly via a Share intent (Cold Start)
-    ReceiveSharingIntent.instance.getInitialMedia().then((List<SharedMediaFile> value) {
-      if (value.isNotEmpty) {
-        setState(() {
-          _sharedText = value.first.path; // For text/plain, the text is stored in 'path'
-          _isFromShare = true;
-        });
-      }
+
+    ReceiveSharingIntent.instance.getInitialMedia().then((value) {
+      _handleSharedMedia(value);
     });
 
-    // 2. Listen for share intents if the app was already running in the background (Warm Start)
     _intentSub = ReceiveSharingIntent.instance.getMediaStream().listen(
-      (List<SharedMediaFile> value) {
-        if (value.isNotEmpty) {
-          setState(() {
-            _sharedText = value.first.path;
-            _isFromShare = true;
-          });
-        }
-      },
+      _handleSharedMedia,
     );
+  }
+
+  void _handleSharedMedia(List<SharedMediaFile> value) {
+    if (value.isEmpty) {
+      return;
+    }
+
+    final text = value.first.path.trim();
+    if (text.isEmpty) {
+      return;
+    }
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _sharedText = text;
+      _isFromShare = true;
+    });
   }
 
   @override
@@ -50,20 +58,20 @@ class _IntentRouterState extends State<IntentRouter> {
     super.dispose();
   }
 
+  void _dismissOverlay() {
+    ReceiveSharingIntent.instance.reset();
+    SystemNavigator.pop();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // If we received text from WhatsApp/SMS, show the invisible overlay screen
     if (_isFromShare && _sharedText != null) {
       return OverlayScreen(
         sharedText: _sharedText!,
-        onDismiss: () {
-          ReceiveSharingIntent.instance.reset(); // Clear the intent
-          SystemNavigator.pop(); // Close the overlay and return cleanly to WhatsApp
-        },
+        onDismiss: _dismissOverlay,
       );
     }
-    
-    // Connects perfectly to your teammate's Phase 1 screen
-    return const ScamDetectorPage(); 
+
+    return const HomeScreen();
   }
 }

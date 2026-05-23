@@ -2,18 +2,39 @@
 
 > **Purpose:** This file defines the strict operating constraints for any AI agent deployed to implement the KuCuba "Everywhere Scam Detector" project. Agents MUST read and comply with every rule in this document before writing a single line of code.
 
+> **Workflow entry point:** Start with [`docs/SOP_blueprint.md`](../SOP_blueprint.md) for the full read-order, dev/test logging, and copy-paste prompts. Then use this file for DO/DON'T details.
+
 ---
 
 ## 0. Core Principles
 
 | # | Principle | Rationale |
 |---|-----------|-----------|
-| 1 | **Plan docs are the source of truth.** | All implementation decisions must trace back to `docs/Phase_1_Core_App_Module.md`, `docs/Phase_2_OS_Share_Sheet_Overlay.md`, `docs/Phase_3_Pinned_Notification_Banner.md`, and `docs/Detailed_System_Requirement_Document.md`. Agent guardrails live in `docs/AI/rule.md` (this file). |
-| 2 | **Phases are sequential. Do not skip ahead.** | Phase 2 requires Phase 1 to be complete and verified. Phase 3 requires Phase 2 to be complete and verified (which includes Phase 1's backend layer). Starting a later phase before the earlier one is verified is strictly forbidden. |
+| 1 | **Plan docs are the source of truth.** | Follow `docs/SOP_blueprint.md` for session workflow. Implementation decisions trace to `docs/Phase_1_*.md`, `Phase_2_*.md`, `Phase_3_*.md`, and `docs/Detailed_System_Requirement_Document.md`. Guardrails: this file. |
+| 2 | **Respect phase dependencies (not strict 1→2→3).** | **Foundation:** Phase 1 **backend** (`POST /analyze`) must be verified before Phase 2 or Phase 3 client work. **Parallel:** Phase 2 (Share Sheet) and Phase 3 (Notification Banner) are **separate entry points** to the same backend — either may start once the backend is live; they do **not** block each other. Phase 2 still needs Phase 1 Flutter widgets (meter, message card). Phase 3 does **not** require Phase 2. Coordinate `android/` merges if both branches edit manifest/MainActivity. |
 | 3 | **No scope creep.** | Do not add features, screens, or logic that are not in the plan documents. When in doubt, do less. |
 | 4 | **Hackathon context.** | This is a 33-hour hackathon. Favour working, demonstrable code over architectural perfection. Never spend time on "nice-to-have" items if core functionality is not yet verified. |
 | 5 | **Ask before inventing.** | If the plan is ambiguous or a specific decision is not documented, stop and surface the question. Do not silently make an assumption and code around it. |
-| 6 | **Log dev work in `docs/dev_logs/`.** | After coding or debugging: new file for large modules/patches; append small changes to `docs/dev_logs/small_patches.md`. See §12. |
+| 6 | **Log dev work in `docs/dev_logs/<branch>/`.** | Use `dev0`, `dev1`, or `dev2` matching your git branch. Large work → new dated file; small fixes → append `small_patches.md` in that folder. See §12. |
+
+### 0.1 Phase dependency model
+
+```
+Phase 1 — Foundation
+├── Backend (dev0/dev1): POST /analyze pipeline     ← REQUIRED for Phase 2 & 3
+└── Flutter core (dev2): sandbox UI, meter, API layer ← REQUIRED for Phase 2 overlay reuse
+
+Phase 2 — Share Sheet (dev2)          ╮
+    └── ACTION_SEND → overlay → POST /analyze     ├── May run IN PARALLEL
+Phase 3 — Notification banner (dev2)    ╯
+    └── Foreground service → Kotlin POST /analyze
+```
+
+| Phase | Depends on | Does not require |
+|-------|------------|------------------|
+| **1** | — | — |
+| **2** | Phase 1 backend + Phase 1 Flutter widgets (`AnalogMeter`, `AnalysisMessageCard`, API layer) | Phase 3 |
+| **3** | Phase 1 **backend** verified (`POST /analyze`); optional Phase 1 home toggle for Guardian Mode | Phase 2 (Share Sheet) |
 
 ---
 
@@ -189,7 +210,7 @@
 ## 8. Phase 3 — Pinned Notification Banner
 
 > [!IMPORTANT]
-> Phase 3 is a **stretch goal**. Do not begin Phase 3 until Phase 1 AND Phase 2 are verified as stable and functional. If fewer than 8 hours remain in the hackathon, **do not implement Phase 3**. Prepare a slide/mockup instead.
+> Phase 3 is a **stretch goal** and may run **in parallel with Phase 2** once the Phase 1 **backend** is verified. It does **not** require the Share Sheet (Phase 2) to be complete. If fewer than 8 hours remain in the hackathon, **do not implement Phase 3**. Prepare a slide/mockup instead.
 
 ### 8.1 DO ✅
 
@@ -209,8 +230,8 @@
 - Do not use `flutter_local_notifications` or any Flutter notification plugin. All notification construction is native Kotlin with `NotificationCompat` and `RemoteViews`.
 - Do not register `BOOT_COMPLETED` or auto-start the service on device reboot. This is explicitly out of scope.
 - Do not use `SYSTEM_ALERT_WINDOW` permission. The overlay effect is achieved via a transparent-themed Activity, not a system overlay.
-- Do not implement Phase 3 before Phase 1 and Phase 2 verification gates have passed.
-- Do not implement the foreground service before the `AnalysisApiService` backend layer from Phase 1 is confirmed working.
+- Do not implement Phase 3 before the Phase 1 **backend** gate passes (`POST /analyze` working). Phase 2 completion is **not** a prerequisite.
+- Do not implement the foreground service before the backend `POST /analyze` contract is confirmed working (curl or `HttpAnalysisClient` smoke test).
 - Do not read clipboard content unless the "Analyze Copied Text" button is explicitly tapped. No passive/automatic clipboard monitoring.
 
 ---
@@ -283,26 +304,36 @@ Before handing off any phase to the next agent or marking it complete, the follo
 
 ---
 
-## 12. Development & Debug Logs (`docs/dev_logs/`)
+## 12. Development & Debug Logs (`docs/dev_logs/<branch>/`)
 
-Agents **must** document implementation work and debugging in `docs/dev_logs/`. Do not skip logging because a change “seems small.”
+Agents **must** document implementation work and debugging under the **branch subfolder** that matches the current git branch. Do not skip logging because a change “seems small.”
+
+### 12.0 Branch folders
+
+| Subfolder | Git branch | Typical scope |
+|-----------|------------|----------------|
+| `docs/dev_logs/dev0/` | `dev0` | **Backend** — `backend/`, `POST /analyze`, Safe Browsing, Gemini |
+| `docs/dev_logs/dev1/` | `dev1` | **Backend** — same as `dev0` (second backend developer / branch) |
+| `docs/dev_logs/dev2/` | `dev2` | **Frontend** — `lib/`, Flutter UI, Android share overlay, Dio; Phase 3 UI/native as assigned |
+
+Do **not** place dated logs or `small_patches.md` at `docs/dev_logs/` root (except updates to `docs/dev_logs/README.md`).
 
 ### 12.1 When to create a **new file** (large work)
 
-Create a dedicated markdown file for:
+Create a dedicated markdown file **inside your branch folder** for:
 
 - New modules or major features (e.g. entire `backend/`, Phase 2 overlay, Phase 3 foreground service)
 - Large refactors touching many files
 - Multi-step debug investigations (build failures, intent/share issues, API integration)
 - Anything that would exceed ~30 lines in a log entry
 
-**Naming:** `YYYY-MM-DD_<short-topic>.md` (e.g. `2026-05-22_phase1_backend.md`).
+**Path:** `docs/dev_logs/<branch>/YYYY-MM-DD_<short-topic>.md` (e.g. `docs/dev_logs/dev0/2026-05-22_phase1_backend.md`).
 
-**Suggested sections:** goal, files changed, approach, issues/debug steps, resolution, verification commands run.
+**Suggested sections:** goal, branch, files changed, approach, issues/debug steps, resolution, verification commands run.
 
-### 12.2 When to **append** to the general log (small work)
+### 12.2 When to **append** to the branch small-patches log (small work)
 
-Append to `docs/dev_logs/small_patches.md` for:
+Append to `docs/dev_logs/<branch>/small_patches.md` for:
 
 - Single-file or few-line fixes
 - Dependency bumps, lint fixes, copy/theme tweaks
@@ -314,6 +345,7 @@ Add a dated entry at the **top** of the file (newest first). Keep each entry con
 ### 12.3 DO ✅
 
 - Log after completing a meaningful chunk of work, or when handing off to another agent.
+- Use the subfolder for **your** branch only (`dev0`, `dev1`, or `dev2`).
 - Include **what** changed, **why**, and **how you verified** (e.g. `flutter analyze`, manual test).
 - Record failed attempts and fixes during debugging — not only the final solution.
 - Reference related phase doc sections when relevant (e.g. Phase 2 §3.4).
@@ -321,8 +353,9 @@ Add a dated entry at the **top** of the file (newest first). Keep each entry con
 ### 12.4 DO NOT ❌
 
 - Do not put API keys, `.env` values, or full `text_payload` samples in dev logs.
-- Do not create a new file for every one-line change — use `small_patches.md`.
-- Do not leave `docs/dev_logs/` empty after a coding session that changed project behavior.
+- Do not create a new file for every one-line change — use your branch’s `small_patches.md`.
+- Do not write another developer’s logs into your folder (avoid cross-branch edits in `docs/dev_logs/`).
+- Do not leave your branch folder without a log entry after a coding session that changed project behavior.
 
 ---
 
@@ -339,4 +372,4 @@ If any of the following situations arise, **stop and report immediately** — do
 
 ---
 
-*Last updated: 2026-05-22 | Project: KuCuba — Everywhere Scam Detector (Eternal Guardian by Bank Islam) | Dev logs: `docs/dev_logs/`*
+*Last updated: 2026-05-23 | Project: KuCuba — Everywhere Scam Detector (Be U by Bank Islam) | Dev logs: `docs/dev_logs/dev0|dev1|dev2/`*

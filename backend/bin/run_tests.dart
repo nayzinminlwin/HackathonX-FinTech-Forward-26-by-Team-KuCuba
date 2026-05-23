@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 
 class TestCase {
   final String id;
@@ -241,21 +241,28 @@ void main() async {
 
   print('[run_tests] Server confirmed active! Running test suite...');
 
-  final client = http.Client();
+  final dio = Dio(BaseOptions(
+    baseUrl: 'http://localhost:8080',
+    connectTimeout: const Duration(seconds: 15),
+    receiveTimeout: const Duration(seconds: 30),
+    contentType: Headers.jsonContentType,
+    // Don't throw on non-2xx — we handle status ourselves
+    validateStatus: (_) => true,
+  ));
+
   final results = <Map<String, dynamic>>[];
 
   try {
     for (final tc in testCases) {
       print('\n[run_tests] Running ${tc.id}: ${tc.description} (${tc.category})');
       
-      final url = Uri.parse('http://localhost:8080/analyze');
       final start = DateTime.now();
       
-      String requestBody;
+      dynamic requestData;
       if (tc.payload is String) {
-        requestBody = tc.payload as String;
+        requestData = tc.payload as String;
       } else {
-        requestBody = jsonEncode(tc.payload);
+        requestData = tc.payload;
       }
 
       int statusCode = 0;
@@ -265,19 +272,26 @@ void main() async {
       String note = '';
 
       try {
-        final response = await client.post(
-          url,
-          headers: {'Content-Type': 'application/json'},
-          body: utf8.encode(requestBody),
+        final response = await dio.post<dynamic>(
+          '/analyze',
+          data: requestData,
         );
         
-        statusCode = response.statusCode;
+        statusCode = response.statusCode ?? 0;
         final elapsed = DateTime.now().difference(start).inMilliseconds;
 
         if (statusCode == 200) {
-          final decoded = jsonDecode(response.body) as Map<String, dynamic>;
-          riskScore = decoded['risk_score'] as int;
-          analysisMessage = decoded['analysis_message'] as String;
+          final Map<String, dynamic> decoded;
+          if (response.data is Map<String, dynamic>) {
+            decoded = response.data as Map<String, dynamic>;
+          } else if (response.data is String) {
+            decoded = jsonDecode(response.data as String) as Map<String, dynamic>;
+          } else {
+            decoded = {};
+          }
+
+          riskScore = decoded['risk_score'] as int? ?? -1;
+          analysisMessage = decoded['analysis_message'] as String? ?? '';
 
           // Validate expectations
           if (tc.expectError) {
@@ -321,7 +335,7 @@ void main() async {
           'id': tc.id,
           'category': tc.category,
           'description': tc.description,
-          'payload': requestBody,
+          'payload': requestData is String ? requestData : jsonEncode(requestData),
           'statusCode': statusCode,
           'riskScore': riskScore,
           'analysisMessage': analysisMessage,
@@ -337,7 +351,7 @@ void main() async {
           'id': tc.id,
           'category': tc.category,
           'description': tc.description,
-          'payload': requestBody,
+          'payload': requestData is String ? requestData : jsonEncode(requestData),
           'statusCode': 0,
           'riskScore': -1,
           'analysisMessage': 'Connection error',
@@ -354,7 +368,7 @@ void main() async {
       }
     }
   } finally {
-    client.close();
+    dio.close();
     print('\n[run_tests] Stopping server...');
     serverProcess.kill();
     await logFuture;

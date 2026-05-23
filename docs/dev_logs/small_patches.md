@@ -1,6 +1,12 @@
-# Small patches & quick fixes
+# Small patches & quick fixes (root — do not use)
 
-Append new entries at the **top** of this file. For large work, create a dated file instead (see [README.md](README.md)).
+**Use your branch folder instead:**
+
+- `docs/dev_logs/dev0/small_patches.md` — branch `dev0` (backend)
+- `docs/dev_logs/dev1/small_patches.md` — branch `dev1` (backend)
+- `docs/dev_logs/dev2/small_patches.md` — branch `dev2` (frontend)
+
+Append new entries at the **top** of the file in **your** branch folder. For large work, create a dated file there (see [README.md](README.md)).
 
 ---
 

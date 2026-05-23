@@ -96,3 +96,4 @@ app.*.map.json
 
 # Keep Android Studio generated plugin registrant files ignored everywhere
 GeneratedPluginRegistrant.java
+backend/.env
