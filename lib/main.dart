@@ -125,6 +125,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/analysis_provider.dart';
 import 'screens/intent_router.dart';
+import 'theme/app_theme.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -146,9 +147,7 @@ class EternalGuardianApp extends StatelessWidget {
     return MaterialApp(
       title: 'Eternal Guardian',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primaryColor: const Color(0xFFED2321), // Bank Islam Red
-      ),
+      theme: AppTheme.lightTheme, // Bank Islam Red
       // CRITICAL: We route the app to your IntentRouter so it catches shared text!
       home: const IntentRouter(), 
     );

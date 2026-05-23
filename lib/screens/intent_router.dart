@@ -62,7 +62,8 @@ class _IntentRouterState extends State<IntentRouter> {
         },
       );
     }
-    // Otherwise, show the normal Phase 1 app screen your teammate built
-    return const HomeScreen(); 
+    
+    // Connects perfectly to your teammate's Phase 1 screen
+    return const ScamDetectorPage(); 
   }
 }
