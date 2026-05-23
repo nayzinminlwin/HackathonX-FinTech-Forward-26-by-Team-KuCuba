@@ -72,6 +72,6 @@ class _IntentRouterState extends State<IntentRouter> {
       );
     }
 
-    return const HomeScreen();
+    return const ScamDetectorPage();
   }
 }
