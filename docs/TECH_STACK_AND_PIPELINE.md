@@ -4,7 +4,7 @@
 **Package:** `eternal_guardian` (`com.kucuba.eternal_guardian`)  
 **Platform:** Android MVP (Flutter + native Kotlin where required)
 
-This document describes **what technologies the project uses**, **how components connect**, **who calls whom**, and **what each layer returns**. It reflects the repo as of Phase 1 backend completion; Flutter UI and Phases 2–3 are specified in plans and wired in docs, with implementation status called out below.
+This document describes **what technologies the project uses**, **how components connect**, **who calls whom**, and **what each layer returns**. It reflects the repo after Phase 1 backend completion and unified Flutter client wiring (Phase 1 sandbox + Phase 2 share overlay).
 
 ---
 
@@ -13,8 +13,8 @@ This document describes **what technologies the project uses**, **how components
 | Layer | Status | Location |
 |--------|--------|----------|
 | **Backend** (Shelf + hybrid pipeline) | **Implemented** | `backend/` |
-| **Flutter app** (UI, Provider, Dio) | **Planned** (default template in `lib/main.dart`) | `lib/` |
-| **Phase 2** (OS share sheet overlay) | **Planned** | `docs/Phase_2_OS_Share_Sheet_Overlay.md` |
+| **Flutter app** (UI, Provider, Dio) | **Implemented** (Phase 1 layout + unified API layer) | `lib/` |
+| **Phase 2** (OS share sheet overlay) | **Implemented** (`IntentRouter`, `OverlayScreen`) | `lib/screens/` |
 | **Phase 3** (pinned notification + Kotlin service) | **Stretch / planned** (may parallel Phase 2) | `docs/Phase_3_Pinned_Notification_Banner.md` |
 
 The **single API contract** (`POST /analyze`) is live on the backend. All client surfaces (sandbox app, share overlay, notification button) call the same endpoint with the same JSON. **Phase 2 and Phase 3 are independent** and may be implemented in parallel once the backend is verified (`docs/AI/rule.md` §0.1).
@@ -34,7 +34,7 @@ The **single API contract** (`POST /analyze`) is live on the backend. All client
 
 ### 2.2 Flutter dependencies (planned — Phase 1+)
 
-Defined in `docs/Phase_1_Core_App_Module.md` and `docs/AI/rule.md` (not all added to root `pubspec.yaml` yet):
+Defined in `docs/Phase_1_Core_App_Module.md` and `docs/AI/rule.md` (root `pubspec.yaml`):
 
 | Package | Role |
 |---------|------|
@@ -112,7 +112,7 @@ flowchart TB
     P3[Phase 3: Notification button<br/>Kotlin HTTP client]
   end
 
-  subgraph flutter [Flutter - planned wiring]
+  subgraph flutter [Flutter - implemented]
     UI[Widgets: AnalogMeter, MessageCard]
     Prov[AnalysisProvider]
     API[AnalysisApiService<br/>Dio or Mock]
@@ -427,4 +427,4 @@ CORS on the backend allows browser/emulator Flutter tooling to call `POST /analy
 
 ---
 
-*Last aligned with backend Phase 1 sectors 1–3 (URL extraction, Safe Browsing, Gemini). Update this file when Flutter Phase 1 or Android Phases 2–3 land in the repo.*
+*Last aligned with backend Phase 1 sectors 1–3 and Flutter Phase 1 + Phase 2 share overlay (unified `AnalysisProvider` + `AppConfig.useMockApi`). Update when Phase 3 notification banner lands.*

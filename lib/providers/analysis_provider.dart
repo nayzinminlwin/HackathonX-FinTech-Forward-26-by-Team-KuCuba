@@ -1,54 +1,57 @@
-import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
-enum AnalysisState { initial, loading, complete, error }
+import '../models/analysis_result.dart';
+import '../services/api_service.dart';
+enum AnalysisState { idle, loading, complete, error }
 
-class AnalysisResult {
-  final int riskScore;
-  final String analysisMessage;
-  AnalysisResult({required this.riskScore, required this.analysisMessage});
+class AnalysisProvider extends ChangeNotifier {
+  AnalysisProvider(this._apiService);
 
-  factory AnalysisResult.fromJson(Map<String, dynamic> json) {
-    return AnalysisResult(
-      riskScore: json['risk_score'] ?? -1,
-      analysisMessage: json['analysis_message'] ?? 'Error',
-    );
-  }
-}
+  final AnalysisApiService _apiService;
 
-class AnalysisProvider with ChangeNotifier {
-  AnalysisState _state = AnalysisState.initial;
+  AnalysisState _state = AnalysisState.idle;
   AnalysisResult? _result;
-  final Dio _dio = Dio(BaseOptions(
-    baseUrl: 'http://10.0.2.2:8080',
-    connectTimeout: const Duration(seconds: 15),
-    receiveTimeout: const Duration(seconds: 30),
-    contentType: Headers.jsonContentType,
-    validateStatus: (_) => true,
-  ));
+  String? _errorMessage;
 
   AnalysisState get state => _state;
   AnalysisResult? get result => _result;
+  String? get errorMessage => _errorMessage;
+  bool get isLoading => _state == AnalysisState.loading;
 
-  Future<void> analyze(String text) async {
-    if (text.trim().isEmpty) return;
+  Future<void> analyze(String textPayload) async {
+    final trimmed = textPayload.trim();
+    if (trimmed.isEmpty) {
+      return;
+    }
+
     _state = AnalysisState.loading;
+    _result = null;
+    _errorMessage = null;
     notifyListeners();
 
     try {
-      final response = await _dio.post('/analyze', data: {'text_payload': text});
-
-      if (response.statusCode == 200 && response.data != null) {
-        final data = response.data is String ? jsonDecode(response.data) : response.data;
-        _result = AnalysisResult.fromJson(data);
-        _state = AnalysisState.complete;
-      } else {
-        _state = AnalysisState.error;
-      }
-    } catch (e) {
+      final result = await _apiService.analyze(trimmed);
+      _result = result;
+      _state = AnalysisState.complete;
+    } on AnalysisUnavailableException catch (e) {
       _state = AnalysisState.error;
+      _errorMessage = e.message;
+    } on DioException {
+      _state = AnalysisState.error;
+      _errorMessage = 'Could not analyze. Please try again.';
+    } catch (_) {
+      _state = AnalysisState.error;
+      _errorMessage = 'Could not analyze. Please try again.';
     }
+
+    notifyListeners();
+  }
+
+  void reset() {
+    _state = AnalysisState.idle;
+    _result = null;
+    _errorMessage = null;
     notifyListeners();
   }
 }

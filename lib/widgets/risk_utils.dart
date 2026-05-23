@@ -1,51 +1,31 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 Color riskColor(int risk) {
   if (risk <= 30) {
-    return const Color(0xFF059669);
+    return AppColors.meterGreen;
   }
   if (risk <= 70) {
-    return const Color(0xFFF59E0B);
+    return AppColors.meterYellow;
   }
-  return const Color(0xFFDC2626);
+  return AppColors.meterRed;
 }
 
 Color riskTint(int risk) {
-  if (risk <= 30) {
-    return const Color(0xFFECFDF5);
-  }
-  if (risk <= 70) {
-    return const Color(0xFFFEFCE8);
-  }
-  return const Color(0xFFFEF2F2);
+  return riskColor(risk).withValues(alpha: 0.12);
 }
 
 Color riskShade(int risk) {
-  if (risk <= 30) {
-    return const Color(0xFF047857);
-  }
-  if (risk <= 70) {
-    return const Color(0xFFB45309);
-  }
-  return const Color(0xFFB91C1C);
+  return riskColor(risk);
 }
 
 IconData riskIcon(int risk) {
   if (risk > 70) {
-    return Icons.cancel;
+    return Icons.shield_outlined;
   }
   if (risk > 30) {
     return Icons.warning_amber_rounded;
   }
-  return Icons.check_circle;
-}
-
-String riskLabel(int risk) {
-  if (risk <= 30) {
-    return 'SAFE';
-  }
-  if (risk <= 70) {
-    return 'CAUTION';
-  }
-  return 'DANGER';
+  return Icons.verified_user_outlined;
 }

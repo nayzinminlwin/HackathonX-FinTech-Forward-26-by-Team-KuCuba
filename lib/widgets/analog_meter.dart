@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
+import '../theme/app_colors.dart';
+
 /// Animated 180° analog risk-score meter.
 ///
 /// Draws a 7-segment arc (green → red) with a tapered needle and
@@ -66,17 +68,11 @@ class _AnalogMeterState extends State<AnalogMeter>
     super.dispose();
   }
 
-  // --- Score-dependent colors (AppColors tokens) ---
-  // TODO(dev2): migrate to AppColors.meterGreen / meterYellow / meterRed
-  static const _green = Color(0xFF2ECC71);
-  static const _yellow = Color(0xFFF1C40F);
-  static const _red = Color(0xFFE74C3C);
-
   Color _scoreColor() {
     final s = widget.riskScore;
-    if (s <= 30) return _green;
-    if (s <= 70) return _yellow;
-    return _red;
+    if (s <= 30) return AppColors.meterGreen;
+    if (s <= 70) return AppColors.meterYellow;
+    return AppColors.meterRed;
   }
 
   String _riskLabel() {

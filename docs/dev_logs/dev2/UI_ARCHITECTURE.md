@@ -1,8 +1,10 @@
 # Flutter App Architecture & UI Design
 
 > **Updated:** May 23, 2026  
-> **Status:** MVP-ready  
+> **Status:** Superseded for implementation layout  
 > **Version:** 1.0
+
+> **Note:** The canonical architecture is `docs/Phase_1_Core_App_Module.md` and `docs/Phase_2_OS_Share_Sheet_Overlay.md`. This file described the dev2 multi-screen MVP; the repo now uses the Phase 1 folder layout (`lib/config/`, `lib/app.dart`, Provider + Dio, single sandbox `HomeScreen`). See `docs/dev_logs/dev2/2026-05-23_architecture_unification.md`.
 
 ---
 
