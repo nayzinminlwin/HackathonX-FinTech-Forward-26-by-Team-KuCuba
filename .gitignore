@@ -31,6 +31,9 @@ migrate_working_dir/
 # is commented out by default.
 #.vscode/
 
+# Environment files
+backend/.env
+
 # Flutter and Dart generated files
 .dart_tool/
 .flutter-plugins
