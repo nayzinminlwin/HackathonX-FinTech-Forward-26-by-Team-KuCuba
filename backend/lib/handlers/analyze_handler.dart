@@ -3,6 +3,7 @@ import 'package:shelf/shelf.dart';
 import '../services/link_extractor.dart';
 import '../services/safe_browsing.dart';
 import '../services/gemini_service.dart';
+import '../services/url_expander.dart';
 import '../models/analysis_result.dart';
 
 /// Handler for POST /analyze.
@@ -18,12 +19,15 @@ import '../models/analysis_result.dart';
 class AnalyzeHandler {
   final SafeBrowsing _safeBrowsing;
   final GeminiService? _geminiService;
+  final UrlExpander _urlExpander;
 
   AnalyzeHandler({
     required SafeBrowsing safeBrowsing,
     GeminiService? geminiService,
+    UrlExpander? urlExpander,
   })  : _safeBrowsing = safeBrowsing,
-        _geminiService = geminiService;
+        _geminiService = geminiService,
+        _urlExpander = urlExpander ?? UrlExpander();
 
   /// Handles an incoming POST /analyze request.
   Future<Response> handle(Request request) async {
@@ -48,21 +52,50 @@ class AnalyzeHandler {
 
       // --- Step 1: URL extraction ---
       final urls = LinkExtractor.extractUrls(textPayload);
+      final hasShortenedUrl = LinkExtractor.containsShortenedUrl(urls);
+      final shortenedUrls = LinkExtractor.extractShortenedUrls(urls);
+      var unresolvedShortenedUrl = false;
+      final expandedUrls = <String>[];
+      final urlContext = StringBuffer();
 
       // Log extracted URLs (no text_payload logged per rule.md §10)
       print('[analyze] Extracted ${urls.length} URL(s): $urls');
 
+      if (shortenedUrls.isNotEmpty) {
+        final expansionResults = await _urlExpander.expandAll(shortenedUrls);
+
+        for (final result in expansionResults) {
+          if (!result.expanded) {
+            unresolvedShortenedUrl = true;
+            urlContext.writeln(
+              '- Shortened URL ${result.originalUrl} could not be expanded; '
+              'treat the hidden destination as caution evidence, not proof.',
+            );
+            continue;
+          }
+
+          if (result.expandedUrl != null) {
+            expandedUrls.add(result.expandedUrl!);
+            urlContext.writeln(
+              '- Shortened URL ${result.originalUrl} expands to '
+              '${result.expandedUrl}.',
+            );
+          }
+        }
+      }
+
       // --- Step 2: Safe Browsing ---
-      if (urls.isNotEmpty) {
-        final isThreat = await _safeBrowsing.checkUrls(urls);
+      final urlsForSafeBrowsing = {...urls, ...expandedUrls}.toList();
+      if (urlsForSafeBrowsing.isNotEmpty) {
+        final isThreat = await _safeBrowsing.checkUrls(urlsForSafeBrowsing);
         if (isThreat) {
           // Threat detected — return 100 immediately, do NOT call Gemini.
           print('[analyze] Safe Browsing threat detected — returning 100.');
           return _jsonResponse(const AnalysisResult(
             riskScore: 100,
-            analysisMessage:
-                'Warning: This message contains a link flagged as '
+            analysisMessage: 'Warning: This message contains a link flagged as '
                 'malicious (phishing/malware). Do not click it.',
+            analysisSource: 'safe_browsing',
           ));
         }
       }
@@ -74,7 +107,10 @@ class AnalyzeHandler {
       }
 
       final geminiService = _geminiService;
-      final geminiResult = await geminiService.analyzeText(textPayload);
+      final geminiResult = await geminiService.analyzeText(
+        textPayload,
+        urlContext: urlContext.toString(),
+      );
 
       if (geminiResult == null) {
         // Gemini call failed or returned unparseable response
@@ -110,16 +146,21 @@ class AnalyzeHandler {
 
       // Clamp to 1–100 range (rule.md §3.2)
       riskScore = riskScore.clamp(1, 100);
+      if (hasShortenedUrl && riskScore <= 30) {
+        riskScore = 31;
+      }
 
-      final analysisMessage = rawMessage is String
-          ? rawMessage
-          : rawMessage.toString();
+      final analysisMessage = _analysisMessageWithUrlContext(
+        rawMessage is String ? rawMessage : rawMessage.toString(),
+        unresolvedShortenedUrl: unresolvedShortenedUrl,
+      );
 
       print('[analyze] Gemini result — risk_score: $riskScore');
 
       return _jsonResponse(AnalysisResult(
         riskScore: riskScore,
         analysisMessage: analysisMessage,
+        analysisSource: 'gemini',
       ));
     } catch (e) {
       // Catch-all: never crash, never return a 5xx with no body (rule.md §3.1)
@@ -134,5 +175,22 @@ class AnalyzeHandler {
       jsonEncode(result.toJson()),
       headers: {'Content-Type': 'application/json'},
     );
+  }
+
+  String _analysisMessageWithUrlContext(
+    String message, {
+    required bool unresolvedShortenedUrl,
+  }) {
+    if (!unresolvedShortenedUrl) return message;
+
+    final lowerMessage = message.toLowerCase();
+    if (lowerMessage.contains('shortened') ||
+        lowerMessage.contains('hidden') ||
+        lowerMessage.contains('expand')) {
+      return message;
+    }
+
+    return '$message The message also includes a shortened link whose final '
+        'destination could not be checked, so treat it with caution.';
   }
 }

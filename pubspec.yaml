@@ -39,6 +39,7 @@ dependencies:
   dio: ^5.7.0
   google_fonts: ^6.3.0
   flutter_animate: ^4.5.2
+  permission_handler: ^11.3.1
   receive_sharing_intent:
     git:
       url: https://github.com/KasemJaffer/receive_sharing_intent.git

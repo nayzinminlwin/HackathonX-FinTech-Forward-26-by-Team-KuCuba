@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/analysis_provider.dart';
+import '../services/notification_service_controller.dart';
 import '../widgets/analysis_message_card.dart';
 import '../widgets/analog_meter.dart';
 import '../widgets/analyze_button.dart';
@@ -18,11 +20,26 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _textController = TextEditingController();
+  bool _guardianModeEnabled = false;
+  bool _guardianModeBusy = false;
+  String? _guardianModeError;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadGuardianModeStatus();
+  }
 
   @override
   void dispose() {
     _textController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadGuardianModeStatus() async {
+    final isRunning = await NotificationServiceController.isRunning();
+    if (!mounted) return;
+    setState(() => _guardianModeEnabled = isRunning);
   }
 
   Future<void> _onAnalyze() async {
@@ -32,6 +49,40 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onRetry() {
     _onAnalyze();
+  }
+
+  Future<void> _onGuardianModeChanged(bool enabled) async {
+    setState(() {
+      _guardianModeBusy = true;
+      _guardianModeError = null;
+    });
+
+    try {
+      if (enabled) {
+        final status = await Permission.notification.request();
+        if (!status.isGranted) {
+          setState(() {
+            _guardianModeEnabled = false;
+            _guardianModeError = 'Notification permission is required.';
+          });
+          return;
+        }
+        await NotificationServiceController.startService();
+      } else {
+        await NotificationServiceController.stopService();
+      }
+
+      setState(() => _guardianModeEnabled = enabled);
+    } catch (_) {
+      setState(() {
+        _guardianModeEnabled = false;
+        _guardianModeError = 'Guardian Mode could not be updated.';
+      });
+    } finally {
+      if (mounted) {
+        setState(() => _guardianModeBusy = false);
+      }
+    }
   }
 
   @override
@@ -56,6 +107,13 @@ class _HomeScreenState extends State<HomeScreen> {
             Text(
               'Check any message for scams',
               style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 16),
+            _GuardianModeTile(
+              enabled: _guardianModeEnabled,
+              busy: _guardianModeBusy,
+              errorMessage: _guardianModeError,
+              onChanged: _onGuardianModeChanged,
             ),
             const SizedBox(height: 24),
             TextInputArea(
@@ -90,6 +148,58 @@ class _HomeScreenState extends State<HomeScreen> {
               _ => const SizedBox.shrink(),
             },
             const SizedBox(height: 40),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _GuardianModeTile extends StatelessWidget {
+  const _GuardianModeTile({
+    required this.enabled,
+    required this.busy,
+    required this.errorMessage,
+    required this.onChanged,
+  });
+
+  final bool enabled;
+  final bool busy;
+  final String? errorMessage;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              secondary: const Icon(Icons.notifications_active_outlined),
+              title: const Text('Guardian Mode'),
+              subtitle: const Text('Pinned notification for paste-to-analyze.'),
+              value: enabled,
+              onChanged: busy ? null : onChanged,
+            ),
+            if (busy) const LinearProgressIndicator(minHeight: 2),
+            if (errorMessage != null) ...[
+              const SizedBox(height: 4),
+              Text(
+                errorMessage!,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.error,
+                ),
+              ),
+            ],
           ],
         ),
       ),

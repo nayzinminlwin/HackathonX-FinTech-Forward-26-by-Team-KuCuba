@@ -28,6 +28,18 @@ Analyse the following text message or conversation. Evaluate for:
 - Emotional manipulation (fear, greed, sympathy)
 - Impersonation of authorities (PDRM, LHDN, Bank Negara, Pos Malaysia)
 - Suspicious links or requests to install apps
+- Phishing link anatomy:
+  1. Look-alike or typosquatting domains, including missing letters or number substitutions.
+  2. Deceptive subdomains where a trusted brand appears before the real registered domain.
+  3. URL shorteners or obfuscated links that hide the final destination. A shortener alone is not proof of a scam; treat it as caution/grey-area evidence and focus on the surrounding message intent.
+  4. Non-standard or cheap TLDs used with trusted brand names, such as .xyz, .top, .cc, or .biz.
+  5. Open redirect patterns where a trusted domain contains redirect, url, next, or target parameters to another site.
+
+SCORING CALIBRATION:
+- If the only concern is a shortened URL and the message is otherwise normal, score 31-45 (caution/yellow), not green and not high-risk.
+- If a shortened URL cannot be expanded, mention that the destination is hidden/unverified and keep at least caution/yellow.
+- If a shortened URL appears with urgency, prizes, account panic, payment, credential collection, or authority impersonation, score based on those scam indicators, usually 70+.
+- Do not call a message a scam solely because it uses a shortened URL.
 
 EXAMPLES OF KNOWN MALAYSIAN SCAMS:
 1. "Polis here. Your IC linked to money laundering case. Transfer RM5,000 to this acc to clear your name." → risk_score: 95
@@ -50,10 +62,17 @@ RESPOND WITH ONLY VALID JSON IN THIS EXACT FORMAT:
   ///
   /// Returns `null` if the API call fails, the response is empty,
   /// or the response cannot be parsed as valid JSON.
-  Future<Map<String, dynamic>?> analyzeText(String text) async {
+  Future<Map<String, dynamic>?> analyzeText(
+    String text, {
+    String? urlContext,
+  }) async {
     try {
+      final promptText = urlContext == null || urlContext.trim().isEmpty
+          ? text
+          : '$text\n\nURL analysis context:\n$urlContext';
+
       final response = await _model.generateContent([
-        Content.text(text),
+        Content.text(promptText),
       ]);
 
       final responseText = response.text;
