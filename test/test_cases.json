@@ -1,0 +1,250 @@
+{
+  "label_categories": ["scam", "suspicious", "legitimate"],
+  "risk_score_ranges": {
+    "legitimate": "0 - 25",
+    "suspicious": "26 - 69",
+    "scam": "70 - 100"
+  },
+  "test_cases": [
+    {
+      "id": 1,
+      "text_payload": "Akaun bank anda akan dibekukan dalam 30 minit. Sahkan login dan TAC sekarang: hxxp://mybank-secure.example/login",
+      "expected_label": "scam",
+      "expected_analysis": "Impersonasi bank dengan ancaman mendesak dan percubaan mencuri maklumat login serta TAC."
+    },
+    {
+      "id": 2,
+      "text_payload": "Amaran: Aktiviti luar biasa dikesan pada akaun anda. Sila sahkan segera atau akaun akan dikunci: www.mpay-security.example/verify",
+      "expected_label": "scam",
+      "expected_analysis": "Notis palsu daripada perkhidmatan kewangan dengan tekanan masa dan pautan pengesahan yang meragukan."
+    },
+    {
+      "id": 3,
+      "text_payload": "Anda telah memenangi RM10,000. Tuntut hadiah anda sebelum tengah malam: hxxps://reward-check.example/win",
+      "expected_label": "scam",
+      "expected_analysis": "Scam hadiah palsu yang menggunakan ganjaran dan had masa untuk memancing mangsa."
+    },
+    {
+      "id": 4,
+      "text_payload": "Notis kurier: Bungkusan anda ditahan kerana caj belum dibayar. Bayar RM2.90 untuk lepaskan bungkusan: hxxp://parcel-fee.example/track",
+      "expected_label": "scam",
+      "expected_analysis": "Scam penghantaran yang meminta bayaran melalui laman penjejakan palsu."
+    },
+    {
+      "id": 5,
+      "text_payload": "E-dompet anda telah disekat. Kemas kini kata laluan sekarang untuk aktif semula: hxxps://wallet-help.example/reset",
+      "expected_label": "scam",
+      "expected_analysis": "Notis akaun palsu yang cuba mencuri kata laluan pengguna."
+    },
+    {
+      "id": 6,
+      "text_payload": "Amaran bank: Kami kesan log masuk dari peranti lain. Sahkan TAC anda untuk elak akaun dibekukan.",
+      "expected_label": "scam",
+      "expected_analysis": "Permintaan TAC bersama ancaman pembekuan akaun menunjukkan taktik phishing."
+    },
+    {
+      "id": 7,
+      "text_payload": "Tahniah! Anda dipilih untuk bantuan kerajaan. Hantar IC dan butiran bank di sini: hxxp://grant-claim.example/apply",
+      "expected_label": "scam",
+      "expected_analysis": "Scam bantuan kerajaan palsu yang meminta data peribadi dan perbankan."
+    },
+    {
+      "id": 8,
+      "text_payload": "Akaun anda akan dipadam hari ini jika anda tidak sahkan identiti: hxxps://account-review.example/confirm",
+      "expected_label": "scam",
+      "expected_analysis": "Ancaman pemadaman akaun untuk memaksa pengesahan identiti."
+    },
+    {
+      "id": 9,
+      "text_payload": "Bayaran balik tersedia. Klik di sini untuk masukkan nombor kad anda dan terima wang anda kembali: hxxp://refund-center.example/pay",
+      "expected_label": "scam",
+      "expected_analysis": "Scam bayaran balik yang cuba mencuri maklumat kad pembayaran."
+    },
+    {
+      "id": 10,
+      "text_payload": "Peringatan terakhir: Bayar penalti cukai yang tertunggak sekarang untuk elak tindakan undang-undang: hxxps://tax-penalty.example/pay",
+      "expected_label": "scam",
+      "expected_analysis": "Ancaman cukai palsu yang mendesak bayaran melalui pautan meragukan."
+    },
+    {
+      "id": 11,
+      "text_payload": "MAYBANK: Kemas kini keselamatan diperlukan. Log masuk di sini: www.mayban-kini.example/login",
+      "expected_label": "scam",
+      "expected_analysis": "Domain tiruan yang meniru Maybank untuk mencuri kelayakan log masuk."
+    },
+    {
+      "id": 12,
+      "text_payload": "ShopeePay: Sahkan identiti anda untuk terus guna perkhidmatan ini: hxxps://sh0peepay.example/security",
+      "expected_label": "scam",
+      "expected_analysis": "Peniruan jenama dengan ejaan hampir sama dan pengesahan palsu."
+    },
+    {
+      "id": 13,
+      "text_payload": "Kad hadiah percuma menanti. Buka sekarang: www.google.com/claim-reward-now.example",
+      "expected_label": "scam",
+      "expected_analysis": "Pautan yang mengelirukan dengan format menyerupai domain dipercayai."
+    },
+    {
+      "id": 14,
+      "text_payload": "Bro, cepat semak link ni bila free: hxxps://docs-review.example/file",
+      "expected_label": "suspicious",
+      "expected_analysis": "Pautan perkongsian dokumen yang tidak jelas dengan sedikit konteks."
+    },
+    {
+      "id": 15,
+      "text_payload": "Kami jumpa isu pada profil you. Buka page ni untuk tengok lebih lanjut: www.account-update.example/help",
+      "expected_label": "suspicious",
+      "expected_analysis": "Notis masalah akaun yang kabur dengan halaman kemas kini yang belum disahkan."
+    },
+    {
+      "id": 16,
+      "text_payload": "Sila update maklumat anda dalam portal sebelum Jumaat.",
+      "expected_label": "suspicious",
+      "expected_analysis": "Permintaan umum tanpa konteks yang cukup untuk sahkan kesahihan."
+    },
+    {
+      "id": 17,
+      "text_payload": "Order anda dah diproses. Track status di sini: hxxps://track-status.example/order",
+      "expected_label": "suspicious",
+      "expected_analysis": "Gaya mesej penghantaran biasa tetapi domain penjejakan tidak dapat disahkan."
+    },
+    {
+      "id": 18,
+      "text_payload": "Penting dari support: setting akaun anda perlukan perhatian.",
+      "expected_label": "suspicious",
+      "expected_analysis": "Amaran umum daripada support tanpa identiti pengirim yang jelas."
+    },
+    {
+      "id": 19,
+      "text_payload": "Sila sahkan penerimaan dokumen yang dikongsi tadi.",
+      "expected_label": "suspicious",
+      "expected_analysis": "Permintaan pengesahan yang umum tanpa konteks pengirim."
+    },
+    {
+      "id": 20,
+      "text_payload": "Kawan anda share album gambar dengan anda: hxxps://photos-share.example/view",
+      "expected_label": "suspicious",
+      "expected_analysis": "Pautan perkongsian yang tidak dikenali dan boleh jadi legit atau berbahaya."
+    },
+    {
+      "id": 21,
+      "text_payload": "Akaun bank anda ada notifikasi baru. Buka dalam app sahaja.",
+      "expected_label": "legitimate",
+      "expected_analysis": "Notifikasi aplikasi yang selamat tanpa pautan luaran yang mencurigakan."
+    },
+    {
+      "id": 22,
+      "text_payload": "Reminder team: hantar timesheet sebelum 5 petang.",
+      "expected_label": "legitimate",
+      "expected_analysis": "Peringatan kerja yang normal."
+    },
+    {
+      "id": 23,
+      "text_payload": "Password reset diminta. Kalau bukan anda, abaikan emel ini.",
+      "expected_label": "legitimate",
+      "expected_analysis": "Wording keselamatan akaun yang standard."
+    },
+    {
+      "id": 24,
+      "text_payload": "Parcel anda sampai hari ini. Tak perlu buat apa-apa.",
+      "expected_label": "legitimate",
+      "expected_analysis": "Kemas kini penghantaran yang bermaklumat dan tidak meminta tindakan mencurigakan."
+    },
+    {
+      "id": 25,
+      "text_payload": "Security notice: Kami kesan log masuk dari lokasi baru. Kalau ini anda, tiada tindakan lanjut diperlukan.",
+      "expected_label": "legitimate",
+      "expected_analysis": "Amaran log masuk biasa tanpa ciri phishing."
+    },
+    {
+      "id": 26,
+      "text_payload": "Support di sini. Bagi saya OTP anda supaya saya boleh check kenapa transaksi gagal.",
+      "expected_label": "scam",
+      "expected_analysis": "Permintaan OTP secara langsung ialah indikator penipuan yang kuat."
+    },
+    {
+      "id": 27,
+      "text_payload": "Your bank account will be suspended in 30 minutes. Verify your login and OTP now: hxxp://mybank-secure.example/login",
+      "expected_label": "scam",
+      "expected_analysis": "Urgent bank impersonation with a request for login credentials and OTP."
+    },
+    {
+      "id": 28,
+      "text_payload": "M-Pay alert: unusual activity detected. Confirm your account immediately or it will be locked: www.mpay-security.example/verify",
+      "expected_label": "scam",
+      "expected_analysis": "Fake finance alert using fear and a suspicious verification URL."
+    },
+    {
+      "id": 29,
+      "text_payload": "You have won RM10,000. Claim your prize before midnight: hxxps://reward-check.example/win",
+      "expected_label": "scam",
+      "expected_analysis": "Prize scam designed to lure the user into clicking a malicious link."
+    },
+    {
+      "id": 30,
+      "text_payload": "Courier notice: Your parcel is on hold due to unpaid fees. Pay RM2.90 to release it: hxxp://parcel-fee.example/track",
+      "expected_label": "scam",
+      "expected_analysis": "Delivery scam requesting payment through a fake tracking page."
+    },
+    {
+      "id": 31,
+      "text_payload": "Your e-wallet has been restricted. Update your password now to restore access: hxxps://wallet-help.example/reset",
+      "expected_label": "scam",
+      "expected_analysis": "Account restriction lure attempting to steal the user's password."
+    },
+    {
+      "id": 32,
+      "text_payload": "Bank alert: We noticed a login from another device. Confirm your TAC to avoid account freeze.",
+      "expected_label": "scam",
+      "expected_analysis": "TAC theft attempt paired with urgent account-freeze pressure."
+    },
+    {
+      "id": 33,
+      "text_payload": "Congratulations! You have been selected for a government grant. Submit your IC and bank details here: hxxp://grant-claim.example/apply",
+      "expected_label": "scam",
+      "expected_analysis": "Fake government grant asking for sensitive identity and banking details."
+    },
+    {
+      "id": 34,
+      "text_payload": "Your account will be deleted today unless you verify your identity: hxxps://account-review.example/confirm",
+      "expected_label": "scam",
+      "expected_analysis": "Threat of account deletion intended to force immediate verification."
+    },
+    {
+      "id": 35,
+      "text_payload": "Refund available. Click here to enter your card details and receive your money back: hxxp://refund-center.example/pay",
+      "expected_label": "scam",
+      "expected_analysis": "Refund bait used to steal payment card details."
+    },
+    {
+      "id": 36,
+      "text_payload": "Final reminder: Pay your overdue tax penalty now to avoid legal action: hxxps://tax-penalty.example/pay",
+      "expected_label": "scam",
+      "expected_analysis": "Fake legal and tax pressure tactic with a suspicious payment link."
+    },
+    {
+      "id": 37,
+      "text_payload": "Delivery issue detected. Track here: www.jnt-express.example/parcel/12345",
+      "expected_label": "scam",
+      "expected_analysis": "Lookalike courier domain used to mimic parcel tracking."
+    },
+    {
+      "id": 38,
+      "text_payload": "Your bank has sent a new notification. View it in the app.",
+      "expected_label": "legitimate",
+      "expected_analysis": "Safe app-based notification without external link risk."
+    },
+    {
+      "id": 39,
+      "text_payload": "We noticed a login attempt from a new device. Review activity in settings.",
+      "expected_label": "legitimate",
+      "expected_analysis": "Standard security alert for account activity."
+    },
+    {
+      "id": 40,
+      "text_payload": "Your verification code is 482913. Do not share this code with anyone.",
+      "expected_label": "legitimate",
+      "expected_analysis": "Normal OTP message with a clear security warning."
+    }
+  ]
+}
