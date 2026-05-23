@@ -240,6 +240,8 @@ class _ScamDetectorPageState extends State<ScamDetectorPage> {
             padding: const EdgeInsets.fromLTRB(24, 22, 24, 14),
             children: [
               _buildQuickScanButton(),
+              const SizedBox(height: 14),
+              _buildGuardianModeCard(),
               const SizedBox(height: 24),
               Text(
                 'Try Quick Examples',
@@ -583,6 +585,111 @@ class _ScamDetectorPageState extends State<ScamDetectorPage> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildGuardianModeCard() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: _guardianModeEnabled
+              ? const Color(0xFFF4B7B6)
+              : const Color(0xFFE5E7EB),
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0F000000),
+            blurRadius: 14,
+            offset: Offset(0, 6),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: _guardianModeEnabled
+                      ? const Color(0xFFFFE4E3)
+                      : const Color(0xFFF3F4F6),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(
+                  _guardianModeEnabled
+                      ? Icons.notifications_active_outlined
+                      : Icons.notifications_none_outlined,
+                  color: _guardianModeEnabled
+                      ? AppColors.corporateRed
+                      : const Color(0xFF6B7280),
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Guardian Mode',
+                      style: TextStyle(
+                        color: Color(0xFF111827),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(height: 3),
+                    Text(
+                      'Keep scam protection running in notifications',
+                      style: TextStyle(
+                        color: Color(0xFF6B7280),
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (_guardianModeBusy)
+                const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(strokeWidth: 2.5),
+                )
+              else
+                Switch(
+                  value: _guardianModeEnabled,
+                  activeThumbColor: AppColors.corporateRed,
+                  onChanged: _onGuardianModeChanged,
+                ),
+            ],
+          ),
+          if (_guardianModeError != null) ...[
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF1F2),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: const Color(0xFFFFCCD3)),
+              ),
+              child: Text(
+                _guardianModeError!,
+                style: const TextStyle(
+                  color: Color(0xFFBE123C),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
