@@ -1,5 +1,4 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 
 /// Client for the Google Safe Browsing Lookup API v4.
 ///
@@ -8,8 +7,14 @@ import 'package:http/http.dart' as http;
 /// risk_score 100 immediately and skip Gemini (Step 3).
 class SafeBrowsing {
   final String _apiKey;
+  final Dio _dio;
 
-  SafeBrowsing({required String apiKey}) : _apiKey = apiKey;
+  SafeBrowsing({required String apiKey})
+      : _apiKey = apiKey,
+        _dio = Dio(BaseOptions(
+          connectTimeout: const Duration(seconds: 10),
+          receiveTimeout: const Duration(seconds: 10),
+        ));
 
   /// Checks [urls] against Google Safe Browsing.
   ///
@@ -25,9 +30,8 @@ class SafeBrowsing {
 
     if (urls.isEmpty) return false;
 
-    final uri = Uri.parse(
-      'https://safebrowsing.googleapis.com/v4/threatMatches:find?key=$_apiKey',
-    );
+    final url =
+        'https://safebrowsing.googleapis.com/v4/threatMatches:find?key=$_apiKey';
 
     // Build the request body per
     // https://developers.google.com/safe-browsing/v4/lookup-api#checking-urls
@@ -44,15 +48,18 @@ class SafeBrowsing {
         ],
         'platformTypes': ['ANY_PLATFORM'],
         'threatEntryTypes': ['URL'],
-        'threatEntries': urls.map((url) => {'url': url}).toList(),
+        'threatEntries': urls.map((u) => {'url': u}).toList(),
       },
     };
 
     try {
-      final response = await http.post(
-        uri,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(requestBody),
+      final response = await _dio.post<Map<String, dynamic>>(
+        url,
+        data: requestBody,
+        options: Options(
+          contentType: Headers.jsonContentType,
+          responseType: ResponseType.json,
+        ),
       );
 
       if (response.statusCode != 200) {
@@ -61,7 +68,11 @@ class SafeBrowsing {
         return false;
       }
 
-      final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+      final decoded = response.data;
+      if (decoded == null) {
+        print('[safe_browsing] Empty response body — treating as no-threat.');
+        return false;
+      }
 
       // The API returns {"matches": [...]} when threats are found.
       // An empty JSON object {} means no threats.
@@ -76,9 +87,14 @@ class SafeBrowsing {
 
       print('[safe_browsing] No threats detected.');
       return false;
-    } catch (e) {
-      // Network error, timeout, JSON parse failure, etc.
+    } on DioException catch (e) {
+      // Network error, timeout, etc.
       // Fail-open: don't block the pipeline.
+      print('[safe_browsing] Dio error calling API: ${e.message} — '
+          'treating as no-threat.');
+      return false;
+    } catch (e) {
+      // Any other unexpected error
       print('[safe_browsing] Error calling API: $e — treating as no-threat.');
       return false;
     }

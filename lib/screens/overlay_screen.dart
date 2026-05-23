@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../providers/analysis_provider.dart';
-import '../widgets/analog_meter.dart';
+import '../theme/app_colors.dart';
 import '../widgets/analysis_message_card.dart';
+import '../widgets/analog_meter.dart';
+import '../widgets/error_banner.dart';
+import '../widgets/skeleton_meter_placeholder.dart';
 
 class OverlayScreen extends StatefulWidget {
-  final String sharedText;
-  final VoidCallback onDismiss;
-
   const OverlayScreen({
     super.key,
     required this.sharedText,
     required this.onDismiss,
   });
+
+  final String sharedText;
+  final VoidCallback onDismiss;
 
   @override
   State<OverlayScreen> createState() => _OverlayScreenState();
@@ -22,30 +26,32 @@ class _OverlayScreenState extends State<OverlayScreen> {
   @override
   void initState() {
     super.initState();
-    // Auto-trigger the AI analysis instantly when the sheet opens. No buttons required.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<AnalysisProvider>().analyze(widget.sharedText);
     });
   }
 
+  void _retry() {
+    context.read<AnalysisProvider>().analyze(widget.sharedText);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<AnalysisProvider>().state;
-    final result = context.watch<AnalysisProvider>().result;
+    final provider = context.watch<AnalysisProvider>();
 
     return PopScope(
-      canPop: false, // Prevent accidental back-button exit messing up the intent
+      canPop: false,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) widget.onDismiss();
+        if (!didPop) {
+          widget.onDismiss();
+        }
       },
       child: Scaffold(
-        backgroundColor: Colors.transparent, // This keeps WhatsApp visible behind it
+        backgroundColor: Colors.transparent,
         body: Stack(
           children: [
-            // The Dark Semi-transparent Scrim
-            Container(color: Colors.black54),
-            
-            // The Bottom Sheet Panel
+            // Scrim — no GestureDetector; tap outside does not dismiss (FR 2.5).
+            const ColoredBox(color: Colors.black54),
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
@@ -53,53 +59,93 @@ class _OverlayScreenState extends State<OverlayScreen> {
                   color: Colors.white,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                 ),
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.fromLTRB(
+                  24,
+                  16,
+                  24,
+                  24 + MediaQuery.paddingOf(context).bottom,
+                ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Header
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 4,
+                        margin: const EdgeInsets.only(bottom: 12),
+                        decoration: BoxDecoration(
+                          color: AppColors.divider,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("🛡️ Scam Analysis", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+                        const Icon(
+                          Icons.shield,
+                          color: AppColors.corporateRed,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Scam Analysis',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
                         IconButton(
-                          icon: const Icon(Icons.close, color: Colors.black),
+                          icon: const Icon(Icons.close),
                           onPressed: widget.onDismiss,
+                          tooltip: 'Close',
                         ),
                       ],
                     ),
                     const Divider(),
-                    
-                    // The Suspicious Message Preview
                     Container(
+                      width: double.infinity,
                       padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(8)),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceCard,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                       child: Text(
                         widget.sharedText,
-                        maxLines: 2,
+                        maxLines: 3,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: Colors.black54),
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ),
                     const SizedBox(height: 16),
-
-                    // Analysis UI (Re-using your teammate's Phase 1 widgets)
-                    if (state == AnalysisState.loading)
-                      const CircularProgressIndicator(color: Color(0xFFED2321)), // Bank Islam Red
-                    
-                    if (state == AnalysisState.complete && result != null) ...[
-                      AnalogMeter(riskScore: result.riskScore),
-                      const SizedBox(height: 16),
-                      AnalysisMessageCard(message: result.analysisMessage),
-                    ],
-
+                    switch (provider.state) {
+                      AnalysisState.loading ||
+                      AnalysisState.idle =>
+                        const SkeletonMeterPlaceholder(compact: true),
+                      AnalysisState.complete when provider.result != null =>
+                        Column(
+                          children: [
+                            AnalogMeter(
+                              riskScore: provider.result!.riskScore,
+                              compact: true,
+                            ),
+                            const SizedBox(height: 16),
+                            AnalysisMessageCard(
+                              message: provider.result!.analysisMessage,
+                              riskScore: provider.result!.riskScore,
+                            ),
+                          ],
+                        ),
+                      AnalysisState.error => ErrorBanner(
+                          message: provider.errorMessage ??
+                              'Could not analyze. Please try again.',
+                          onRetry: _retry,
+                        ),
+                      _ => const SizedBox.shrink(),
+                    },
                     const SizedBox(height: 24),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFED2321)),
                         onPressed: widget.onDismiss,
-                        child: const Text("Done", style: TextStyle(color: Colors.white)),
+                        child: const Text('Done'),
                       ),
                     ),
                   ],

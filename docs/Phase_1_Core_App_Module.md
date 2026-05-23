@@ -76,7 +76,12 @@ KuCuba_Project/                       # repo root — Flutter package: eternal_g
 │   └── MainActivity.kt               # exists
 ├── resources/                        # exists — read-only brand reference
 ├── docs/AI/rule.md, docs/AI/SKILL.md, docs/Phase_*.md
-├── docs/dev_logs/                    # dev/debug notes (see README.md there)
+├── docs/dev_logs/                    # per-branch dev logs (see README.md)
+│   ├── README.md
+│   ├── dev0/                       # git branch dev0 — backend (dev 1)
+│   ├── dev1/                       # git branch dev1 — backend (dev 2)
+│   └── dev2/                       # git branch dev2 — frontend
+├── docs/test_logs/                 # test run write-ups
 ├── hackathon/
 └── test/
 ```
