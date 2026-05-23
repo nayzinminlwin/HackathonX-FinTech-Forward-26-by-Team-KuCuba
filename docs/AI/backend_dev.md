@@ -31,5 +31,5 @@ WHEN DONE:
 
 - From repo root: cd backend && dart pub get && dart analyze (if applicable) && dart run bin/server.dart
 - Smoke test with curl (sector-appropriate; see sector prompt)
-- Log to docs/dev_logs/: new file YYYY-MM-DD_phase1_backend_sectorN.md
+- Log to docs/dev_logs/dev0/ or docs/dev_logs/dev1/ (whichever branch you are on): new file YYYY-MM-DD_phase1_backend_sectorN.md
 - Stop. Do not start the next sector unless the user asks.

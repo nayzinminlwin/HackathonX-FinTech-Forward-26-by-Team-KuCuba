@@ -2,8 +2,8 @@
 
 > **Scope:** Android Foreground Service, persistent notification with "Analyze Copied Text" button, clipboard reading, background analysis, and in-notification result display with horizontal risk bar.
 > **Estimated Time:** ~10 hours (most complex phase — heavy native Android work)
-> **Prerequisite:** Phase 1 and Phase 2 must be complete, verified, and stable (see `docs/AI/rule.md` §11 gates).
-> **Priority:** Stretch goal — implement only after Phase 1 & 2 are stable.
+> **Prerequisite:** Phase 1 **backend** must be complete and verified (`POST /analyze` working). Phase 2 (Share Sheet) is **not** required — Phase 3 may be implemented **in parallel** with Phase 2; both call the same analysis API (see `docs/AI/rule.md` §0.1).
+> **Priority:** Stretch goal — implement when backend is stable and hackathon time allows (parallel with Phase 2 is OK).
 
 ---
 

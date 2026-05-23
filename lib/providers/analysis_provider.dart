@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 
 enum AnalysisState { initial, loading, complete, error }
 
@@ -20,6 +20,13 @@ class AnalysisResult {
 class AnalysisProvider with ChangeNotifier {
   AnalysisState _state = AnalysisState.initial;
   AnalysisResult? _result;
+  final Dio _dio = Dio(BaseOptions(
+    baseUrl: 'http://10.0.2.2:8080',
+    connectTimeout: const Duration(seconds: 15),
+    receiveTimeout: const Duration(seconds: 30),
+    contentType: Headers.jsonContentType,
+    validateStatus: (_) => true,
+  ));
 
   AnalysisState get state => _state;
   AnalysisResult? get result => _result;
@@ -30,15 +37,11 @@ class AnalysisProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      // 10.0.2.2 is the Android Emulator IP to reach your laptop's localhost
-      final response = await http.post(
-        Uri.parse('http://10.0.2.2:8080/analyze'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'text_payload': text}),
-      );
+      final response = await _dio.post('/analyze', data: {'text_payload': text});
 
-      if (response.statusCode == 200) {
-        _result = AnalysisResult.fromJson(jsonDecode(response.body));
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data is String ? jsonDecode(response.data) : response.data;
+        _result = AnalysisResult.fromJson(data);
         _state = AnalysisState.complete;
       } else {
         _state = AnalysisState.error;

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "924621814031",
+    "project_id": "eternal-guardian",
+    "storage_bucket": "eternal-guardian.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:924621814031:android:7c61e0fca8f0013f21267a",
+        "android_client_info": {
+          "package_name": "com.kucuba.eternal_guardian"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_zVcVnmrXlJf6P0NneVoE_iRa9w-pyRs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

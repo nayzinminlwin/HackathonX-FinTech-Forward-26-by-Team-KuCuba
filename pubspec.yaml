@@ -36,7 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   # receive_sharing_intent: ^1.8.1
   provider: ^6.1.2
-  http: ^1.2.1
+  dio: ^5.7.0
   receive_sharing_intent:
     git:
       url: https://github.com/KasemJaffer/receive_sharing_intent.git

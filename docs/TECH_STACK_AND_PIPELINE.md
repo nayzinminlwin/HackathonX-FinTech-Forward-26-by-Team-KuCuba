@@ -15,9 +15,9 @@ This document describes **what technologies the project uses**, **how components
 | **Backend** (Shelf + hybrid pipeline) | **Implemented** | `backend/` |
 | **Flutter app** (UI, Provider, Dio) | **Planned** (default template in `lib/main.dart`) | `lib/` |
 | **Phase 2** (OS share sheet overlay) | **Planned** | `docs/Phase_2_OS_Share_Sheet_Overlay.md` |
-| **Phase 3** (pinned notification + Kotlin service) | **Stretch / planned** | `docs/Phase_3_Pinned_Notification_Banner.md` |
+| **Phase 3** (pinned notification + Kotlin service) | **Stretch / planned** (may parallel Phase 2) | `docs/Phase_3_Pinned_Notification_Banner.md` |
 
-The **single API contract** (`POST /analyze`) is live on the backend. All client surfaces (sandbox app, share overlay, notification button) are designed to call the same endpoint with the same JSON.
+The **single API contract** (`POST /analyze`) is live on the backend. All client surfaces (sandbox app, share overlay, notification button) call the same endpoint with the same JSON. **Phase 2 and Phase 3 are independent** and may be implemented in parallel once the backend is verified (`docs/AI/rule.md` §0.1).
 
 ---
 
@@ -87,7 +87,15 @@ KuCuba_Project/
 │       ├── services/       # link_extractor, safe_browsing, gemini_service
 │       └── models/analysis_result.dart
 ├── resources/              # Brand reference (not runtime wiring yet)
-└── docs/                   # SRD, phases, AI rules, dev logs
+└── docs/
+    ├── AI/                 # rule.md, SKILL.md, backend_dev.md
+    ├── Phase_*.md          # implementation plans
+    ├── dev_logs/           # per-branch dev/debug notes
+    │   ├── README.md
+    │   ├── dev0/           # branch dev0 — backend (developer 1)
+    │   ├── dev1/           # branch dev1 — backend (developer 2)
+    │   └── dev2/           # branch dev2 — frontend
+    └── test_logs/          # formal test run logs
 ```
 
 ---
@@ -397,7 +405,12 @@ CORS on the backend allows browser/emulator Flutter tooling to call `POST /analy
 | `docs/Phase_2_OS_Share_Sheet_Overlay.md` | Share intent + overlay UX |
 | `docs/Phase_3_Pinned_Notification_Banner.md` | Foreground service + Kotlin bridge |
 | `docs/AI/rule.md` | Enforced conventions (Provider, Dio, API contract, phases) |
-| `docs/dev_logs/` | Backend sector implementation notes |
+| `docs/SOP_blueprint.md` | **Start here** — SOP, prompts, read order, session checklist |
+| `docs/dev_logs/README.md` | Where each developer logs (`dev0` / `dev1` / `dev2`) |
+| `docs/dev_logs/dev0/` | Backend dev logs (developer on branch `dev0`) |
+| `docs/dev_logs/dev1/` | Backend dev logs (developer on branch `dev1`) |
+| `docs/dev_logs/dev2/` | Frontend dev logs (Flutter, share overlay, UI) |
+| `docs/test_logs/` | Validation and phase test results |
 
 ---
 

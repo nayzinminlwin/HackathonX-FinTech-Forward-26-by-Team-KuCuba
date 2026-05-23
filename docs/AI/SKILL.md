@@ -9,13 +9,15 @@ description: >-
   and optional Phase 3 native foreground-service notification with
   RemoteViews and Kotlin HttpURLConnection. Use when building or extending this
   hackathon project, scam-analysis UX, hybrid rule+LLM pipelines, or
-  Flutter+Kotlin Android integrations. Always read docs/AI/rule.md and phase
-  plans before coding. Apply only in-scope Phase 1–3 work.
+  Flutter+Kotlin Android integrations. Always read docs/SOP_blueprint.md first,
+  then docs/AI/rule.md and phase plans before coding. Apply only in-scope Phase 1–3 work.
 ---
 
 # KuCuba — Everywhere Scam Detector
 
-**Default**: analysis runs through a **local Shelf backend** on port 8080, with **mock mode** enabled so demos work without keys. Phases are **strictly sequential**: Phase 2 only after Phase 1 gate passes; Phase 3 only after Phase 2 gate passes (and only if enough hackathon time remains).
+**Default**: analysis runs through a **local Shelf backend** on port 8080, with **mock mode** enabled so demos work without keys. **Phase 1 backend** is the foundation. **Phase 2 (Share Sheet) and Phase 3 (Notification)** are independent client surfaces to the same `POST /analyze` — they may be built **in parallel** after the backend is verified. Phase 2 still needs Phase 1 Flutter widgets; Phase 3 does not need Phase 2.
+
+**Workflow:** `docs/SOP_blueprint.md` — status analysis, implementation order, dev/test logs, prompts.
 
 **Source of truth** (in order):
 
@@ -64,7 +66,8 @@ On any failure: `{"risk_score": -1, "analysis_message": "Analysis temporarily un
 | `resources/` | Brand JSON + logo (read-only) |
 | `docs/AI/rule.md`, `docs/AI/SKILL.md` | Agent guardrails |
 | `docs/Phase_*.md`, `docs/Detailed_System_Requirement_Document.md` | Plans + SRD |
-| `docs/dev_logs/` | Development & debug notes (required after coding) |
+| `docs/dev_logs/dev0/`, `dev1/`, `dev2/` | Per-branch dev/debug notes (required after coding; see `docs/dev_logs/README.md`) |
+| `docs/test_logs/` | Test run write-ups (separate from dev logs) |
 
 - **Application ID:** `com.kucuba.eternal_guardian`
 - **Phase 2:** set `MainActivity` `launchMode` to **`singleTask`** on the existing activity only
@@ -257,7 +260,7 @@ main.dart → KuCubaApp → IntentRouter
 
 ## Phase 3 — Pinned notification (stretch)
 
-**Do not start** until Phase 1 **and** 2 gates pass. If **< 8 hours** remain in hackathon, skip Phase 3 (slide/mockup instead).
+**Do not start** until the Phase 1 **backend** gate passes (`POST /analyze`). Phase 2 is **not** required first. May run in parallel with Phase 2 on separate tasks/branches. If **< 8 hours** remain in hackathon, skip Phase 3 (slide/mockup instead).
 
 ### Native components
 
@@ -314,8 +317,9 @@ Copy checklists from `docs/AI/rule.md` §11 before marking a phase complete.
 3. Widgets + home screen; refactor `lib/main.dart` + `app.dart`
 4. Add `backend/` Shelf server + `.env.example` (not real keys)
 5. Integration: flip `useMockApi` to `false`, test `curl` + emulator — **Phase 1 gate**
-6. Phase 2: manifest (`singleTask` + `ACTION_SEND`), `IntentRouter`, `OverlayScreen` — **Phase 2 gate**
-7. Phase 3 only if Phase 2 gate passed and hackathon time allows
+6. **Then in parallel (either order, or split across developers):**
+   - Phase 2: manifest (`singleTask` + `ACTION_SEND`), `IntentRouter`, `OverlayScreen` — **Phase 2 gate**
+   - Phase 3: foreground service, `AnalyzeReceiver`, Kotlin `POST /analyze` — **Phase 3 gate** (if time remains)
 
 ## Commands (reference)
 
@@ -356,22 +360,28 @@ Do not silently workaround:
 
 Do not implement items outside the phase plans, SRD, or `docs/AI/rule.md` (e.g. scan history, iOS, splash, cloud deploy, extra API routes, `BOOT_COMPLETED`).
 
-## Development logs (`docs/dev_logs/`)
+## Development logs (`docs/dev_logs/<branch>/`)
 
-After implementation or debugging, **write a dev log** (see `docs/AI/rule.md` §12):
+After implementation or debugging, **write a dev log in the folder for your git branch** (`dev0`, `dev1`, or `dev2`). See `docs/AI/rule.md` §12 and `docs/dev_logs/README.md`.
 
 | Change size | Where to write |
 |-------------|----------------|
-| **Large** — new module, major feature, big refactor, long debug session | New file: `docs/dev_logs/YYYY-MM-DD_<topic>.md` |
-| **Small** — few files, quick fix, short debug | Append to `docs/dev_logs/small_patches.md` (newest entry at top) |
+| **Large** — new module, major feature, big refactor, long debug session | New file: `docs/dev_logs/<branch>/YYYY-MM-DD_<topic>.md` |
+| **Small** — few files, quick fix, short debug | Append to `docs/dev_logs/<branch>/small_patches.md` (newest entry at top) |
 
-Include: what changed, why, debug steps if any, verification (`flutter analyze`, tests, manual checks). No secrets or raw user message payloads.
+| Branch folder | Typical work |
+|---------------|----------------|
+| `dev0/` | **Backend** — Shelf, Safe Browsing, Gemini |
+| `dev1/` | **Backend** — parallel backend branch (same scope as `dev0`) |
+| `dev2/` | **Frontend** — Flutter app, share overlay, theme, Dio → backend |
+
+Include: branch name, what changed, why, debug steps if any, verification (`flutter analyze`, `dart analyze`, tests, manual checks). No secrets or raw user message payloads.
 
 ## Agent workflow summary
 
-1. Confirm which **phase** the user is targeting; refuse to skip ahead.
+1. Confirm which **phase** the user is targeting; do not skip Phase 1 **backend** foundation; Phase 2 and 3 may proceed in parallel once backend is verified.
 2. Re-read `docs/AI/rule.md` for DO/DON'T in that phase.
 3. Use existing paths (`eternal_guardian`, `docs/AI/`); minimal diff; no scope creep.
 4. If plan is ambiguous, **ask** — do not assume.
 5. Run verification gate commands before claiming done.
-6. **Document** the session in `docs/dev_logs/` (new file or append to `small_patches.md`).
+6. **Document** the session in `docs/dev_logs/<branch>/` (new file or append to `small_patches.md` in that folder).

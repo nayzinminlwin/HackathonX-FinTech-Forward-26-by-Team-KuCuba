@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/analysis_provider.dart';
 import '../widgets/analog_meter.dart';
 import '../widgets/analysis_message_card.dart';
+import '../theme/app_colors.dart';
 
 class OverlayScreen extends StatefulWidget {
   final String sharedText;
@@ -85,7 +86,7 @@ class _OverlayScreenState extends State<OverlayScreen> {
 
                     // Analysis UI (Re-using your teammate's Phase 1 widgets)
                     if (state == AnalysisState.loading)
-                      const CircularProgressIndicator(color: Color(0xFFED2321)), // Bank Islam Red
+                      const CircularProgressIndicator(color: AppColors.corporateRed), // Bank Islam Red
                     
                     if (state == AnalysisState.complete && result != null) ...[
                       AnalogMeter(riskScore: result.riskScore),
@@ -97,7 +98,7 @@ class _OverlayScreenState extends State<OverlayScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFED2321)),
+                        style: ElevatedButton.styleFrom(backgroundColor: AppColors.corporateRed),
                         onPressed: widget.onDismiss,
                         child: const Text("Done", style: TextStyle(color: Colors.white)),
                       ),
