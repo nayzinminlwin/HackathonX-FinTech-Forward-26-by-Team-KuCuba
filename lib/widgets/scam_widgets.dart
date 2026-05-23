@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../app/theme/app_theme.dart';
+import '../theme/app_theme.dart';
 import '../models/analysis_result.dart';
 import 'analog_meter.dart';
 import 'risk_badge.dart';
@@ -187,7 +187,6 @@ class _BottomSheetOverlayDemoState extends State<BottomSheetOverlayDemo> {
                         children: [
                           AnalogMeter(
                             riskScore: _result!.riskScore,
-                            size: MeterSize.medium,
                           ),
                           const SizedBox(height: 18),
                           RiskBadge(riskScore: _result!.riskScore),
