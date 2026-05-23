@@ -152,7 +152,7 @@ class _ScamDetectorPageState extends State<ScamDetectorPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Be U',
+                          'Eternal Guardian',
                           style: Theme.of(context).textTheme.titleLarge
                               ?.copyWith(color: Colors.white, fontSize: 22),
                         ),

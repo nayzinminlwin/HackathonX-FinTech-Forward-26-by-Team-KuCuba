@@ -339,4 +339,4 @@ If any of the following situations arise, **stop and report immediately** — do
 
 ---
 
-*Last updated: 2026-05-22 | Project: KuCuba — Everywhere Scam Detector (Be U by Bank Islam) | Dev logs: `docs/dev_logs/`*
+*Last updated: 2026-05-22 | Project: KuCuba — Everywhere Scam Detector (Eternal Guardian by Bank Islam) | Dev logs: `docs/dev_logs/`*

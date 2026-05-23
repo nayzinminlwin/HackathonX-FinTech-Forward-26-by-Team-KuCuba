@@ -5,7 +5,7 @@ void main() {
   testWidgets('Scam detector home renders', (WidgetTester tester) async {
     await tester.pumpAndSettle();
 
-    expect(find.text('Be U'), findsOneWidget);
+    expect(find.text('Eternal Guardian'), findsOneWidget);
     expect(find.text('Quick Scan'), findsOneWidget);
   });
 }

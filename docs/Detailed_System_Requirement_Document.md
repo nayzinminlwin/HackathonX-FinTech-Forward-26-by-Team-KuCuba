@@ -1,6 +1,6 @@
 # Detailed System Requirements Document (SRD)
 
-**Project Name:** The "Everywhere Scam Detector" (Be U by Bank Islam Module)
+**Project Name:** The "Everywhere Scam Detector" (Eternal Guardian by Bank Islam Module)
 **Target Platform:** Android MVP (Prioritized for OS share-sheet and notification flexibility)
 **Team Allocation:** 2 Backend Developers, 1 Frontend Developer (Web to Mobile UI)
 
