@@ -10,135 +10,123 @@
 ```
 lib/
 ├── main.dart
-│   └── → Imports EternalGuardianApp from lib/app/app.dart
-│       └── void main() { runApp(const EternalGuardianApp()); }
+│   └── → Imports KuCubaApp from lib/app.dart
+│       └── runApp(MultiProvider(
+│           ├── AnalysisProvider (API communication)
+│           ├── StatsProvider (scan tracking)
+│           └── KuCubaApp
+│       ))
 │
-├── app/
-│   ├── app.dart
-│   │   ├── Class: EternalGuardianApp (StatelessWidget)
-│   │   ├── Creates: MaterialApp
-│   │   ├── Applies: AppTheme.lightTheme
-│   │   └── Sets Home: ScamDetectorPage()
+├── app.dart
+│   ├── Class: KuCubaApp (StatelessWidget)
+│   ├── Creates: MaterialApp
+│   ├── Applies: bankIslamTheme()
+│   └── Sets Home: IntentRouter()
+│
+├── config/
+│   ├── app_config.dart
+│   │   ├── useMockApi (bool) — toggle mock vs. live backend
+│   │   ├── backendBaseUrl (String) — http://localhost:8080
+│   │   └── analyzeEndpoint (String) — /analyze
+│   └── [theme files]
+│
+├── providers/
+│   ├── analysis_provider.dart
+│   │   ├── Class: AnalysisProvider (ChangeNotifier)
+│   │   ├── Properties:
+│   │   │   ├── _state (AnalysisState: idle, loading, complete, error)
+│   │   │   ├── _result (AnalysisResult?)
+│   │   │   └── _errorMessage (String?)
+│   │   │
+│   │   ├── Methods:
+│   │   │   ├── analyze(String textPayload) → Future<void>
+│   │   │   └── reset() → void
+│   │   │
+│   │   └── Getters: state, result, errorMessage, isLoading
 │   │
-│   └── theme/
-│       └── app_theme.dart
-│           ├── Class: AppTheme (static methods & constants)
-│           ├── Constants: Color tokens (primaryBrand, textPrimary, etc.)
-│           ├── TextTheme: Poppins typography definitions
-│           ├── CardTheme, InputDecorationTheme, FilledButtonTheme
-│           └── Getter: lightTheme → ThemeData
+│   └── stats_provider.dart
+│       ├── Class: StatsProvider (ChangeNotifier)
+│       ├── Properties:
+│       │   ├── _totalScans (int)
+│       │   └── _threatsBlocked (int)
+│       │
+│       ├── Methods:
+│       │   ├── recordAnalysis(int riskScore) → void (risk ≥ 50 = threat)
+│       │   └── reset() → void
+│       │
+│       └── Getters: totalScans, threatsBlocked
 │
-└── features/
-    └── scam_detector/
-        ├── screens/
-        │   └── scam_detector_page.dart
-        │       ├── Class: ScamDetectorPage (StatefulWidget)
-        │       ├── Class: _ScamDetectorPageState
-        │       │   ├── Properties:
-        │       │   │   ├── _textController (TextField input)
-        │       │   │   ├── _analysisService (AnalysisService instance)
-        │       │   │   ├── _currentScreen (enum AppScreen)
-        │       │   │   ├── _isLoading (bool)
-        │       │   │   └── _result (AnalysisResult?)
-        │       │   │
-        │       │   ├── Lifecycle:
-        │       │   │   ├── initState() [inherited, not overridden here]
-        │       │   │   └── dispose() → _textController.dispose()
-        │       │   │
-        │       │   ├── Methods:
-        │       │   │   ├── _analyzeText() → calls _analysisService
-        │       │   │   ├── _openBottomSheetDemo()
-        │       │   │   ├── _pasteFromClipboard()
-        │       │   │   ├── _setScreenFromNav(int)
-        │       │   │   │
-        │       │   │   ├── Build Methods:
-        │       │   │   ├── _buildHomeScreen() → 3 sections + bottom nav
-        │       │   │   ├── _buildScanScreen() → text input + buttons
-        │       │   │   ├── _buildResultScreen() → meter + badge + analysis
-        │       │   │   │
-        │       │   │   └── Helper Methods:
-        │       │   │       ├── _buildQuickScanButton()
-        │       │   │       ├── _buildQuickExampleCard()
-        │       │   │       └── _screenHeader()
-        │       │   │
-        │       │   ├── Enums:
-        │       │   │   └── AppScreen { home, scan, result }
-        │       │   │
-        │       │   └── build() → Scaffold + switch on _currentScreen
-        │
-        ├── services/
-        │   └── analysis_service.dart
-        │       ├── Class: AnalysisService
-        │       ├── HTTP Client: uses http package
-        │       │
-        │       ├── Public Methods:
-        │       │   ├── analyzeText(String text) → Future<AnalysisResult>
-        │       │   │   ├── Tries: POST {API_BASE_URL}/analyze
-        │       │   │   ├── Timeout: 12 seconds
-        │       │   │   ├── On Success: return AnalysisResult(isFallback: false)
-        │       │   │   └── On Failure: return _analyzeLocalHeuristic(text)
-        │       │   │
-        │       │   └── previewBottomSheetResult() → AnalysisResult
-        │       │
-        │       └── Private Methods:
-        │           └── _analyzeLocalHeuristic(String text) → AnalysisResult
-        │               └── Pattern matching: keywords, URLs, urgency
-        │
-        ├── models/
-        │   ├── analysis_result.dart
-        │   │   └── Class: AnalysisResult
-        │   │       ├── riskScore (int 0–100)
-        │   │       ├── analysisMessage (String explanation)
-        │   │       └── isFallback (bool)
-        │   │
-        │   └── scam_demo_models.dart
-        │       ├── Class: QuickScanExample
-        │       │   ├── text (String)
-        │       │   └── preview (String label)
-        │       │
-        │       └── const quickScanExamples (List<QuickScanExample>)
-        │           └── 3 pre-built examples (suspicious link, prize scam, normal)
-        │
-        └── widgets/
-            ├── analog_meter.dart
-            │   ├── Enum: MeterSize { small, medium, large }
-            │   ├── Class: AnalogMeter (StatelessWidget)
-            │   │   ├── Props: riskScore, size
-            │   │   └── Builds: Animated gauge using CustomPaint
-            │   │
-            │   └── Class: _MeterPainter (CustomPainter)
-            │       ├── paint(): draws gauge arcs, needle, scale markings
-            │       └── shouldRepaint(): detects score/color changes
-            │
-            ├── risk_badge.dart
-            │   └── Class: RiskBadge (StatelessWidget)
-            │       ├── Props: riskScore
-            │       └── Builds: colored badge with icon + label
-            │
-            ├── risk_utils.dart
-            │   ├── Function: riskColor(int) → Color
-            │   ├── Function: riskTint(int) → Color (light bg)
-            │   ├── Function: riskShade(int) → Color (dark variant)
-            │   ├── Function: riskIcon(int) → IconData
-            │   └── Function: riskLabel(int) → String
-            │
-            └── scam_widgets.dart
-                ├── Class: GlassStatCard (StatelessWidget)
-                │   ├── Props: value, label
-                │   └── Builds: frosted glass card with stats
-                │
-                ├── Class: SpinningLoader (StatelessWidget)
-                │   ├── Props: size
-                │   └── Builds: circular progress indicator
-                │
-                ├── Class: BottomSheetOverlayDemo (StatefulWidget)
-                │   ├── Props: result (AnalysisResult)
-                │   ├── State: _isLoading, _result
-                │   └── Builds: Full-screen bottom sheet with analysis
-                │
-                └── Class: BottomNavBar (StatelessWidget)
-                    ├── Props: selectedIndex, onSelect callback
-                    └── Builds: Custom nav with Home + Scan tabs
+├── services/
+│   ├── api_service.dart (abstract + LiveApiService)
+│   └── mock_api_service.dart (keyword heuristics)
+│
+├── models/
+│   ├── analysis_result.dart
+│   │   └── Class: AnalysisResult
+│   │       ├── riskScore (int 0–100, -1 = error sentinel)
+│   │       ├── analysisMessage (String)
+│   │       ├── isUnavailable getter
+│   │       └── fromJson() factory
+│   │
+│   └── scam_demo_models.dart
+│       ├── Class: QuickScanExample
+│       └── const quickScanExamples (List<QuickScanExample>)
+│
+├── screens/
+│   ├── home_screen.dart
+│   │   ├── Class: ScamDetectorPage (StatefulWidget)
+│   │   ├── Class: _ScamDetectorPageState
+│   │   │   ├── _buildHomeScreen() — displays live stats (totalScans, threatsBlocked)
+│   │   │   ├── _buildScanScreen() — text input + paste button + analyze button
+│   │   │   └── _buildResultScreen() — meter + badge + message + report button
+│   │   │
+│   │   ├── Enums:
+│   │   │   └── AppScreen { home, scan, result }
+│   │   │
+│   │   └── Stats Recording:
+│   │       ├── Triggered when AnalysisState.complete
+│   │       ├── Deduped by _lastRecordedRiskScore
+│   │       └── Reset when new analysis starts or user taps "Scan Another Message"
+│   │
+│   ├── overlay_screen.dart (Phase 2 — Share Sheet integration)
+│   ├── intent_router.dart (intent handling)
+│   └── [future screens]
+│
+├── theme/
+│   ├── app_colors.dart — meterGreen, meterYellow, meterRed, corporateRed, etc.
+│   ├── app_typography.dart — TextStyle definitions
+│   └── bank_islam_theme.dart — ThemeData builder
+│
+└── widgets/
+    ├── analog_meter.dart
+    │   ├── Class: AnalogMeter (StatefulWidget)
+    │   │   ├── Props: riskScore, compact (bool)
+    │   │   └── Builds: 7-segment gauge, needle animation, score label
+    │   │
+    │   └── Class: _GaugePainter (CustomPainter)
+    │       ├── paint() — draws arcs, labels, needle, hub
+    │       └── shouldRepaint() — triggers on value change
+    │
+    ├── risk_badge.dart
+    │   └── Class: RiskBadge (StatelessWidget)
+    │       ├── Props: riskScore
+    │       ├── Builds: colored dot + risk label (Low/Medium/High)
+    │       └── Animates: TweenAnimationBuilder on dot scale
+    │
+    ├── risk_utils.dart
+    │   ├── Function: riskColor(int) → Color (green/yellow/red)
+    │   ├── Function: riskTint(int) → Color (light 12% alpha)
+    │   ├── Function: riskShade(int) → Color (dark variant)
+    │   ├── Function: riskIcon(int) → IconData
+    │   └── Function: riskLabel(int) → String (Low/Medium/High Risk)
+    │
+    ├── analysis_message_card.dart — message + reasoning display
+    ├── analyze_button.dart — primary action button
+    ├── error_banner.dart — error state UI
+    ├── skeleton_meter_placeholder.dart — loading state
+    ├── text_input_area.dart — TextField wrapper
+    ├── scam_widgets.dart — GlassStatCard, BottomNavBar, etc.
+    └── [future widgets]
 ```
 
 ---
@@ -296,13 +284,205 @@ test/widget_test.dart
 
 ---
 
+## Data Flow: Stats Tracking (StatsProvider)
+
+```
+User completes analysis
+  │
+  ├── AnalysisProvider sets state → complete
+  │   └── _result populated with AnalysisResult
+  │
+  └──▶ _buildResultScreen() calls widget.watch(AnalysisProvider)
+       │
+       └──▶ Detects state.complete && result != null
+            │
+            └──▶ Compares riskScore vs _lastRecordedRiskScore
+                 │
+                 ├── If different (first time or new analysis):
+                 │   │
+                 │   └──▶ WidgetsBinding.addPostFrameCallback(...)
+                 │        └──▶ stats.recordAnalysis(riskScore)
+                 │             │
+                 │             ├── _totalScans++
+                 │             │
+                 │             ├── if (riskScore ≥ 50):
+                 │             │   └── _threatsBlocked++
+                 │             │
+                 │             └──▶ notifyListeners()
+                 │                  │
+                 │                  └──▶ _buildHomeScreen() rebuilds
+                 │                       ├── watch(StatsProvider)
+                 │                       └── Display live: totalScans, threatsBlocked
+                 │
+                 └── If same (duplicate):
+                     └── Silently skip (dedupe prevents double-counting)
+
+Dedup Reset Triggers:
+  ├── When _analyzeText() starts (new analysis):
+  │   └── _lastRecordedRiskScore = null
+  │
+  ├── When user taps "Scan Another Message":
+  │   └── _lastRecordedRiskScore = null (in setState)
+  │
+  └── When user navigates via bottom nav:
+      └── _lastRecordedRiskScore = null
+```
+
+---
+
+## Provider Setup (main.dart → MultiProvider Pattern)
+
+```
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final apiService = AppConfig.useMockApi
+      ? MockApiService()
+      : LiveApiService();
+
+  runApp(
+    MultiProvider(                           // ← Provides multiple ChangeNotifiers
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => AnalysisProvider(apiService),  // Manages API calls + results
+        ),
+        ChangeNotifierProvider(
+          create: (_) => StatsProvider(),              // Manages scan counts
+        ),
+      ],
+      child: const KuCubaApp(),
+    ),
+  );
+}
+
+Why MultiProvider?
+  ├── Separates concerns: AnalysisProvider (analysis) vs. StatsProvider (tracking)
+  ├── Both providers outlive individual screens
+  ├── Home screen can watch StatsProvider for live updates
+  └── Result screen uses both AnalysisProvider (results) + StatsProvider (recording)
+```
+
+---
+
+## Server Integration: ADB Reverse Tunneling
+
+### Setup for Physical Android Device
+
+```
+Step 1: Update AppConfig
+  └── lib/config/app_config.dart
+      ├── useMockApi = false  (enable live backend)
+      └── backendBaseUrl = 'http://localhost:8080'
+
+Step 2: Set up ADB Reverse
+  └── Terminal command (Windows):
+      adb reverse tcp:8080 tcp:8080
+      
+      What it does:
+        └── Forwards device localhost:8080 requests to PC localhost:8080
+
+Step 3: Start Backend Server
+  └── On your PC:
+      cd backend
+      dart run bin/server.dart
+      
+      Should output: Server running on http://localhost:8080
+
+Step 4: Deploy App to Device
+  └── flutter run -d <device-id>
+      
+      Get device ID: adb devices
+
+Step 5: Test Communication
+  └── In app:
+      ├── Go to "Scan" tab
+      ├── Paste text with scam keywords or link
+      ├── Tap "Analyze"
+      └── Watch logcat:
+          adb logcat | grep -i "analyze\|error\|dio"
+
+Troubleshooting:
+  ├── Verify ADB reverse active:
+  │   adb reverse --list    (should show: tcp:8080 tcp:8080)
+  │
+  ├── Test manually:
+  │   adb shell curl -X POST http://localhost:8080/analyze \
+  │     -H "Content-Type: application/json" \
+  │     -d '{"text_payload": "test"}'
+  │
+  └── If connection fails:
+      ├── Check PC firewall allows port 8080
+      ├── Verify backend is actually running
+      ├── Check backend logs for errors
+      └── Fall back to useMockApi = true to test UI
+```
+
+---
+
+## Testing: Widget Test Updates
+
+```
+test/widget_test.dart now uses MultiProvider:
+
+testWidgets('Scam detector home renders', (WidgetTester tester) async {
+  await tester.pumpWidget(
+    MultiProvider(                    // ← Both providers must be present
+      providers: [
+        ChangeNotifierProvider(create: (_) => AnalysisProvider(MockApiService())),
+        ChangeNotifierProvider(create: (_) => StatsProvider()),
+      ],
+      child: const KuCubaApp(),
+    ),
+  );
+  await tester.pumpAndSettle();
+
+  expect(find.text('Eternal Guardian'), findsOneWidget);
+  expect(find.text('Quick Scan'), findsOneWidget);
+  expect(find.text('0'), findsWidgets);  // Stats start at 0
+});
+
+Why MultiProvider in tests?
+  ├── home_screen.dart calls context.watch<StatsProvider>()
+  ├── If only AnalysisProvider provided → ProviderNotFoundException
+  └── Tests must match main.dart provider setup exactly
+```
+
+---
+
+## Mock API Service: Keyword Heuristics
+
+```
+MockApiService (lib/services/mock_api_service.dart)
+
+Pattern-based scoring:
+
+  Tier 1 (Score: 88) — Authority Impersonation + Financial
+    └── Contains: 'transfer' OR 'tac' OR 'polis' OR 'lhdn'
+        └── Example: "Polis here. Transfer RM5,000..."
+
+  Tier 2 (Score: 65) — Suspicious Link/Action
+    └── Contains: 'http' OR 'www' OR 'click'
+        └── Example: "Click link to claim..."
+
+  Tier 3 (Score: 8) — Safe/Normal
+    └── Default fallback
+        └── Example: "How are you today?"
+
+Enhancement Opportunity:
+  └── Current limitation: "Congratulations! You won RM50,000..." → 8 (should be ~88)
+      └── Need to add patterns for: 'won', 'claim', 'fee', 'prize' + money amount
+```
+
+---
+
 ## Notes for Developers
 
-1. **Single Responsibility:** Each file handles one domain (theme, service, screen, widget).
-2. **Stateless Where Possible:** Most widgets are stateless (AnalogMeter, RiskBadge, etc.). Only `ScamDetectorPage` needs mutable state.
-3. **No Global State Yet:** If complexity grows, introduce Provider pattern in a new `lib/providers/` folder.
-4. **Theme Consistency:** Always use `AppTheme` constants or `Theme.of(context)` instead of hardcoded colors.
-5. **Testing:** Keep widgets small and pure; test AnalysisService and helpers independently once test infrastructure expands.
+1. **Provider Scope:** Both AnalysisProvider and StatsProvider live for the entire app lifecycle (not widget-scoped).
+2. **Stats Dedup:** Uses `_lastRecordedRiskScore` to avoid double-counting when same analysis completes.
+3. **Mock vs. Live:** Toggle `AppConfig.useMockApi` — no other changes needed.
+4. **ADB Reverse:** Required for physical device testing; emulator uses `10.0.2.2:8080` instead.
+5. **Error Sentinel:** `riskScore = -1` indicates backend unavailable; UI shows banner warning.
+6. **Risk Threshold:** Threat = `riskScore ≥ 50` (medium/high); tracked separately from raw scores.
 
 ---
 

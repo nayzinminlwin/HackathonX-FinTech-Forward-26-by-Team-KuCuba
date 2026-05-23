@@ -29,3 +29,13 @@ IconData riskIcon(int risk) {
   }
   return Icons.verified_user_outlined;
 }
+
+String riskLabel(int risk) {
+  if (risk <= 30) {
+    return 'Low Risk';
+  }
+  if (risk <= 70) {
+    return 'Medium Risk';
+  }
+  return 'High Risk';
+}

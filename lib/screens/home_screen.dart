@@ -47,6 +47,8 @@ class _ScamDetectorPageState extends State<ScamDetectorPage> {
     setState(() => _currentScreen = AppScreen.result);
 
     if (!mounted) return;
+    // Reset dedupe flag when new analysis starts
+    _lastRecordedRiskScore = null;
     await context.read<AnalysisProvider>().analyze(inputText);
   }
 
@@ -402,6 +404,7 @@ class _ScamDetectorPageState extends State<ScamDetectorPage> {
                           setState(() {
                             _textController.clear();
                             _currentScreen = AppScreen.scan;
+                            _lastRecordedRiskScore = null; // Reset dedupe
                           });
                         },
                         style: FilledButton.styleFrom(

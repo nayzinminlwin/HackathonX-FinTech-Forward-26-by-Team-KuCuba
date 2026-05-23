@@ -3,12 +3,14 @@
 | Start here | Purpose |
 |------------|---------|
 | **[`SOP_blueprint.md`](SOP_blueprint.md)** | Standard workflow for AI and developers: status → read plans → code → dev_logs → test → test_logs |
+| **[`SERVER_INTEGRATION_GUIDE.md`](SERVER_INTEGRATION_GUIDE.md)** | ✨ NEW — How to test the backend with a physical Android device via ADB reverse tunneling |
 
 ## Plans & architecture
 
 | Document | Purpose |
 |----------|---------|
 | [`Detailed_System_Requirement_Document.md`](Detailed_System_Requirement_Document.md) | SRD — requirements & architecture |
+| [`ARCHITECTURE_DIAGRAM.md`](ARCHITECTURE_DIAGRAM.md) | Directory tree, provider setup, data flows, stats tracking (updated) |
 | [`Phase_1_Core_App_Module.md`](Phase_1_Core_App_Module.md) | Phase 1 plan |
 | [`Phase_2_OS_Share_Sheet_Overlay.md`](Phase_2_OS_Share_Sheet_Overlay.md) | Phase 2 plan |
 | [`Phase_3_Pinned_Notification_Banner.md`](Phase_3_Pinned_Notification_Banner.md) | Phase 3 plan (may run in parallel with Phase 2 after backend) |

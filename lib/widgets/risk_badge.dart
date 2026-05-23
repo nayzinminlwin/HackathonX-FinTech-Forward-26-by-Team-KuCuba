@@ -34,14 +34,14 @@ class RiskBadge extends StatelessWidget {
               ),
             ),
           ),
-          /* const SizedBox(width: 8),
+          const SizedBox(width: 8),
           Text(
             riskLabel(riskScore),
             style: TextStyle(
               color: riskShade(riskScore),
               fontWeight: FontWeight.w700,
             ),
-          ), */
+          ),
         ],
       ),
     );
