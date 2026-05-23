@@ -10,135 +10,59 @@
 ```
 lib/
 ├── main.dart
-│   └── → Imports EternalGuardianApp from lib/app/app.dart
-│       └── void main() { runApp(const EternalGuardianApp()); }
+│   ├── Initializes Flutter bindings
+│   ├── Creates API service (MockApiService or LiveApiService)
+│   └── Runs MultiProvider + KuCubaApp
 │
-├── app/
-│   ├── app.dart
-│   │   ├── Class: EternalGuardianApp (StatelessWidget)
-│   │   ├── Creates: MaterialApp
-│   │   ├── Applies: AppTheme.lightTheme
-│   │   └── Sets Home: ScamDetectorPage()
-│   │
-│   └── theme/
-│       └── app_theme.dart
-│           ├── Class: AppTheme (static methods & constants)
-│           ├── Constants: Color tokens (primaryBrand, textPrimary, etc.)
-│           ├── TextTheme: Poppins typography definitions
-│           ├── CardTheme, InputDecorationTheme, FilledButtonTheme
-│           └── Getter: lightTheme → ThemeData
+├── app.dart
+│   └── Class: KuCubaApp (StatelessWidget)
+│       ├── Applies: bankIslamTheme()
+│       └── Sets Home: IntentRouter()
 │
-└── features/
-    └── scam_detector/
-        ├── screens/
-        │   └── scam_detector_page.dart
-        │       ├── Class: ScamDetectorPage (StatefulWidget)
-        │       ├── Class: _ScamDetectorPageState
-        │       │   ├── Properties:
-        │       │   │   ├── _textController (TextField input)
-        │       │   │   ├── _analysisService (AnalysisService instance)
-        │       │   │   ├── _currentScreen (enum AppScreen)
-        │       │   │   ├── _isLoading (bool)
-        │       │   │   └── _result (AnalysisResult?)
-        │       │   │
-        │       │   ├── Lifecycle:
-        │       │   │   ├── initState() [inherited, not overridden here]
-        │       │   │   └── dispose() → _textController.dispose()
-        │       │   │
-        │       │   ├── Methods:
-        │       │   │   ├── _analyzeText() → calls _analysisService
-        │       │   │   ├── _openBottomSheetDemo()
-        │       │   │   ├── _pasteFromClipboard()
-        │       │   │   ├── _setScreenFromNav(int)
-        │       │   │   │
-        │       │   │   ├── Build Methods:
-        │       │   │   ├── _buildHomeScreen() → 3 sections + bottom nav
-        │       │   │   ├── _buildScanScreen() → text input + buttons
-        │       │   │   ├── _buildResultScreen() → meter + badge + analysis
-        │       │   │   │
-        │       │   │   └── Helper Methods:
-        │       │   │       ├── _buildQuickScanButton()
-        │       │   │       ├── _buildQuickExampleCard()
-        │       │   │       └── _screenHeader()
-        │       │   │
-        │       │   ├── Enums:
-        │       │   │   └── AppScreen { home, scan, result }
-        │       │   │
-        │       │   └── build() → Scaffold + switch on _currentScreen
-        │
-        ├── services/
-        │   └── analysis_service.dart
-        │       ├── Class: AnalysisService
-        │       ├── HTTP Client: uses http package
-        │       │
-        │       ├── Public Methods:
-        │       │   ├── analyzeText(String text) → Future<AnalysisResult>
-        │       │   │   ├── Tries: POST {API_BASE_URL}/analyze
-        │       │   │   ├── Timeout: 12 seconds
-        │       │   │   ├── On Success: return AnalysisResult(isFallback: false)
-        │       │   │   └── On Failure: return _analyzeLocalHeuristic(text)
-        │       │   │
-        │       │   └── previewBottomSheetResult() → AnalysisResult
-        │       │
-        │       └── Private Methods:
-        │           └── _analyzeLocalHeuristic(String text) → AnalysisResult
-        │               └── Pattern matching: keywords, URLs, urgency
-        │
-        ├── models/
-        │   ├── analysis_result.dart
-        │   │   └── Class: AnalysisResult
-        │   │       ├── riskScore (int 0–100)
-        │   │       ├── analysisMessage (String explanation)
-        │   │       └── isFallback (bool)
-        │   │
-        │   └── scam_demo_models.dart
-        │       ├── Class: QuickScanExample
-        │       │   ├── text (String)
-        │       │   └── preview (String label)
-        │       │
-        │       └── const quickScanExamples (List<QuickScanExample>)
-        │           └── 3 pre-built examples (suspicious link, prize scam, normal)
-        │
-        └── widgets/
-            ├── analog_meter.dart
-            │   ├── Enum: MeterSize { small, medium, large }
-            │   ├── Class: AnalogMeter (StatelessWidget)
-            │   │   ├── Props: riskScore, size
-            │   │   └── Builds: Animated gauge using CustomPaint
-            │   │
-            │   └── Class: _MeterPainter (CustomPainter)
-            │       ├── paint(): draws gauge arcs, needle, scale markings
-            │       └── shouldRepaint(): detects score/color changes
-            │
-            ├── risk_badge.dart
-            │   └── Class: RiskBadge (StatelessWidget)
-            │       ├── Props: riskScore
-            │       └── Builds: colored badge with icon + label
-            │
-            ├── risk_utils.dart
-            │   ├── Function: riskColor(int) → Color
-            │   ├── Function: riskTint(int) → Color (light bg)
-            │   ├── Function: riskShade(int) → Color (dark variant)
-            │   ├── Function: riskIcon(int) → IconData
-            │   └── Function: riskLabel(int) → String
-            │
-            └── scam_widgets.dart
-                ├── Class: GlassStatCard (StatelessWidget)
-                │   ├── Props: value, label
-                │   └── Builds: frosted glass card with stats
-                │
-                ├── Class: SpinningLoader (StatelessWidget)
-                │   ├── Props: size
-                │   └── Builds: circular progress indicator
-                │
-                ├── Class: BottomSheetOverlayDemo (StatefulWidget)
-                │   ├── Props: result (AnalysisResult)
-                │   ├── State: _isLoading, _result
-                │   └── Builds: Full-screen bottom sheet with analysis
-                │
-                └── Class: BottomNavBar (StatelessWidget)
-                    ├── Props: selectedIndex, onSelect callback
-                    └── Builds: Custom nav with Home + Scan tabs
+├── config/
+│   └── app_config.dart
+│
+├── models/
+│   ├── analysis_result.dart
+│   └── scam_demo_models.dart
+│
+├── providers/
+│   ├── analysis_provider.dart
+│   │   └── Class: AnalysisProvider (ChangeNotifier)
+│   └── stats_provider.dart
+│       └── Class: StatsProvider (ChangeNotifier)
+│
+├── screens/
+│   ├── intent_router.dart
+│   │   ├── Class: IntentRouter
+│   │   └── Routes to OverlayScreen or ScamDetectorPage
+│   ├── home_screen.dart
+│   │   ├── Class: ScamDetectorPage (StatefulWidget)
+│   │   └── Enum: AppScreen { home, scan, result }
+│   └── overlay_screen.dart
+│
+├── services/
+│   ├── api_service.dart
+│   │   ├── Interface: AnalysisApiService
+│   │   └── Class: LiveApiService (Dio HTTP client)
+│   └── mock_api_service.dart
+│
+├── theme/
+│   ├── app_colors.dart
+│   ├── app_typography.dart
+│   └── bank_islam_theme.dart
+│       └── Function: bankIslamTheme() → ThemeData
+│
+└── widgets/
+    ├── analog_meter.dart
+    ├── analysis_message_card.dart
+    ├── analyze_button.dart
+    ├── error_banner.dart
+    ├── risk_badge.dart
+    ├── risk_utils.dart
+    ├── scam_widgets.dart
+    ├── skeleton_meter_placeholder.dart
+    └── text_input_area.dart
 ```
 
 ---
@@ -149,38 +73,41 @@ lib/
 
 ```
 main.dart
-  └── imports EternalGuardianApp from app/app.dart
+  ├── imports KuCubaApp from app.dart
+  ├── imports AnalysisProvider + StatsProvider
+  └── imports MockApiService + LiveApiService
 
-app/app.dart
-  ├── imports AppTheme from app/theme/app_theme.dart
-  └── imports ScamDetectorPage from features/scam_detector/screens/
+app.dart
+  ├── imports bankIslamTheme from theme/bank_islam_theme.dart
+  └── imports IntentRouter from screens/intent_router.dart
 
-features/scam_detector/screens/scam_detector_page.dart
-  ├── imports AnalysisService from services/
-  ├── imports AnalysisResult, QuickScanExample from models/
-  ├── imports AppTheme from app/theme/
-  └── imports Widgets from widgets/
+screens/intent_router.dart
+  ├── imports ScamDetectorPage from screens/home_screen.dart
+  └── imports OverlayScreen from screens/overlay_screen.dart
 
-features/scam_detector/widgets/scam_widgets.dart
-  ├── imports AnalysisResult, AnalysisService from services/
-  ├── imports AppTheme from app/theme/
-  └── imports risk_utils helpers
+screens/home_screen.dart
+  ├── imports AnalysisProvider + StatsProvider
+  ├── imports models + reusable widgets
+  └── imports OverlayScreen for share-sheet demo
 
-features/scam_detector/widgets/analog_meter.dart
-  └── imports risk_utils for color helpers
+providers/analysis_provider.dart
+  └── imports AnalysisApiService from services/api_service.dart
 
-features/scam_detector/services/analysis_service.dart
-  ├── imports AnalysisResult from models/
-  └── imports http package
+services/api_service.dart
+  ├── imports Dio package
+  └── imports AnalysisResult from models/analysis_result.dart
 ```
 
 ### External Dependencies
 
 ```
 Packages (pubspec.yaml):
-├── flutter (core framework)
-├── google_fonts (Poppins typography)
-└── http (HTTP client for API calls)
+├── flutter
+├── provider
+├── dio
+├── google_fonts
+├── flutter_animate
+└── receive_sharing_intent (git dependency)
 ```
 
 ---
@@ -188,38 +115,20 @@ Packages (pubspec.yaml):
 ## Data Flow: Analyze Text
 
 ```
-User Input (Scan Screen)
+User Input (Scan screen)
   │
-  └──▶ TextField (_textController)
+  └──▶ ScamDetectorPage._analyzeText()
        │
-       └──▶ User taps "Analyze Now"
+       └──▶ AnalysisProvider.analyze(text)
             │
-            └──▶ _analyzeText() method
-                 │
-                 └──▶ Calls AnalysisService.analyzeText(text)
-                      │
-                      ├─ Try: HTTP POST /analyze
-                      │  ├── Success (200, valid JSON)
-                      │  │   └── Return AnalysisResult(isFallback: false)
-                      │  │
-                      │  └── Failure (timeout, 4xx/5xx, parse error)
-                      │      └── Catch exception
-                      │         └── Call _analyzeLocalHeuristic()
-                      │            └── Keyword pattern matching
-                      │               └── Return AnalysisResult(isFallback: true)
-                      │
-                      └──▶ setState() updates:
-                           ├── _result = AnalysisResult
-                           ├── _isLoading = false
-                           └── _currentScreen = AppScreen.result
-                               │
-                               └──▶ Rebuild UI
-                                    │
-                                    └──▶ _buildResultScreen()
-                                         ├── Show meter (animate to risk score)
-                                         ├── Show badge (color based on risk)
-                                         ├── Show analysis box (isFallback banner if needed)
-                                         └── Show buttons (Report, Scan Again)
+            ├── Sets state: loading
+            ├── Calls AnalysisApiService.analyze(text)
+            │     ├── LiveApiService: Dio POST /analyze
+            │     └── MockApiService: local demo result
+            │
+            └── Updates state:
+                  ├── complete + AnalysisResult
+                  └── or error + message
 ```
 
 ---
@@ -227,33 +136,14 @@ User Input (Scan Screen)
 ## Screen Navigation State Machine
 
 ```
-┌──────────┐
-│   Home   │◀─────────────────────────────────┐
-│ _home()  │                                   │
-│          │                                   │
-└────┬─────┘                                   │
-     │                                         │
-     │ "Quick Scan" / Example tap              │
-     │                                         │
-     ▼                                         │
-┌──────────┐        ┌─────────────┐            │
-│  Scan    │        │    (Back)   │            │
-│ _scan()  │◀───────┤  or Home    │────────────┤
-│          │        │    button   │            │
-└────┬─────┘        └─────────────┘            │
-     │                                         │
-     │ "Analyze Now" (text not empty)          │
-     │                                         │
-     ▼                                         │
-┌──────────────┐                               │
-│   Result     │─── "Scan Another Message" ───┘
-│ _result()    │
-│              │
-└──────────────┘
-     │
-     │ "Home" button
-     │
-     └──────────────────────────────────────────┘
+IntentRouter
+  ├── Shared intent present  ──▶ OverlayScreen
+  └── No shared intent       ──▶ ScamDetectorPage
+
+ScamDetectorPage AppScreen:
+  home ──▶ scan ──▶ result
+   ▲                 │
+   └────── back/home ┘
 ```
 
 ---
@@ -261,24 +151,14 @@ User Input (Scan Screen)
 ## Theme Application Flow
 
 ```
-AppTheme.lightTheme (getter)
+bankIslamTheme()
   │
-  ├── 1. Base ThemeData
-  │   └── ColorScheme.fromSeed(seedColor: primaryBrand)
+  ├── ColorScheme.fromSeed (AppColors.corporateRed)
+  ├── appTextTheme() typography
+  ├── AppBarTheme / ElevatedButtonTheme / InputDecorationTheme
   │
-  ├── 2. Text Theme (Poppins)
-  │   ├── displaySmall, headlineLarge, titleLarge
-  │   ├── bodyLarge, bodyMedium
-  │   └── labelLarge
-  │
-  ├── 3. Component Themes
-  │   ├── CardTheme (border, elevation, radius)
-  │   ├── InputDecorationTheme (focus border color)
-  │   └── FilledButtonTheme (padding, border radius)
-  │
-  └── 4. Applied in EternalGuardianApp
-      └── MaterialApp(theme: AppTheme.lightTheme)
-          └── All child widgets inherit theme via Theme.of(context)
+  └── Applied in KuCubaApp
+      └── MaterialApp(theme: bankIslamTheme())
 ```
 
 ---
@@ -287,22 +167,17 @@ AppTheme.lightTheme (getter)
 
 ```
 test/widget_test.dart
-  │
-  └── testWidgets('Scam detector home renders', ...)
-      └── Builds: const EternalGuardianApp()
-          ├── Checks: find.text('Eternal Guardian') findOne
-          └── Checks: find.text('Quick Scan') findOne
+  └── currently pumps KuCubaApp with AnalysisProvider
 ```
 
 ---
 
 ## Notes for Developers
 
-1. **Single Responsibility:** Each file handles one domain (theme, service, screen, widget).
-2. **Stateless Where Possible:** Most widgets are stateless (AnalogMeter, RiskBadge, etc.). Only `ScamDetectorPage` needs mutable state.
-3. **No Global State Yet:** If complexity grows, introduce Provider pattern in a new `lib/providers/` folder.
-4. **Theme Consistency:** Always use `AppTheme` constants or `Theme.of(context)` instead of hardcoded colors.
-5. **Testing:** Keep widgets small and pure; test AnalysisService and helpers independently once test infrastructure expands.
+1. **Provider-based state:** `AnalysisProvider` and `StatsProvider` are app-level state.
+2. **Router entrypoint:** `IntentRouter` is the home entry to handle share intents.
+3. **Service abstraction:** `AnalysisApiService` allows switching between live and mock backends.
+4. **Theme consistency:** Use `AppColors` + `bankIslamTheme()` tokens instead of hardcoded theme values.
 
 ---
 
