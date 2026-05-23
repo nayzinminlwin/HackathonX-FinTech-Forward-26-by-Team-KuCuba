@@ -47,16 +47,16 @@ class _OverlayScreenState extends State<OverlayScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparent,
         body: Stack(
           children: [
             // Scrim — no GestureDetector; tap outside does not dismiss (FR 2.5).
-            const ColoredBox(color: Colors.black54),
+            const ColoredBox(color: AppColors.overlayScrim),
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
                 decoration: const BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.background,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                 ),
                 padding: EdgeInsets.fromLTRB(
