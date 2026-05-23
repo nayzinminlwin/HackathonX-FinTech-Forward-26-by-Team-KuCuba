@@ -85,8 +85,8 @@ class _AnalogMeterState extends State<AnalogMeter>
   @override
   Widget build(BuildContext context) {
     final c = widget.compact;
-    final double w = c ? 200 : 280;
-    final double h = c ? 125 : 170;
+    final double w = c ? 184 : 280;
+    final double h = c ? 104 : 170;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -107,7 +107,7 @@ class _AnalogMeterState extends State<AnalogMeter>
           ),
         ),
 
-        const SizedBox(height: 10),
+        SizedBox(height: c ? 6 : 10),
 
         // ── Score number ──
         Text(
@@ -119,7 +119,7 @@ class _AnalogMeterState extends State<AnalogMeter>
           ),
         ),
 
-        const SizedBox(height: 2),
+        SizedBox(height: c ? 0 : 2),
 
         // ── Verbal label ──
         Text(

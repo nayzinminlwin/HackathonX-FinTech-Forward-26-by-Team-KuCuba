@@ -28,7 +28,10 @@ void main() {
     expect(calls.single.method, 'startService');
     expect(
       calls.single.arguments,
-      <String, String>{'backend_url': AppConfig.backendBaseUrl},
+      <String, Object>{
+        'backend_url': AppConfig.backendBaseUrl,
+        'use_mock_api': AppConfig.useMockApi,
+      },
     );
   });
 

@@ -8,8 +8,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Scam Detector Result"
-        android:textColor="#1A1A1A"
+        android:text="Eternal Guardian Result"
+        android:textAppearance="@style/TextAppearance.Compat.Notification.Title"
         android:textSize="14sp"
         android:textStyle="bold" />
 
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="Risk: 0/100"
-        android:textColor="#757575"
+        android:textAppearance="@style/TextAppearance.Compat.Notification.Info"
         android:textSize="12sp" />
 
     <TextView
@@ -39,6 +39,6 @@
         android:ellipsize="end"
         android:maxLines="3"
         android:text=""
-        android:textColor="#1A1A1A"
+        android:textAppearance="@style/TextAppearance.Compat.Notification"
         android:textSize="13sp" />
 </LinearLayout>

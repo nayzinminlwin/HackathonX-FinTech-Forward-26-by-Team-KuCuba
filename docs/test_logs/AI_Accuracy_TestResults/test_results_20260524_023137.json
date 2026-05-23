@@ -1,0 +1,83 @@
+{
+  "run_at": "2026-05-24T02:31:37",
+  "url": "http://localhost:8080/analyze",
+  "count": 5,
+  "interval_seconds": 20,
+  "results": [
+    {
+      "id": 45,
+      "text_payload": "Perodua Service Center: Servis kereta anda telah tamat tempoh pada 15 Mei 2026. Hubungi wakil sah kami untuk temujanji.",
+      "expected_label": "legitimate",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 15,
+        "analysis_message": "The message mentions a Perodua Service Center and a service expiry date. However, it does not contain any suspicious links or requests for personal information, making it a low-risk message.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:30:12.5916544+08:00",
+      "response_received_time": "2026-05-24T02:30:18.7196734+08:00",
+      "request_duration_ms": 6128,
+      "match": 1
+    },
+    {
+      "id": 11,
+      "text_payload": "Netflix: Your payment for the current billing cycle failed. Update your billing info to continue watching: https://netflix-payment-failed.com",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The domain 'netflix-payment-failed.com' is a look-alike domain, attempting to impersonate the legitimate Netflix service. This is a common tactic used in phishing scams to trick users into revealing their payment details.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:30:32.7667252+08:00",
+      "response_received_time": "2026-05-24T02:30:36.1254736+08:00",
+      "request_duration_ms": 3359,
+      "match": 1
+    },
+    {
+      "id": 22,
+      "text_payload": "Reminder: All staff must submit their monthly timesheets to bamboohr.com by 5 PM today.",
+      "expected_label": "legitimate",
+      "predicted_label": "unavailable",
+      "return_json": {
+        "risk_score": -1,
+        "analysis_message": "Analysis temporarily unavailable.",
+        "analysis_source": "backend"
+      },
+      "request_start_time": "2026-05-24T02:30:53.1416526+08:00",
+      "response_received_time": "2026-05-24T02:30:56.6897290+08:00",
+      "request_duration_ms": 3548,
+      "match": 0
+    },
+    {
+      "id": 37,
+      "text_payload": "GitHub: Your 2FA authentication code is 881292. This code expires in 10 minutes.",
+      "expected_label": "legitimate",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 5,
+        "analysis_message": "The message appears to be a legitimate 2FA code from GitHub. There are no suspicious links or requests for personal information.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:31:13.7053459+08:00",
+      "response_received_time": "2026-05-24T02:31:17.8074067+08:00",
+      "request_duration_ms": 4102,
+      "match": 1
+    },
+    {
+      "id": 48,
+      "text_payload": "Hai! Jemput join group WhatsApp komuniti taman kita kat sini: https://chat.whatsapp.com/invite/Ah3sjk921",
+      "expected_label": "suspicious",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 5,
+        "analysis_message": "The message contains a standard WhatsApp group invite link. There are no indicators of a scam such as suspicious domains or deceptive language.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:31:33.8163093+08:00",
+      "response_received_time": "2026-05-24T02:31:37.0569683+08:00",
+      "request_duration_ms": 3241,
+      "match": 0
+    }
+  ]
+}

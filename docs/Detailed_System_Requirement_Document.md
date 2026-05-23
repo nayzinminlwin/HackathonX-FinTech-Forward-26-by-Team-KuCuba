@@ -1,80 +1,137 @@
-# Detailed System Requirements Document (SRD)
+# Detailed System Requirements Document
 
-**Project Name:** The "Everywhere Scam Detector" (Eternal Guardian by Bank Islam Module)
-**Target Platform:** Android MVP (Prioritized for OS share-sheet and notification flexibility)
-**Team Allocation:** 2 Backend Developers, 1 Frontend Developer (Web to Mobile UI)
+**Project:** Eternal Guardian - Everywhere Scam Detector  
+**Team:** KuCuba  
+**Target platform:** Android MVP  
+**Status:** Development complete / demo-ready prototype  
+**Last updated:** 2026-05-24
 
----
+## 1. Product Scope
 
-## 1. System Architecture: The Hybrid AI Engine
+Eternal Guardian helps users check suspicious messages and links at the moment of risk. The Android MVP provides three entry points:
 
-**Approach:** Hybrid Rule-Based + AI Method
-**Objective:** Ensure low latency (< 2.5s), high accuracy, and minimal API token costs.
+| Entry point | Requirement | Implementation status |
+|-------------|-------------|-----------------------|
+| Core app scan | User pastes or types suspicious text, taps Analyze, and receives a risk score plus explanation. | Implemented |
+| Android share sheet | User shares text from another app into Eternal Guardian, which opens an overlay and analyzes automatically. | Implemented |
+| Guardian Mode notification | User starts a persistent notification and submits text through the notification action. | Implemented |
 
-### 1.1 Backend Processing Flow & Logic
+The backend exposes a single analysis contract used by all three entry points.
 
-1. **Input Reception:** - The backend exposes a REST endpoint (`POST /analyze`) accepting a JSON payload: `{"text_payload": "<string>"}`.
-   - The payload can be a single message, a multi-line copied conversation, or a URL.
-2. **Step 1: Link Extraction (Regex):** - The backend runs a Regular Expression (e.g., matching `http://`, `https://`, and `www.`) to parse and extract any URLs from the `text_payload`.
-3. **Step 2: Threat Database Lookup (Rule-Based):**
-   - If URLs exist, make an asynchronous call to the Google Safe Browsing API (or equivalent).
-   - _Condition A (Malicious):_ If the API returns a threat match, immediately halt further processing. Return a hardcoded response: `{"risk_score": 100, "analysis_message": "Warning: This link is a known malicious website flagged for phishing/malware."}`. (Bypasses LLM to save tokens/time).
-4. **Step 3: Contextual Analysis (LLM API):**
-   - _Condition B (Safe/No Link):_ If no links are found, or the API clears the links, send the full `text_payload` to the LLM API (e.g., Gemini).
-   - **System Prompt Requirements (Few-Shot):** The prompt must use the **Few-Shot** technique to maximize accuracy. It must instruct the AI to act as a cybersecurity analyst, provide **at least 5 examples of known Malaysian scams and 5 safe messages** for context, read the user's text as a potential two-way conversation, and evaluate urgency, financial requests, and emotional manipulation.
-   - **Enforced Output:** The LLM must be strictly constrained to output _only_ valid JSON.
+## 2. System Architecture
 
-5. **Standardized Output Format:** - The backend MUST always return this exact schema to the frontend:
-   ```json
-   {
-     "risk_score": <Integer 1-100>,
-     "analysis_message": "<String, max 2 sentences explaining the risk>"
-   }
-   ```
+Eternal Guardian uses a hybrid rule-based and AI pipeline:
 
----
+1. Client submits `POST /analyze` with `{"text_payload": "<message>"}`.
+2. Backend extracts URLs from the submitted text.
+3. Safe Browsing checks original URLs immediately.
+4. Shortened URLs are expanded with tight timeouts and checked again after expansion.
+5. If Safe Browsing flags any URL, the backend returns `risk_score: 100` and skips Gemini.
+6. If no known threat is found, Gemini analyzes the complete message context.
+7. Backend returns a normalized JSON result to Flutter or Kotlin.
 
-## 2. Detailed Functional Requirements (FR)
+The backend never stores scan history and does not persist user messages.
 
-### Phase 1: Core App Module (The Sandbox / Chat-Based UI)
+## 3. Functional Requirements
 
-_The base testing ground and fallback application interface._
+### FR1 - Core App Scan
 
-- **FR 1.1 Multi-line Input:** A main screen featuring a `TextInput` area capable of accepting multi-line strings (representing copied conversational blocks).
-- **FR 1.2 Action Trigger:** An "Analyze" button to trigger the `POST /analyze` API call.
-- **FR 1.3 Asynchronous UI States:** - _Idle:_ Empty input; meter hidden until the first analysis completes.
-  - _Loading:_ A skeleton loader or spinner replaces the meter while awaiting the backend response. Button is disabled to prevent duplicate calls.
-- **FR 1.4 Analog Meter UI Component:** A custom SVG or Canvas-based half-circle analog meter.
-  - **Zones:** 1-30 (Green/Safe), 31-70 (Yellow/Caution), 71-100 (Red/Danger).
-  - **Animation:** The needle must smoothly animate from 0 to the received `risk_score`.
-- **FR 1.5 Analysis Display:** A readable text view directly below the meter to display the `analysis_message`.
+| ID | Requirement | Status |
+|----|-------------|--------|
+| FR1.1 | Provide a multi-line input for suspicious messages, conversations, or URLs. | Implemented |
+| FR1.2 | Provide an Analyze button that submits text to the configured analysis service. | Implemented |
+| FR1.3 | Disable duplicate analysis while loading and show a loading state. | Implemented |
+| FR1.4 | Display an animated analog risk meter for successful results. | Implemented |
+| FR1.5 | Display a short analysis explanation below the score. | Implemented |
+| FR1.6 | Provide demo-safe mock responses when `AppConfig.useMockApi` is true. | Implemented |
+| FR1.7 | Track simple in-session stats for total scans and threats blocked. | Implemented |
 
-### Phase 2: OS Share-Sheet Overlay (The Primary UX)
+### FR2 - Android Share-Sheet Overlay
 
-_The frictionless "Eternal Guardian" feature triggered natively from other apps._
+| ID | Requirement | Status |
+|----|-------------|--------|
+| FR2.1 | Register Android `ACTION_SEND` for `text/plain`. | Implemented |
+| FR2.2 | Route shared text through `IntentRouter`. | Implemented |
+| FR2.3 | Open a bottom-aligned overlay instead of the normal home screen. | Implemented |
+| FR2.4 | Auto-analyze shared text without requiring a button press. | Implemented |
+| FR2.5 | Reuse the same risk meter, loading placeholder, error, and message components. | Implemented |
+| FR2.6 | Disable tap-outside dismissal and provide explicit close/done actions. | Implemented |
+| FR2.7 | Return control to the source app using native dismissal behavior. | Implemented |
 
-- **FR 2.1 OS Intent Registration:** The Android `AndroidManifest.xml` must register an `<intent-filter>` for `ACTION_SEND` with `mimeType="text/plain"`. This ensures the app appears in the share menu of apps like WhatsApp.
-- **FR 2.2 Overlay Architecture:** The share intent is handled by the existing `MainActivity` with a transparent theme. The UI is a **bottom-sheet-style panel** built with a full-screen transparent `Scaffold` and a manual bottom-aligned container — **not** Flutter `showModalBottomSheet` (tap-to-dismiss cannot be disabled). The panel renders _over_ the current app (e.g., WhatsApp) rather than a conventional full-screen takeover.
-- **FR 2.3 Auto-Execution:** Upon receiving the `ACTION_SEND` text payload, the frontend must immediately trigger the `POST /analyze` API call without requiring the user to press an "Analyze" button.
-- **FR 2.4 Reusable UI Components:** The overlay must render the exact same Analog Meter and Message components built in FR 1.4 and FR 1.5.
-- **FR 2.5 Explicit Dismissal & Back Stack:** - Tap-to-dismiss on the background overlay MUST be disabled (`setCancelable(false)`).
-  - A clear, prominent "X" Close button or "Done" button must be provided.
-  - Both the UI buttons and the physical Android Back button MUST trigger the same clean dismissal logic (`SystemNavigator.pop()` or `finish()`) to return control to the underlying app natively and avoid unexpected back stack behavior.
+### FR3 - Guardian Mode Notification
 
-### Phase 3: Pinned Notification Banner (The Clipboard Fallback)
+| ID | Requirement | Status |
+|----|-------------|--------|
+| FR3.1 | Start and stop a native Android foreground service from Flutter. | Implemented |
+| FR3.2 | Request Android notification permission before starting Guardian Mode. | Implemented |
+| FR3.3 | Show a persistent custom notification. | Implemented |
+| FR3.4 | Accept suspicious text through notification `RemoteInput`. | Implemented |
+| FR3.5 | Show scanning, result, and error notification states. | Implemented |
+| FR3.6 | Call the same `/analyze` contract from native Kotlin when live mode is enabled. | Implemented |
+| FR3.7 | Use a native mock client when app mock mode is enabled. | Implemented |
 
-_For handling multiple copied messages when the OS "Share" option is restricted._
+## 4. Backend Requirements
 
-- **FR 3.1 Foreground Service:** Implement an Android Foreground Service to maintain a persistent, pinned notification in the system drawer.
-- **FR 3.2 Custom Notification Layout (`RemoteViews`):** The notification must use a custom layout containing an "Analyze Copied Text" action button.
-- **FR 3.3 Clipboard Access:** Tapping the action button must trigger the app to read the current system clipboard (`ClipboardManager`).
-- **FR 3.4 Background Processing & Update:** The copied text is sent to the backend. The notification must show a "Scanning..." state.
-- **FR 3.5 Horizontal Bar UI:** Once the response is received, the notification layout updates to display a horizontal segmented progress bar (Green/Yellow/Red) representing the `risk_score` percentage, alongside the `analysis_message`.
+| ID | Requirement | Status |
+|----|-------------|--------|
+| BR1 | Expose exactly one analysis endpoint: `POST /analyze`. | Implemented |
+| BR2 | Accept JSON with `text_payload`. | Implemented |
+| BR3 | Return HTTP 200 with a JSON result for normal and analysis-unavailable cases. | Implemented |
+| BR4 | Return `risk_score: -1` for malformed input, unavailable Gemini, or unparseable model output. | Implemented |
+| BR5 | Check Safe Browsing before calling Gemini. | Implemented |
+| BR6 | Skip Gemini when a known malicious URL is detected. | Implemented |
+| BR7 | Expand shortened URLs with bounded redirects and timeouts. | Implemented |
+| BR8 | Cache URL expansion and Safe Browsing results in memory for repeated demo/test inputs. | Implemented |
+| BR9 | Support `GEMINI_MODEL` in `.env`, defaulting to `gemini-2.5-flash-lite`. | Implemented |
+| BR10 | Include `analysis_source` in backend JSON for internal transparency. | Implemented |
 
----
+## 5. API Contract
 
-## 3. Non-Functional Requirements (NFR)
+### Request
 
-- **NFR 1 (Latency):** The end-to-end response time for Phase 2 (from OS Share to meter animating) must target < 2.5 seconds to maintain the "instant" UX feel.
-- **NFR 2 (Cost Optimization):** Step 2 (Safe Browsing) must be strictly enforced before Step 3 (LLM) to prevent expensive token usage on obvious malicious URLs.
-- **NFR 3 (Framework):** **Flutter** (Android-only MVP). Native Kotlin bridging is required for Phase 3 foreground-service notifications; Phase 2 share intents use `receive_sharing_intent` on the existing `MainActivity`.
+```json
+{
+  "text_payload": "Suspicious message or link"
+}
+```
+
+### Response
+
+```json
+{
+  "risk_score": 42,
+  "analysis_message": "Short explanation in at most two sentences.",
+  "analysis_source": "gemini"
+}
+```
+
+`analysis_source` may be `gemini`, `safe_browsing`, or `backend`. Flutter and Kotlin currently consume `risk_score` and `analysis_message`; the source field is safe to ignore on clients.
+
+## 6. Score Semantics
+
+| Score | Meaning | UI treatment |
+|-------|---------|--------------|
+| `1-30` | Low risk | Green / safe |
+| `31-70` | Caution | Yellow / caution |
+| `71-100` | High risk | Red / danger |
+| `100` | Known malicious URL from Safe Browsing | Red / danger |
+| `-1` | Analysis unavailable or invalid request | Error state |
+
+Shortened links that cannot be expanded must not be treated as safe. The backend keeps unresolved-shortener results at least in the caution range.
+
+## 7. Non-Functional Requirements
+
+| ID | Requirement | Implementation |
+|----|-------------|----------------|
+| NFR1 | Keep common demo flows responsive. | Safe Browsing short-circuit, Flash Lite default, in-memory caches, staged loading UI. |
+| NFR2 | Avoid unnecessary AI token use. | Safe Browsing runs before Gemini and known threats skip Gemini. |
+| NFR3 | Keep API keys out of the mobile app. | Keys live only in `backend/.env`. |
+| NFR4 | Avoid persisting user scan content. | No database, no scan history, no text payload logging. |
+| NFR5 | Keep demos reliable without live services. | Flutter and native notification mock clients are available through `AppConfig.useMockApi`. |
+| NFR6 | Preserve Android-first behavior. | Share intent, transparent activity background, foreground service, and notification `RemoteViews`. |
+
+## 8. Verification Evidence
+
+Formal validation notes are stored in [test_logs/](test_logs/). The final development pass includes Flutter widget/unit tests, UI overflow checks, backend validation, architecture review, notification checklist, and Android debug build evidence.
+
+Remaining validation risk: full Guardian Mode behavior should still be checked on the exact physical demo device because Android notification behavior can vary by OS version and OEM settings.

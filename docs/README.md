@@ -1,39 +1,33 @@
-# KuCuba documentation index
+# Eternal Guardian Documentation
 
-| Start here | Purpose |
-|------------|---------|
-| **[`SOP_blueprint.md`](SOP_blueprint.md)** | Standard workflow for AI and developers: status → read plans → code → dev_logs → test → test_logs |
+This folder contains the final project documentation for **Eternal Guardian**, Team KuCuba's Android-first scam detection prototype.
 
-## Plans & architecture
+## Final Documents
 
 | Document | Purpose |
 |----------|---------|
-| [`Detailed_System_Requirement_Document.md`](Detailed_System_Requirement_Document.md) | SRD — requirements & architecture |
-| [`Phase_1_Core_App_Module.md`](Phase_1_Core_App_Module.md) | Phase 1 plan |
-| [`Phase_2_OS_Share_Sheet_Overlay.md`](Phase_2_OS_Share_Sheet_Overlay.md) | Phase 2 plan |
-| [`Phase_3_Pinned_Notification_Banner.md`](Phase_3_Pinned_Notification_Banner.md) | Phase 3 plan (may run in parallel with Phase 2 after backend) |
-| [`TECH_STACK_AND_PIPELINE.md`](TECH_STACK_AND_PIPELINE.md) | Stack, API, pipeline diagrams |
+| [Detailed_System_Requirement_Document.md](Detailed_System_Requirement_Document.md) | Final system requirements, functional scope, and non-functional requirements. |
+| [TECH_STACK_AND_PIPELINE.md](TECH_STACK_AND_PIPELINE.md) | Current technology stack, API contract, backend pipeline, and deployment notes. |
+| [ARCHITECTURE_DIAGRAM.md](ARCHITECTURE_DIAGRAM.md) | Current module map and end-to-end architecture diagrams. |
+| [UI_ARCHITECTURE.md](UI_ARCHITECTURE.md) | Flutter UI structure, screens, state flow, and visual system. |
 
-## Agent guardrails (`docs/AI/`)
-
-| Document | Purpose |
-|----------|---------|
-| [`AI/rule.md`](AI/rule.md) | Mandatory DO/DON'T |
-| [`AI/SKILL.md`](AI/SKILL.md) | Stack, commands, build order |
-| [`AI/backend_dev.md`](AI/backend_dev.md) | Backend-only sessions |
-
-## History & testing
+## Supporting Material
 
 | Folder | Purpose |
 |--------|---------|
-| [`dev_logs/`](dev_logs/) | Per-branch implementation logs (`dev0`/`dev1` backend, `dev2` frontend) |
-| [`test_logs/`](test_logs/) | Formal test reports |
+| [assets/](assets/) | Documentation images and cover artwork. |
+| [test_logs/](test_logs/) | Validation reports and testing evidence. |
+| [dev_logs/](dev_logs/) | Historical implementation notes from development. |
+| [bin/](bin/) | Archived plans, AI guardrails, and process documents that are no longer part of the final reading path. |
 
-## Phase dependencies
+## Current Reading Path
 
-- **Phase 1 backend** (`POST /analyze`) is required before Phase 2 or Phase 3.
-- **Phase 2** (Share Sheet) and **Phase 3** (Notification) are **parallel** — both call the same backend. Details: [`AI/rule.md` §0.1](AI/rule.md).
+1. Start with the root [README.md](../README.md) for the project overview and run instructions.
+2. Read [Detailed_System_Requirement_Document.md](Detailed_System_Requirement_Document.md) for what the product must do.
+3. Read [TECH_STACK_AND_PIPELINE.md](TECH_STACK_AND_PIPELINE.md) for how the implemented system works.
+4. Use [ARCHITECTURE_DIAGRAM.md](ARCHITECTURE_DIAGRAM.md) and [UI_ARCHITECTURE.md](UI_ARCHITECTURE.md) for implementation handoff.
+5. Check [test_logs/](test_logs/) for verification history.
 
-## Quick prompts
+## Archived Documents
 
-See **§0** in [`SOP_blueprint.md`](SOP_blueprint.md).
+The original phase plans, optimization plan, AI guardrails, and development SOP have been moved to [bin/](bin/) because development is complete. They remain available for traceability, but the final documents above are the source of truth.

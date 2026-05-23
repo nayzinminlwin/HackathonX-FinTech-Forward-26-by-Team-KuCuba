@@ -20,9 +20,9 @@ class AnalysisResult {
   });
 
   /// Creates an error sentinel response.
-  factory AnalysisResult.error() => const AnalysisResult(
+  factory AnalysisResult.error({String? message}) => AnalysisResult(
         riskScore: -1,
-        analysisMessage: 'Analysis temporarily unavailable.',
+        analysisMessage: message ?? 'Analysis temporarily unavailable.',
         analysisSource: 'backend',
       );
 

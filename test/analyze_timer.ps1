@@ -50,14 +50,14 @@ foreach ($key in $testJson.risk_score_ranges.PSObject.Properties.Name) {
   $ranges[$key] = $parsed
 }
 
-$countInput = Read-Host "Enter number of test cases to run (1-40)"
+$countInput = Read-Host "Enter number of test cases to run (1-53)"
 if (-not [int]::TryParse($countInput, [ref]$null)) {
   Write-Error "Input must be an integer."
   exit 1
 }
 $count = [int]$countInput
-if ($count -lt 1 -or $count -gt 40) {
-  Write-Error "Input must be between 1 and 40."
+if ($count -lt 1 -or $count -gt 53) {
+  Write-Error "Input must be between 1 and 53."
   exit 1
 }
 

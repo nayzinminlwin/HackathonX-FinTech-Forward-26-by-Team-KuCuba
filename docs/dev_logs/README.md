@@ -2,8 +2,8 @@
 
 Agents and developers record **implementation and debugging** work here, **one subfolder per git branch** so parallel work on `dev0`, `dev1`, and `dev2` does not overwrite each other.
 
-**Full workflow:** [`docs/SOP_blueprint.md`](../SOP_blueprint.md)  
-Rules: `docs/AI/rule.md` §12.
+**Archived workflow:** [`docs/bin/SOP_blueprint.md`](../bin/SOP_blueprint.md)  
+Archived rules: `docs/bin/AI/rule.md` §12.
 
 ---
 

@@ -5,40 +5,50 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 object HttpAnalysisClient {
+    private const val ANALYSIS_TIMEOUT_MS = 12_000
+
     data class AnalysisResult(
         val riskScore: Int,
         val analysisMessage: String
     )
 
     fun analyze(backendUrl: String, textPayload: String): AnalysisResult {
-        val url = URL("${backendUrl.trimEnd('/')}/analyze")
-        val connection = url.openConnection() as HttpURLConnection
+        val normalizedBackendUrl = backendUrl.trim().trimEnd('/')
+        require(normalizedBackendUrl.isNotBlank()) { "Backend URL is empty" }
 
-        connection.requestMethod = "POST"
-        connection.connectTimeout = 5000
-        connection.readTimeout = 10000
-        connection.setRequestProperty("Content-Type", "application/json")
-        connection.doOutput = true
-
-        val requestBody = JSONObject()
-            .put("text_payload", textPayload)
-            .toString()
-
-        connection.outputStream.use { output ->
-            output.write(requestBody.toByteArray(Charsets.UTF_8))
+        val url = URL("$normalizedBackendUrl/analyze")
+        val connection = (url.openConnection() as HttpURLConnection).apply {
+            requestMethod = "POST"
+            connectTimeout = ANALYSIS_TIMEOUT_MS
+            readTimeout = ANALYSIS_TIMEOUT_MS
+            setRequestProperty("Content-Type", "application/json")
+            setRequestProperty("Accept", "application/json")
+            doOutput = true
         }
 
-        val responseCode = connection.responseCode
-        val responseText = if (responseCode in 200..299) {
-            connection.inputStream.bufferedReader().use { it.readText() }
-        } else {
-            connection.errorStream?.bufferedReader()?.use { it.readText() }.orEmpty()
-        }
+        val responseText: String
+        val responseCode: Int
+        try {
+            val requestBody = JSONObject()
+                .put("text_payload", textPayload)
+                .toString()
 
-        connection.disconnect()
+            connection.outputStream.use { output ->
+                output.write(requestBody.toByteArray(Charsets.UTF_8))
+            }
+
+            responseCode = connection.responseCode
+            responseText = if (responseCode in 200..299) {
+                connection.inputStream.bufferedReader().use { it.readText() }
+            } else {
+                connection.errorStream?.bufferedReader()?.use { it.readText() }.orEmpty()
+            }
+        } finally {
+            connection.disconnect()
+        }
 
         if (responseCode !in 200..299) {
-            throw IllegalStateException("Backend returned HTTP $responseCode")
+            throw IllegalStateException("Backend returned HTTP $responseCode.")
         }
 
         val json = JSONObject(responseText)

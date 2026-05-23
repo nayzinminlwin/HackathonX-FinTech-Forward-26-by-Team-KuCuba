@@ -17,30 +17,29 @@ class UrlExpansionResult {
 /// This does not execute JavaScript or open a browser. It uses tight timeouts
 /// and a small redirect limit so a bad shortener cannot stall analysis.
 class UrlExpander {
-  static const int _maxRedirects = 5;
+  static const int _maxRedirects = 3;
+  static const Duration _cacheTtl = Duration(minutes: 10);
 
   final Dio _dio;
+  final Map<String, _CacheEntry<UrlExpansionResult>> _cache = {};
 
   UrlExpander()
       : _dio = Dio(BaseOptions(
-          connectTimeout: const Duration(seconds: 3),
-          receiveTimeout: const Duration(seconds: 3),
-          sendTimeout: const Duration(seconds: 3),
+          connectTimeout: const Duration(milliseconds: 1500),
+          receiveTimeout: const Duration(milliseconds: 1500),
+          sendTimeout: const Duration(milliseconds: 1500),
           followRedirects: false,
           validateStatus: (_) => true,
         ));
 
   Future<List<UrlExpansionResult>> expandAll(List<String> urls) async {
-    final results = <UrlExpansionResult>[];
-
-    for (final url in urls) {
-      results.add(await expand(url));
-    }
-
-    return results;
+    return Future.wait(urls.toSet().map(expand));
   }
 
   Future<UrlExpansionResult> expand(String url) async {
+    final cached = _getCached(url);
+    if (cached != null) return cached;
+
     var currentUrl = url;
 
     try {
@@ -49,19 +48,26 @@ class UrlExpander {
           redirectCount++) {
         final nextUrl = await _nextRedirect(currentUrl);
         if (nextUrl == null || nextUrl == currentUrl) {
-          return UrlExpansionResult(
+          final result = UrlExpansionResult(
             originalUrl: url,
             expandedUrl: currentUrl,
           );
+          _setCached(url, result);
+          return result;
         }
 
         currentUrl = nextUrl;
       }
 
-      return UrlExpansionResult(originalUrl: url, expandedUrl: currentUrl);
+      final result =
+          UrlExpansionResult(originalUrl: url, expandedUrl: currentUrl);
+      _setCached(url, result);
+      return result;
     } catch (e) {
-      print('[url_expander] Could not expand $url: $e');
-      return UrlExpansionResult(originalUrl: url, expandedUrl: null);
+      print('[url_expander] Could not expand shortened URL: $e');
+      final result = UrlExpansionResult(originalUrl: url, expandedUrl: null);
+      _setCached(url, result);
+      return result;
     }
   }
 
@@ -99,4 +105,31 @@ class UrlExpander {
     final baseUri = Uri.parse(baseUrl);
     return baseUri.resolve(location).toString();
   }
+
+  UrlExpansionResult? _getCached(String url) {
+    final entry = _cache[url];
+    if (entry == null) return null;
+
+    if (DateTime.now().difference(entry.createdAt) > _cacheTtl) {
+      _cache.remove(url);
+      return null;
+    }
+
+    print('[url_expander] Cache hit for shortened URL.');
+    return entry.value;
+  }
+
+  void _setCached(String url, UrlExpansionResult value) {
+    _cache[url] = _CacheEntry(value: value, createdAt: DateTime.now());
+  }
+}
+
+class _CacheEntry<T> {
+  final T value;
+  final DateTime createdAt;
+
+  const _CacheEntry({
+    required this.value,
+    required this.createdAt,
+  });
 }

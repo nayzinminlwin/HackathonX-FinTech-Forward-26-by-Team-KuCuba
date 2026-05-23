@@ -381,23 +381,11 @@ class _ScamDetectorPageState extends State<ScamDetectorPage> {
             padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
             child: switch (provider.state) {
               AnalysisState.idle => const SizedBox.shrink(),
-              AnalysisState.loading => const Column(
+              AnalysisState.loading => Column(
                   children: [
-                    SizedBox(height: 80),
-                    SkeletonMeterPlaceholder(),
-                    SizedBox(height: 22),
-                    Text(
-                      'Analyzing...',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF374151),
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'Checking 10,000+ known scams',
-                      style: TextStyle(color: Color(0xFF9CA3AF)),
+                    const SizedBox(height: 80),
+                    SkeletonMeterPlaceholder(
+                      messageText: _textController.text,
                     ),
                   ],
                 ),

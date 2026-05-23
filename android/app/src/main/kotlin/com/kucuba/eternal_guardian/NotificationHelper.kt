@@ -55,7 +55,15 @@ object NotificationHelper {
 
     fun updateNotificationScanning(context: Context) {
         val remoteViews = RemoteViews(context.packageName, R.layout.notification_scanning)
-        notify(context, buildStatusNotification(context, remoteViews, "Scanning message"))
+        notify(
+            context,
+            buildStatusNotification(
+                context,
+                remoteViews,
+                "Scanning message",
+                "Checking the submitted text..."
+            )
+        )
     }
 
     fun updateNotificationError(context: Context, message: String) {
@@ -66,7 +74,12 @@ object NotificationHelper {
 
         notify(
             context,
-            buildStatusNotification(context, remoteViews, "Analysis unavailable")
+            buildStatusNotification(
+                context,
+                remoteViews,
+                "Analysis unavailable",
+                message
+            )
         )
     }
 
@@ -101,19 +114,27 @@ object NotificationHelper {
 
         notify(
             context,
-            buildStatusNotification(context, remoteViews, "$zoneLabel result")
+            buildStatusNotification(
+                context,
+                remoteViews,
+                "$zoneLabel result",
+                result.analysisMessage.take(160)
+            )
         )
     }
 
     private fun buildStatusNotification(
         context: Context,
         remoteViews: RemoteViews,
-        contentTitle: String
+        contentTitle: String,
+        contentText: String
     ): Notification {
         return NotificationCompat.Builder(context, ScamDetectorForegroundService.CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_shield)
             .setCustomContentView(remoteViews)
             .setContentTitle(contentTitle)
+            .setContentText(contentText)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(contentText))
             .setOngoing(true)
             .setSilent(true)
             .setOnlyAlertOnce(true)

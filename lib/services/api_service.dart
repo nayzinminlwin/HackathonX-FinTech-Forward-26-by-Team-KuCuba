@@ -8,13 +8,16 @@ abstract class AnalysisApiService {
 }
 
 class LiveApiService implements AnalysisApiService {
+  static const Duration analysisTimeout = Duration(seconds: 12);
+
   LiveApiService({Dio? dio})
       : _dio = dio ??
             Dio(
               BaseOptions(
                 baseUrl: AppConfig.backendBaseUrl,
-                connectTimeout: const Duration(seconds: 15),
-                receiveTimeout: const Duration(seconds: 30),
+                connectTimeout: analysisTimeout,
+                receiveTimeout: analysisTimeout,
+                sendTimeout: analysisTimeout,
                 contentType: Headers.jsonContentType,
               ),
             );
