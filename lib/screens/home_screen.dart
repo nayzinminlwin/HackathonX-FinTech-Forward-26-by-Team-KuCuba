@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/analysis_provider.dart';
+import '../providers/stats_provider.dart';
 import '../theme/app_colors.dart';
 import '../models/scam_demo_models.dart';
 import '../widgets/analysis_message_card.dart';
@@ -27,6 +28,7 @@ class _ScamDetectorPageState extends State<ScamDetectorPage> {
   final TextEditingController _textController = TextEditingController();
 
   AppScreen _currentScreen = AppScreen.home;
+  int? _lastRecordedRiskScore; // Track to avoid duplicate recordings
 
   @override
   void dispose() {
@@ -77,6 +79,7 @@ class _ScamDetectorPageState extends State<ScamDetectorPage> {
         1 => AppScreen.scan,
         _ => AppScreen.home,
       };
+      _lastRecordedRiskScore = null; // Reset when navigating
     });
   }
 
@@ -103,6 +106,7 @@ class _ScamDetectorPageState extends State<ScamDetectorPage> {
   // ── Home ──────────────────────────────────────────────────────────────────
 
   Widget _buildHomeScreen() {
+    final stats = context.watch<StatsProvider>();
     return Column(
       children: [
         Container(
@@ -161,11 +165,21 @@ class _ScamDetectorPageState extends State<ScamDetectorPage> {
                 ],
               ),
               const SizedBox(height: 26),
-              const Row(
+              Row(
                 children: [
-                  Expanded(child: GlassStatCard(value: '127', label: 'Scans Protected')),
-                  SizedBox(width: 12),
-                  Expanded(child: GlassStatCard(value: '23', label: 'Threats Blocked')),
+                  Expanded(
+                    child: GlassStatCard(
+                      value: stats.totalScans.toString(),
+                      label: 'Scans Protected',
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: GlassStatCard(
+                      value: stats.threatsBlocked.toString(),
+                      label: 'Threats Blocked',
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -283,7 +297,18 @@ class _ScamDetectorPageState extends State<ScamDetectorPage> {
 
   Widget _buildResultScreen() {
     final provider = context.watch<AnalysisProvider>();
+    final stats = context.read<StatsProvider>();
     final hasInput = _textController.text.trim().isNotEmpty;
+
+    // Record analysis once when it completes
+    if (provider.state == AnalysisState.complete &&
+        provider.result != null &&
+        _lastRecordedRiskScore != provider.result!.riskScore) {
+      _lastRecordedRiskScore = provider.result!.riskScore;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        stats.recordAnalysis(provider.result!.riskScore);
+      });
+    }
 
     return Column(
       children: [
