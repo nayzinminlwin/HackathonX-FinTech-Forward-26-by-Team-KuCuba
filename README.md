@@ -22,6 +22,7 @@ Eternal Guardian makes scam analysis available where scams actually arrive: chat
 - [Our Solution](#our-solution)
 - [Core Features](#core-features)
 - [Demo Surfaces](#demo-surfaces)
+- [Demo and Screenshots](#demo-and-screenshots)
 - [Architecture](#architecture)
 - [Tech Stack](#tech-stack)
 - [How to Install and Run](#how-to-install-and-run)
@@ -76,13 +77,41 @@ The backend first extracts URLs and checks Google Safe Browsing. If a known mali
 
 The implemented prototype includes:
 
-| Surface | Status | Entry point |
-| ------- | ------ | ----------- |
-| Home scan | Implemented | Open the app, paste/type text, tap **Analyze** |
-| Android share overlay | Implemented | Share text from another app into Eternal Guardian |
+| Surface                    | Status      | Entry point                                                        |
+| -------------------------- | ----------- | ------------------------------------------------------------------ |
+| Home scan                  | Implemented | Open the app, paste/type text, tap **Analyze**                     |
+| Android share overlay      | Implemented | Share text from another app into Eternal Guardian                  |
 | Guardian Mode notification | Implemented | Toggle Guardian Mode, submit text from the persistent notification |
-| Mock demo mode | Implemented | `AppConfig.useMockApi = true` |
-| Live backend mode | Implemented | `AppConfig.useMockApi = false` with backend running |
+| Mock demo mode             | Implemented | `AppConfig.useMockApi = true`                                      |
+| Live backend mode          | Implemented | `AppConfig.useMockApi = false` with backend running                |
+
+## Demo and Screenshots
+
+### 0. Main App
+
+| HomeScreen                                                                                    | ManualScan                                                                                    |
+| --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| <img src="docs/assets/screenshots/0_0HomeScreen.jpeg" alt="0_0HomeScreen.jpeg" width="220" /> | <img src="docs/assets/screenshots/0_1ManualScan.jpeg" alt="0_1ManualScan.jpeg" width="220" /> |
+
+| LoadingPage0                                                                                      | LoadingPage1                                                                                      | ResultMeter                                                                                     |
+| ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| <img src="docs/assets/screenshots/0_2LoadingPage0.jpeg" alt="0_2LoadingPage0.jpeg" width="220" /> | <img src="docs/assets/screenshots/0_3LoadingPage1.jpeg" alt="0_3LoadingPage1.jpeg" width="220" /> | <img src="docs/assets/screenshots/0_4ResultMeter.jpeg" alt="0_4ResultMeter.jpeg" width="220" /> |
+
+### 1. Overlay
+
+| ShareViaEternalGuardian                                                                                                 | shareOverlay                                                                                      |
+| ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| <img src="docs/assets/screenshots/1_0ShareViaEternalGuardian.jpeg" alt="1_0ShareViaEternalGuardian.jpeg" width="220" /> | <img src="docs/assets/screenshots/1_1shareOverlay.jpeg" alt="1_1shareOverlay.jpeg" width="220" /> |
+
+### 2. Notification
+
+| GuardianNotification0                                                                                             | GuardianNotification1                                                                                             | GuardianNotification2                                                                                             |
+| ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| <img src="docs/assets/screenshots/2_GuardianNotification0.jpeg" alt="2_GuardianNotification0.jpeg" width="220" /> | <img src="docs/assets/screenshots/2_GuardianNotification1.jpeg" alt="2_GuardianNotification1.jpeg" width="220" /> | <img src="docs/assets/screenshots/2_GuardianNotification2.jpeg" alt="2_GuardianNotification2.jpeg" width="220" /> |
+
+| Safe Case                                                                                                         | Scam Case                                                                                                         |
+| ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| <img src="docs/assets/screenshots/2_GuardianNotification3.jpeg" alt="2_GuardianNotification3.jpeg" width="220" /> | <img src="docs/assets/screenshots/2_GuardianNotification4.jpeg" alt="2_GuardianNotification4.jpeg" width="220" /> |
 
 ## Architecture
 
@@ -304,30 +333,30 @@ docs/test_logs/
 
 ## Current Prototype Status
 
-| Area                             | Status                                             |
-| -------------------------------- | -------------------------------------------------- |
-| Flutter core app                 | Implemented                                        |
-| Bank Islam themed UI             | Implemented                                        |
-| Analog risk meter                | Implemented                                        |
-| Mock analysis mode               | Implemented                                        |
-| Live backend API service         | Implemented                                        |
-| Dart Shelf backend               | Implemented                                        |
-| Safe Browsing integration        | Implemented                                        |
-| Gemini scam analysis             | Implemented                                        |
-| Short-link expansion and caution | Implemented                                        |
-| Performance timing logs          | Implemented                                        |
-| Android share-sheet overlay      | Implemented                                        |
-| Guardian Mode notification path  | Implemented                                        |
-| Android debug APK build          | Passing                                            |
+| Area                             | Status                                                                         |
+| -------------------------------- | ------------------------------------------------------------------------------ |
+| Flutter core app                 | Implemented                                                                    |
+| Bank Islam themed UI             | Implemented                                                                    |
+| Analog risk meter                | Implemented                                                                    |
+| Mock analysis mode               | Implemented                                                                    |
+| Live backend API service         | Implemented                                                                    |
+| Dart Shelf backend               | Implemented                                                                    |
+| Safe Browsing integration        | Implemented                                                                    |
+| Gemini scam analysis             | Implemented                                                                    |
+| Short-link expansion and caution | Implemented                                                                    |
+| Performance timing logs          | Implemented                                                                    |
+| Android share-sheet overlay      | Implemented                                                                    |
+| Guardian Mode notification path  | Implemented                                                                    |
+| Android debug APK build          | Passing                                                                        |
 | Full device testing              | Device-specific notification behavior still needs final demo-device validation |
 
 ## Team
 
-| Name | Role | Responsibilities | Contact / GitHub |
-| ---- | ---- | ---------------- | ---------------- |
-| Dhiyahudin | Team Lead | Back-end support | [@Dhyaddin](https://github.com/Dhyaddin) |
-| Arif Danial | Member | Front-end development | [@adandadan](https://github.com/adandadan) |
-| Nay Zin | Member | Back-end development | [@nayzinminlwin](https://github.com/nayzinminlwin) |
+| Name        | Role      | Responsibilities      | Contact / GitHub                                   |
+| ----------- | --------- | --------------------- | -------------------------------------------------- |
+| Dhiyahudin  | Team Lead | Back-end support      | [@Dhyaddin](https://github.com/Dhyaddin)           |
+| Arif Danial | Member    | Front-end development | [@adandadan](https://github.com/adandadan)         |
+| Nay Zin     | Member    | Back-end development  | [@nayzinminlwin](https://github.com/nayzinminlwin) |
 
 ## Known Limitations
 

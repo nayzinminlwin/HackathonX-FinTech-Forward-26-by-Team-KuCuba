@@ -54,10 +54,12 @@ class _OverlayScreenState extends State<OverlayScreen> {
             const ColoredBox(color: AppColors.overlayScrim),
             Align(
               alignment: Alignment.bottomCenter,
-              child: SizedBox(
-                width: double.infinity,
-                height: MediaQuery.sizeOf(context).height * 0.88,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.sizeOf(context).height * 0.72,
+                ),
                 child: Container(
+                  width: double.infinity,
                   decoration: const BoxDecoration(
                     color: AppColors.background,
                     borderRadius:
@@ -70,7 +72,7 @@ class _OverlayScreenState extends State<OverlayScreen> {
                     16 + MediaQuery.paddingOf(context).bottom,
                   ),
                   child: Column(
-                    mainAxisSize: MainAxisSize.max,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Center(
                         child: Container(
