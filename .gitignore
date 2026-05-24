@@ -49,6 +49,7 @@ coverage/
 # Generated documentation and package artifacts
 **/doc/api/
 *.pdf
+docs/bin/
 
 # Symbolication and obfuscation artifacts
 app.*.symbols
