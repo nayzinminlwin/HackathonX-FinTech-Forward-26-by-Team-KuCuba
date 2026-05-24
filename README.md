@@ -89,23 +89,23 @@ The implemented prototype includes:
 
 ### 0. Main App
 
-| HomeScreen                                                                                    | ManualScan                                                                                    |
+| Home Screen                                                                                   | Manual Scan                                                                                   |
 | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | <img src="docs/assets/screenshots/0_0HomeScreen.jpeg" alt="0_0HomeScreen.jpeg" width="220" /> | <img src="docs/assets/screenshots/0_1ManualScan.jpeg" alt="0_1ManualScan.jpeg" width="220" /> |
 
-| LoadingPage0                                                                                      | LoadingPage1                                                                                      | ResultMeter                                                                                     |
+| Loading Page (~0.3 seconds)                                                                       | Loading Page (~2.5 seconds)                                                                       | Result Meter                                                                                    |
 | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | <img src="docs/assets/screenshots/0_2LoadingPage0.jpeg" alt="0_2LoadingPage0.jpeg" width="220" /> | <img src="docs/assets/screenshots/0_3LoadingPage1.jpeg" alt="0_3LoadingPage1.jpeg" width="220" /> | <img src="docs/assets/screenshots/0_4ResultMeter.jpeg" alt="0_4ResultMeter.jpeg" width="220" /> |
 
-### 1. Overlay
+### 1. Overlay (User never needs to exit the source app to analyze a suspicious message)
 
-| ShareViaEternalGuardian                                                                                                 | shareOverlay                                                                                      |
+| Share-via-EternalGuardian                                                                                               | Analysis Overlay                                                                                  |
 | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | <img src="docs/assets/screenshots/1_0ShareViaEternalGuardian.jpeg" alt="1_0ShareViaEternalGuardian.jpeg" width="220" /> | <img src="docs/assets/screenshots/1_1shareOverlay.jpeg" alt="1_1shareOverlay.jpeg" width="220" /> |
 
 ### 2. Notification
 
-| GuardianNotification0                                                                                             | GuardianNotification1                                                                                             | GuardianNotification2                                                                                             |
+| Guardian Notification Step1                                                                                       | Guardian Notification Step2                                                                                       | Guardian Notification Step3                                                                                       |
 | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | <img src="docs/assets/screenshots/2_GuardianNotification0.jpeg" alt="2_GuardianNotification0.jpeg" width="220" /> | <img src="docs/assets/screenshots/2_GuardianNotification1.jpeg" alt="2_GuardianNotification1.jpeg" width="220" /> | <img src="docs/assets/screenshots/2_GuardianNotification2.jpeg" alt="2_GuardianNotification2.jpeg" width="220" /> |
 
