@@ -1,507 +1,234 @@
-# Flutter App Architecture & UI Design
+# Flutter UI Architecture
 
-> **Updated:** May 23, 2026  
-> **Status:** MVP-ready  
-> **Version:** 1.0
-
----
+**Project:** Eternal Guardian  
+**Status:** Current Android MVP implementation  
+**Last updated:** 2026-05-24
 
 ## 1. Overview
 
-The **Eternal Guardian Scam Detector** is a Flutter mobile app that analyzes messages and links for phishing/scam indicators. Users paste suspicious content, and the app returns a risk score (0–100) with analysis and recommendations.
+The Flutter UI is an Android-first scam analysis experience with three user-facing flows:
 
-### Key Features (Current MVP)
+| Flow | Screen/component | Behavior |
+|------|------------------|----------|
+| Manual scan | `ScamDetectorPage` | Paste or type text, analyze, view score and explanation. |
+| Share-sheet scan | `IntentRouter` + `OverlayScreen` | Receive Android shared text, open overlay, auto-analyze. |
+| Guardian Mode | `ScamDetectorPage` + `NotificationServiceController` | Toggle persistent notification service for notification-based checks. |
 
-✅ **Home Screen**
-- App branding (Bank Islam visual identity)
-- Statistics display (scans protected, threats blocked)
-- Quick Scan button
-- Pre-built example scams for demo/testing
-- WhatsApp Share Sheet integration demo
+`main.dart` creates the shared providers, `KuCubaApp` applies the theme, and `IntentRouter` decides whether to show the home flow or the share overlay.
 
-✅ **Scan Screen**
-- Large text input field for message/link
-- "Analyze Now" button
-- "Paste from Clipboard" quick action
+## 2. UI File Map
 
-✅ **Result Screen**
-- Animated analog meter (0–100 scale)
-- Risk badge (SAFE/CAUTION/DANGER)
-- Analysis explanation text
-- "Report to Authorities" button (when risk > 30)
-- "Scan Another Message" button to loop back
-- Fallback warning when backend unavailable
-
----
-
-## 2. Visual Identity
-
-### Colors (Bank Islam Theme)
-
-All colors sourced from `/resources/bank_islam_theme.json` and enforced in `lib/app/theme/app_theme.dart`.
-
-| Role | Hex | RGB | Usage |
-|------|-----|-----|-------|
-| **Primary Brand** | `#ED2321` | 237, 35, 33 | Buttons, icons, accents, borders |
-| **Primary Dark** | `#C91D1B` | 201, 29, 27 | Hover/focus states, gradients |
-| **Text Primary** | `#1A1A1A` | 26, 26, 26 | Body text, headers |
-| **Text Secondary** | `#757575` | 117, 117, 117 | Labels, metadata, descriptions |
-| **Background** | `#FFFFFF` | 255, 255, 255 | Main app background |
-| **Surface** | `#FFFFFF` | 255, 255, 255 | Cards, containers |
-| **Border** | `#E0E0E0` | 224, 224, 224 | Dividers, input borders |
-
-### Typography
-
-| Element | Font | Size | Weight | Color |
-|---------|------|------|--------|-------|
-| Display | Poppins | 36px | 700 | Text Primary |
-| Headline | Poppins | 30px | 700 | Text Primary |
-| Title | Poppins | 20px | 700 | Text Primary |
-| Body Large | Poppins | 16px | 500 | Text Primary |
-| Body Medium | Poppins | 14px | 400 | Text Secondary |
-| Label | Poppins | 16px | 700 | Contextual |
-
-**Font Strategy:** Poppins is a geometric sans-serif with sharp apexes matching Bank Islam's modern aesthetic. Integrated via `google_fonts` package.
-
-### Risk Score Visualization
-
-The analog meter animates from 0 to the calculated risk score using a smooth `easeOut` curve (1.4s duration).
-
-#### Color Mapping
-
-| Risk Range | Color | Icon | Label |
-|------------|-------|------|-------|
-| 0–30 | Green `#059669` | ✓ check_circle | SAFE |
-| 31–70 | Amber `#F59E0B` | ⚠ warning_amber | CAUTION |
-| 71–100 | Red `#DC2626` | ✗ cancel | DANGER |
-
-*(Note: These are risk-level colors; primary brand red `#ED2321` is used for actions/buttons.)*
-
----
-
-## 3. App Architecture
-
-```
-┌──────────────────────────────────────────────────────────────┐
-│                        App Entry                              │
-│  lib/main.dart → runApp(EternalGuardianApp())                             │
-└────────────────────────┬─────────────────────────────────────┘
-                         │
-         ┌───────────────▼───────────────┐
-         │   EternalGuardianApp (lib/app/app.dart)   │
-         │                               │
-         │  - MaterialApp config         │
-         │  - AppTheme.lightTheme        │
-         │  - Home: ScamDetectorPage     │
-         │  - Routes (future)            │
-         └───────────────┬───────────────┘
-                         │
-         ┌───────────────▼──────────────────────────────────┐
-         │  ScamDetectorPage (Stateful)                      │
-         │  lib/features/scam_detector/screens/             │
-         │                                                  │
-         │  State:                                          │
-         │  - _textController (TextField input)             │
-         │  - _analysisService (backend/fallback)           │
-         │  - _currentScreen (Home|Scan|Result)             │
-         │  - _isLoading (analysis in progress)             │
-         │  - _result (AnalysisResult?)                     │
-         │                                                  │
-         │  Methods:                                        │
-         │  - _analyzeText() → calls service                │
-         │  - _openBottomSheetDemo() → share integration    │
-         │  - _pasteFromClipboard()                         │
-         │                                                  │
-         │  Build Screens:                                  │
-         │  - _buildHomeScreen()                            │
-         │  - _buildScanScreen()                            │
-         │  - _buildResultScreen()                          │
-         └───────────────┬──────────────────────────────────┘
-                         │
-     ┌───────────────────┼───────────────────┐
-     │                   │                   │
-     ▼                   ▼                   ▼
-[Home]              [Scan]              [Result]
-- Header            - Text input        - Meter
-- Stats cards       - Analyze btn       - Badge
-- Quick Scan        - Paste btn         - Analysis box
-- Examples                              - Report btn
-- Share demo btn                        - Scan Again btn
-- Bottom nav
+```text
+lib/
+|-- app.dart
+|-- main.dart
+|-- config/
+|   `-- app_config.dart
+|-- models/
+|   |-- analysis_result.dart
+|   `-- scam_demo_models.dart
+|-- providers/
+|   |-- analysis_provider.dart
+|   `-- stats_provider.dart
+|-- screens/
+|   |-- home_screen.dart
+|   |-- intent_router.dart
+|   `-- overlay_screen.dart
+|-- services/
+|   |-- api_service.dart
+|   |-- mock_api_service.dart
+|   `-- notification_service_controller.dart
+|-- theme/
+|   |-- app_colors.dart
+|   |-- app_typography.dart
+|   `-- bank_islam_theme.dart
+`-- widgets/
+    |-- analog_meter.dart
+    |-- analysis_message_card.dart
+    |-- analyze_button.dart
+    |-- error_banner.dart
+    |-- risk_badge.dart
+    |-- risk_utils.dart
+    |-- scam_widgets.dart
+    |-- skeleton_meter_placeholder.dart
+    `-- text_input_area.dart
 ```
 
-### Service Layer (`lib/features/scam_detector/services/`)
+## 3. App Shell
 
-**AnalysisService**
-
-```dart
-class AnalysisService {
-  // Live API call with fallback
-  Future<AnalysisResult> analyzeText(String text) async {
-    try {
-      // POST to backend /analyze endpoint
-      // Timeout: 12 seconds
-      // On success: return AnalysisResult(isFallback: false)
-    } on SocketException, TimeoutException, FormatException {
-      // Network or parse error
-      // Return local heuristic analysis (isFallback: true)
-    }
-  }
-
-  // Local pattern-based analysis (no network)
-  AnalysisResult _analyzeLocalHeuristic(String text) {
-    // Pattern detection: keywords, URL patterns, urgency markers
-    // Returns risk 0–100 based on heuristic score
-  }
-
-  // Demo data for bottom sheet preview
-  AnalysisResult previewBottomSheetResult() { ... }
-}
+```mermaid
+flowchart TD
+  Main["main.dart"] --> Providers["MultiProvider"]
+  Providers --> AnalysisProvider["AnalysisProvider"]
+  Providers --> StatsProvider["StatsProvider"]
+  Providers --> App["KuCubaApp"]
+  App --> Theme["bankIslamTheme()"]
+  App --> Router["IntentRouter"]
+  Router --> Home["ScamDetectorPage"]
+  Router --> Overlay["OverlayScreen"]
 ```
 
-### Model Layer (`lib/features/scam_detector/models/`)
+`AppConfig.useMockApi` chooses the injected analysis service at startup:
 
-**AnalysisResult**
-```dart
-class AnalysisResult {
-  final int riskScore;          // 0–100
-  final String analysisMessage; // Explanation
-  final bool isFallback;        // true if from local heuristic
-}
+| Value | Service |
+|-------|---------|
+| `true` | `MockApiService` |
+| `false` | `LiveApiService` |
+
+## 4. Screen Structure
+
+### Home
+
+Implemented in `ScamDetectorPage._buildHomeScreen()`.
+
+Main elements:
+
+| Element | Purpose |
+|---------|---------|
+| Red branded header | App identity and quick trust signal. |
+| Stat cards | In-session count of scans and blocked threats. |
+| Quick Scan button | Navigates to the scan screen. |
+| Guardian Mode card | Starts/stops the Android foreground notification service. |
+| Quick examples | Demo messages that trigger immediate analysis. |
+| Share Sheet Demo | Opens the overlay UI using sample text. |
+| Bottom nav | Home and Scan navigation. |
+
+### Scan
+
+Implemented in `ScamDetectorPage._buildScanScreen()`.
+
+Main elements:
+
+| Element | Purpose |
+|---------|---------|
+| Header | Back action and screen title. |
+| `TextInputArea` | Multi-line suspicious message input. |
+| `AnalyzeButton` | Calls `AnalysisProvider.analyze()`. |
+| Paste from Clipboard | Pulls text from Android clipboard into the input field. |
+
+### Result
+
+Implemented in `ScamDetectorPage._buildResultScreen()`.
+
+State-driven content:
+
+| Provider state | UI |
+|----------------|----|
+| `idle` | Empty content. |
+| `loading` | `SkeletonMeterPlaceholder` with staged loading labels. |
+| `complete` | `AnalogMeter`, `RiskBadge`, `AnalysisMessageCard`, optional report button. |
+| `error` | `ErrorBanner` with retry when input is available. |
+
+When an analysis completes, `StatsProvider.recordAnalysis()` updates scan and threat counters once per result.
+
+### Share Overlay
+
+Implemented in `OverlayScreen`.
+
+Behavior:
+
+| Requirement | Implementation |
+|-------------|----------------|
+| Analyze automatically | Calls `AnalysisProvider.analyze(widget.sharedText)` after first frame. |
+| Stay visually anchored | Uses a bottom-aligned panel occupying 88% of screen height. |
+| Avoid accidental dismissal | Scrim has no tap handler and `PopScope` redirects back to `onDismiss`. |
+| Reuse core components | Uses the same loading, meter, message, and error widgets as the app flow. |
+| Return to source app | `IntentRouter` calls `ReceiveSharingIntent.instance.reset()` and `SystemNavigator.pop()`. |
+
+## 5. State Management
+
+### AnalysisProvider
+
+`AnalysisProvider` owns the analysis state machine:
+
+```mermaid
+stateDiagram-v2
+  [*] --> idle
+  idle --> loading: analyze(text)
+  loading --> complete: service result
+  loading --> error: exception or unavailable sentinel
+  complete --> idle: reset()
+  error --> idle: reset()
+  error --> loading: retry
 ```
 
-**QuickScanExample** (demo data only)
-```dart
-class QuickScanExample {
-  final String text;      // Full message to analyze
-  final String preview;   // Label for UI button
-}
-```
-
----
-
-## 4. Screen Flows
-
-### Home Screen
-
-**Layout:**
-1. **Header** (Gradient: red brand → dark red)
-   - App icon (shield)
-   - Title "Eternal Guardian" + subtitle "Scam Detector"
-   - Settings button (placeholder)
-   - Glass stats cards (127 scans protected, 23 threats blocked)
-
-2. **Content (Scrollable)**
-   - "Quick Scan" button (large, prominent)
-   - "Try Quick Examples" section with 3 pre-built scams
-   - "Share Sheet Demo" section (WhatsApp integration preview)
-
-3. **Bottom Nav**
-   - Home (icon: shield, active state shows brand red)
-   - Scan (icon: scanner)
-   - *(History tab removed)*
-
-### Scan Screen
-
-**Layout:**
-1. **Header** (White background, simple)
-   - Back button → returns to Home
-   - Title "Scan Message"
-   - Subtitle "Paste suspicious text or link to analyze"
-
-2. **Content**
-   - Large multiline TextField
-   - Placeholder: "Paste message here..." + example text
-   - "Analyze Now" button (disabled if empty)
-   - "Paste from Clipboard" tonal button
-
-3. **Bottom Nav** (Home + Scan tabs visible)
-
-### Result Screen
-
-**Layout:**
-1. **Header** (White background, simple)
-   - Home button → returns to Home (clears text)
-   - Title "Scan Result"
-
-2. **Content (Scrollable)**
-   - **Loading State:**
-     - Animated spinner
-     - "Analyzing..." + "Checking 10,000+ known scams"
-
-   - **Success State:**
-     - AnalogMeter widget (animated needle)
-     - RiskBadge (color + label: SAFE/CAUTION/DANGER)
-     - *(Optional)* Fallback warning banner (if `isFallback: true`)
-     - Analysis box (white background, left border in brand red)
-       - Icon + "Analysis" label
-       - Message text
-     - "Report to Authorities" button (appears if risk > 30)
-     - "Scan Another Message" button (clears input, returns to Scan)
-
-3. **Bottom Nav** (Home + Scan tabs visible)
-
----
-
-## 5. Widget Library
-
-### Reusable Components (`lib/features/scam_detector/widgets/`)
-
-| Widget | File | Props | Purpose |
-|--------|------|-------|---------|
-| `AnalogMeter` | `analog_meter.dart` | `riskScore`, `size` | Animated risk gauge |
-| `RiskBadge` | `risk_badge.dart` | `riskScore` | Status label (SAFE/CAUTION/DANGER) |
-| `GlassStatCard` | `scam_widgets.dart` | `value`, `label` | Frosted glass stat display |
-| `SpinningLoader` | `scam_widgets.dart` | `size` | Animated circular progress |
-| `BottomNavBar` | `scam_widgets.dart` | `selectedIndex`, `onSelect` | Custom bottom navigation |
-| `BottomSheetOverlayDemo` | `scam_widgets.dart` | `result` | WhatsApp share sheet preview |
-
-### Helper Functions (`lib/features/scam_detector/widgets/risk_utils.dart`)
-
-```dart
-Color riskColor(int risk)           // Maps risk to color
-Color riskTint(int risk)            // Light background tint
-Color riskShade(int risk)           // Dark variant
-IconData riskIcon(int risk)         // Maps risk to icon
-String riskLabel(int risk)          // Maps risk to label text
-```
-
----
-
-## 6. State Management
-
-**Current Approach:** Simple StatefulWidget with `setState()`.
-
-**Rationale:**
-- MVP scope (single screen with 3 sub-views)
-- No global state sharing needed yet
-- Easy for hackathon team to understand
-
-**Future Consideration:** If multiple screens or complex state emerges, migrate to:
-- Provider package (`lib/providers/analysis_provider.dart`)
-- Riverpod
-- GetX
-
----
-
-## 7. Backend Integration
-
-### API Endpoint
-
-**URL:** `POST {API_BASE_URL}/analyze`
-
-**Default:** `http://10.0.2.2:8080` (Android emulator)  
-**Override:** `flutter run --dart-define=API_BASE_URL=http://your.host:8080`
-
-### Request/Response
-
-```dart
-// Request
-{
-  "text_payload": "suspicious message or link"
-}
-
-// Response (200 OK)
-{
-  "risk_score": 45,
-  "analysis_message": "Detected potential phishing attempt: message uses urgency tactics and requests personal action."
-}
-
-// Error responses: timeout, non-200, or malformed JSON
-// → Fallback to local heuristic analysis
-```
-
-### Fallback Logic
-
-If backend is unreachable, returns local-only analysis:
-
-```dart
-AnalysisResult _analyzeLocalHeuristic(String text) {
-  int riskScore = 0;
-  
-  // Pattern detection
-  if (text.contains(RegExp(r'bank|verify|account|urgent', caseSensitive: false))) {
-    riskScore += 20;
-  }
-  if (text.contains(RegExp(r'http|\.xyz|fake-link', caseSensitive: false))) {
-    riskScore += 30;
-  }
-  if (text.contains(RegExp(r'congratulations|won|prize|claim', caseSensitive: false))) {
-    riskScore += 25;
-  }
-  
-  return AnalysisResult(
-    riskScore: riskScore.clamp(0, 100),
-    analysisMessage: 'Local analysis only (backend unavailable)',
-    isFallback: true,
-  );
-}
-```
-
-The UI shows a warning banner when `isFallback: true`.
-
----
-
-## 8. Theming System
-
-### Theme Configuration (`lib/app/theme/app_theme.dart`)
-
-```dart
-class AppTheme {
-  static const Color primaryBrand = Color(0xFFED2321);
-  static const Color primaryBrandDeep = Color(0xFFC91D1B);
-  static const Color textPrimary = Color(0xFF1A1A1A);
-  static const Color textSecondary = Color(0xFF757575);
-  static const Color appBackground = Color(0xFFFFFFFF);
-  static const Color surface = Color(0xFFFFFFFF);
-  static const Color border = Color(0xFFE0E0E0);
-
-  // Poppins typography
-  static ThemeData get lightTheme {
-    final base = ThemeData(
-      useMaterial3: true,
-      scaffoldBackgroundColor: appBackground,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: primaryBrand,
-        brightness: Brightness.light,
-      ).copyWith(
-        primary: primaryBrand,
-        onPrimary: Colors.white,
-        surface: surface,
-        onSurface: textPrimary,
-      ),
-    );
-
-    final textTheme = GoogleFonts.poppinsTextTheme(base.textTheme)
-        .copyWith(
-          displaySmall: GoogleFonts.poppins(fontSize: 36, fontWeight: FontWeight.w700, color: textPrimary),
-          headlineLarge: GoogleFonts.poppins(fontSize: 30, fontWeight: FontWeight.w700, color: textPrimary),
-          titleLarge: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.w700, color: textPrimary),
-          bodyLarge: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500, color: textPrimary),
-          bodyMedium: GoogleFonts.poppins(fontSize: 14, color: textSecondary),
-          labelLarge: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w700),
-        );
-
-    return base.copyWith(
-      textTheme: textTheme,
-      cardTheme: const CardThemeData(
-        color: surface,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(16)),
-          side: BorderSide(color: border),
-        ),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: surface,
-        contentPadding: const EdgeInsets.all(16),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(color: border, width: 2),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(color: primaryBrand, width: 2),
-        ),
-      ),
-    );
-  }
-}
-```
-
-### Usage
-
-```dart
-MaterialApp(
-  theme: AppTheme.lightTheme,
-  home: const ScamDetectorPage(),
-)
-```
-
----
-
-## 9. Responsive Design
-
-**Breakpoints:**
-- Mobile: < 600dp (primary target)
-- Tablet: ≥ 600dp (not currently optimized; safe mode applies)
-
-**Strategy:**
-- Single-column layouts (Mobile First)
-- Full-width buttons and inputs
-- Scrollable content areas
-- `SafeArea` for notch/status bar safety
-
----
-
-## 10. Accessibility
-
-**Current Coverage:**
-- High contrast text (text primary `#1A1A1A` on white bg)
-- Icon labels in bottom nav
-- Semantic button labels
-
-**Future Work:**
-- Semantic widgets for screen readers
-- Adjustable text size
-- Color-blind mode testing
-
----
-
-## 11. Testing
-
-### Unit Tests (`test/widget_test.dart`)
-
-```dart
-testWidgets('Scam detector home renders', (WidgetTester tester) async {
-  await tester.pumpWidget(const EternalGuardianApp());
-  await tester.pumpAndSettle();
-
-  expect(find.text('Eternal Guardian'), findsOneWidget);
-  expect(find.text('Quick Scan'), findsOneWidget);
-});
-```
-
-### Manual Testing Checklist
-
-- [ ] Home screen loads with branding, stats, examples
-- [ ] Tap Quick Scan → navigates to Scan screen
-- [ ] Paste from Clipboard button works (copy text first)
-- [ ] Analyze Now button disabled when input empty
-- [ ] Analysis loads with spinner → risk meter animates
-- [ ] Risk badge color changes (green/amber/red)
-- [ ] Report button appears for risk > 30
-- [ ] Scan Another Message → clears input, returns to Scan
-- [ ] Bottom nav tabs selectable
-- [ ] Share Sheet demo loads correctly
-
----
-
-## 12. Performance Notes
-
-- **Meter Animation:** 1.4s easeOut curve (smooth, not laggy)
-- **Network Timeout:** 12 seconds (generous for 3G networks)
-- **Demo Data:** 3 QuickScanExample items (instant tap response)
-- **Image Assets:** None in MVP (uses system icons + vectors)
-
----
-
-## 13. Dependencies
-
-```yaml
-dependencies:
-  flutter:
-    sdk: flutter
-  google_fonts: ^6.3.0          # Poppins typography
-  http: ^1.2.2                  # Backend API calls
-  
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-```
-
----
-
-**Last Updated:** May 23, 2026  
-**Next Review:** Phase 2 (Share Sheet Overlay)
+State fields:
+
+| Field | Purpose |
+|-------|---------|
+| `state` | `idle`, `loading`, `complete`, or `error`. |
+| `result` | Current `AnalysisResult`, when available. |
+| `errorMessage` | User-readable error message. |
+| `isLoading` | Convenience getter for buttons/loading UI. |
+
+### StatsProvider
+
+`StatsProvider` tracks in-session statistics shown on the home screen. It is intentionally local-only for the MVP.
+
+## 6. Service Layer
+
+| Service | Responsibility |
+|---------|----------------|
+| `LiveApiService` | Sends Dio `POST /analyze` requests to `AppConfig.backendBaseUrl`. |
+| `MockApiService` | Returns deterministic demo results after a short delay. |
+| `NotificationServiceController` | Uses a MethodChannel to start, stop, and query the native foreground service. |
+
+`LiveApiService` treats backend sentinel results (`risk_score < 0`) as an `AnalysisUnavailableException`, allowing the UI to show a clean error state.
+
+## 7. Visual System
+
+| Token/source | Usage |
+|--------------|-------|
+| `AppColors.corporateRed` | Primary action and brand color. |
+| `AppColors.background` | Main app and overlay panel background. |
+| `AppColors.surfaceCard` | Cards and preview surfaces. |
+| `bankIslamTheme()` | Material theme, Poppins typography, component styling. |
+
+Risk visualization:
+
+| Risk range | Label | Color intent |
+|------------|-------|--------------|
+| `1-30` | Safe / Low risk | Green |
+| `31-70` | Caution | Yellow / amber |
+| `71-100` | Danger / High risk | Red |
+| `<0` | Unavailable | Error state, no meter |
+
+## 8. Reusable Widgets
+
+| Widget | Purpose |
+|--------|---------|
+| `AnalogMeter` | Animated half-circle score meter; supports compact overlay mode. |
+| `AnalysisMessageCard` | Presents the explanation using risk-aware styling. |
+| `AnalyzeButton` | Full-width action button with loading/disabled behavior. |
+| `ErrorBanner` | Error state and retry affordance. |
+| `RiskBadge` | Compact score label. |
+| `SkeletonMeterPlaceholder` | Staged loading state for manual and overlay flows. |
+| `TextInputArea` | Multi-line input surface. |
+| `BottomNavBar` / `GlassStatCard` | Home screen support components. |
+
+## 9. Android UI Integration
+
+Guardian Mode is split between Flutter and native Android:
+
+| Layer | Responsibility |
+|-------|----------------|
+| Flutter home screen | Shows switch, requests notification permission, calls MethodChannel. |
+| `MainActivity.kt` | Receives MethodChannel calls and starts/stops the service. |
+| `ScamDetectorForegroundService.kt` | Owns the persistent foreground notification. |
+| `NotificationHelper.kt` | Builds idle, scanning, result, and error `RemoteViews`. |
+| `AnalyzeReceiver.kt` | Receives notification input and runs analysis on a background thread. |
+
+## 10. Testing Focus
+
+UI validation should prioritize:
+
+| Area | What to check |
+|------|---------------|
+| Text overflow | Home, result, overlay, and notification labels on small screens. |
+| Loading state | Staged labels appear quickly and do not shift layout. |
+| Share overlay | Shared text is truncated safely and auto-analysis runs once. |
+| Mock/live mode | Both app and notification flows respect the configured mode. |
+| Error handling | Backend unavailable cases show actionable messages. |
+| Android notification | Physical-device behavior for permission, foreground service, and RemoteInput. |
+
+Testing evidence is stored in [test_logs/](test_logs/).

@@ -1,0 +1,803 @@
+{
+  "run_at": "2026-05-24T03:08:53",
+  "url": "http://localhost:8080/analyze",
+  "count": 53,
+  "interval_seconds": 20,
+  "results": [
+    {
+      "id": 31,
+      "text_payload": "AirAsia: Your flight AK511 has been cancelled. Claim your full refund here: https://airasia-refund-claims.net",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The domain 'airasia-refund-claims.net' is not an official AirAsia domain. Scammers often use look-alike domains to trick users into believing they are legitimate.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:51:05.2211768+08:00",
+      "response_received_time": "2026-05-24T02:51:08.5997182+08:00",
+      "request_duration_ms": 3379,
+      "match": 1
+    },
+    {
+      "id": 34,
+      "text_payload": "Grab: Dapatkan diskaun 20% untuk tunggangan seterusnya dengan kod GRAB20 di aplikasi Grab. Sah hingga Ahad.",
+      "expected_label": "legitimate",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 5,
+        "analysis_message": "The message is a legitimate promotional offer from Grab, encouraging users to use a discount code within the official app. There are no suspicious links or indicators of a scam.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:51:25.6160531+08:00",
+      "response_received_time": "2026-05-24T02:51:31.4775637+08:00",
+      "request_duration_ms": 5862,
+      "match": 1
+    },
+    {
+      "id": 21,
+      "text_payload": "MAYBANK: Pemindahan RM150.00 kepada ALI BIN ABU berjaya. Sila log masuk ke aplikasi MAE untuk lihat resit.",
+      "expected_label": "legitimate",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 5,
+        "analysis_message": "The message appears to be a legitimate transaction notification from Maybank. It directs the user to the official MAE app, which is a standard and safe practice.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:51:46.4914657+08:00",
+      "response_received_time": "2026-05-24T02:51:49.4925542+08:00",
+      "request_duration_ms": 3001,
+      "match": 1
+    },
+    {
+      "id": 14,
+      "text_payload": "HR Dept: Sila semak dokumen permohonan cuti terkini di pautan ini: https://docs-google-com.view-file.info/hr-leave",
+      "expected_label": "scam",
+      "predicted_label": "unavailable",
+      "return_json": {
+        "risk_score": -1,
+        "analysis_message": "Analisis sementara tidak tersedia.",
+        "analysis_source": "backend"
+      },
+      "request_start_time": "2026-05-24T02:52:06.5080567+08:00",
+      "response_received_time": "2026-05-24T02:52:09.3840141+08:00",
+      "request_duration_ms": 2876,
+      "match": 0
+    },
+    {
+      "id": 24,
+      "text_payload": "Shopee: Bungkusan SPXMY01928374 sedang dalam perjalanan. Semak aplikasi Shopee untuk kemas kini langsung.",
+      "expected_label": "legitimate",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 5,
+        "analysis_message": "The message appears to be a legitimate shipping notification from Shopee. It directs the user to check the official Shopee app for updates, which is a safe practice.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:52:27.4002300+08:00",
+      "response_received_time": "2026-05-24T02:52:30.9084277+08:00",
+      "request_duration_ms": 3508,
+      "match": 1
+    },
+    {
+      "id": 13,
+      "text_payload": "Apple ID Locked: We detected unusual activity. Please unlock your account at https://appleid-locked-verify.com",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The domain 'appleid-locked-verify.com' is a look-alike domain attempting to impersonate Apple. It uses a non-standard TLD (.com is standard, but the subdomain structure is suspicious) and the name 'appleid' to trick users into thinking it's legitimate.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:52:47.9143444+08:00",
+      "response_received_time": "2026-05-24T02:52:51.5386891+08:00",
+      "request_duration_ms": 3624,
+      "match": 1
+    },
+    {
+      "id": 16,
+      "text_payload": "Sila kemas kini maklumat HR anda dalam portal dalaman syarikat sebelum jam 5 petang hari Jumaat ini.",
+      "expected_label": "suspicious",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 5,
+        "analysis_message": "The message is a standard internal company communication regarding updating HR information. There are no suspicious links or requests for sensitive data.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:53:08.5503257+08:00",
+      "response_received_time": "2026-05-24T02:53:11.8065608+08:00",
+      "request_duration_ms": 3256,
+      "match": 0
+    },
+    {
+      "id": 44,
+      "text_payload": "Zoom: Your upcoming meeting is starting in 5 minutes. Join now: https://zoom-meeting-invite.info/j/8273645",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 75,
+        "analysis_message": "The domain 'zoom-meeting-invite.info' is not an official Zoom domain. The use of a non-standard TLD (.info) combined with a brand name in the domain is a common phishing tactic.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:53:28.8146718+08:00",
+      "response_received_time": "2026-05-24T02:53:32.2340597+08:00",
+      "request_duration_ms": 3419,
+      "match": 1
+    },
+    {
+      "id": 25,
+      "text_payload": "Microsoft: Unusual sign-in activity detected. Please review your recent activity at https://aka.ms/mysecurity",
+      "expected_label": "legitimate",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 10,
+        "analysis_message": "The provided link uses a legitimate Microsoft domain (aka.ms), which is a URL shortener for Microsoft services. While URL shorteners can sometimes be used maliciously, the context of a Microsoft security alert and the use of an official Microsoft domain make this appear legitimate.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:53:49.2412542+08:00",
+      "response_received_time": "2026-05-24T02:54:01.8313381+08:00",
+      "request_duration_ms": 12590,
+      "match": 1
+    },
+    {
+      "id": 10,
+      "text_payload": "PDRM: Terdapat 2 saman trafik tertunggak pada kenderaan anda. Bayar segera untuk elak waran tangkap: https://saman-pdrm-my.com/bayar",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The domain 'saman-pdrm-my.com' is a look-alike domain for PDRM, using a hyphen and 'my' TLD which is not the official PDRM domain. This is a common tactic used in traffic summon scams.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:54:09.8356579+08:00",
+      "response_received_time": "2026-05-24T02:54:13.0285453+08:00",
+      "request_duration_ms": 3193,
+      "match": 1
+    },
+    {
+      "id": 30,
+      "text_payload": "Maxis: Bil tertunggak RM120. Bayar dalam 2 jam atau talian anda akan dipotong: https://maxis-pay-portal.net",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The message uses a look-alike domain 'maxis-pay-portal.net' which mimics the legitimate Maxis brand. The urgency to pay within 2 hours to avoid service disconnection is a common scam tactic.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:54:30.0409079+08:00",
+      "response_received_time": "2026-05-24T02:54:33.4663442+08:00",
+      "request_duration_ms": 3425,
+      "match": 1
+    },
+    {
+      "id": 38,
+      "text_payload": "LHDN: Pengesahan e-Filing bagi Tahun Taksiran 2025 telah diterima. Sila simpan rekod peribadi anda.",
+      "expected_label": "legitimate",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 5,
+        "analysis_message": "The message is a standard notification from LHDN regarding e-filing confirmation. It does not contain any suspicious links or requests for personal information, making it appear legitimate.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:54:50.4812864+08:00",
+      "response_received_time": "2026-05-24T02:54:53.8712247+08:00",
+      "request_duration_ms": 3390,
+      "match": 1
+    },
+    {
+      "id": 29,
+      "text_payload": "Panggilan Video Terlepas daripada 'PDRM IPK KL'. Sila klik pautan ini untuk memuat turun app i-Polis: https://app-ipolis-apk.com",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The domain 'app-ipolis-apk.com' is suspicious as it uses a non-standard TLD (.com) and mimics a government service ('PDRM IPK KL') to trick users into downloading an app. This could be a phishing attempt to install malware or steal personal information.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:55:10.8747931+08:00",
+      "response_received_time": "2026-05-24T02:55:14.9807336+08:00",
+      "request_duration_ms": 4106,
+      "match": 1
+    },
+    {
+      "id": 33,
+      "text_payload": "Telegram: Seseorang log masuk ke akaun anda dari Rusia. Batal log masuk ini di: https://telegram-web-cancel.com",
+      "expected_label": "scam",
+      "predicted_label": "unavailable",
+      "return_json": {
+        "risk_score": -1,
+        "analysis_message": "Analisis sementara tidak tersedia.",
+        "analysis_source": "backend"
+      },
+      "request_start_time": "2026-05-24T02:55:30.9923433+08:00",
+      "response_received_time": "2026-05-24T02:55:34.0229507+08:00",
+      "request_duration_ms": 3031,
+      "match": 0
+    },
+    {
+      "id": 28,
+      "text_payload": "Binance: Mandatory KYC update required. Failure to verify will result in account suspension: https://binance-kyc-update.com",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The domain 'binance-kyc-update.com' is a look-alike domain attempting to impersonate Binance. It uses a non-standard TLD (.com) in conjunction with the brand name, which is a common tactic in phishing attempts to trick users into thinking it's legitimate.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:55:51.0293241+08:00",
+      "response_received_time": "2026-05-24T02:55:54.3617176+08:00",
+      "request_duration_ms": 3332,
+      "match": 1
+    },
+    {
+      "id": 50,
+      "text_payload": "Your YouTube Premium subscription will renew automatically tomorrow. View details in your YouTube App settings.",
+      "expected_label": "legitimate",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 5,
+        "analysis_message": "The message is a standard notification about a subscription renewal and directs the user to check their app settings. There are no suspicious links or indicators of a scam.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:56:11.3736044+08:00",
+      "response_received_time": "2026-05-24T02:56:14.3368751+08:00",
+      "request_duration_ms": 2963,
+      "match": 1
+    },
+    {
+      "id": 6,
+      "text_payload": "Pegawai LHDN: Anda mempunyai tunggakan cukai RM4,500. Sila beri nombor TAC yang dihantar sebentar tadi untuk semakan pembatalan penalti.",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 92,
+        "analysis_message": "The message impersonates an LHDN officer and requests a TAC number, which is a common tactic in phishing scams to gain unauthorized access to bank accounts. LHDN will never ask for TAC numbers via SMS.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:56:32.3412352+08:00",
+      "response_received_time": "2026-05-24T02:56:35.4872279+08:00",
+      "request_duration_ms": 3146,
+      "match": 1
+    },
+    {
+      "id": 11,
+      "text_payload": "Netflix: Your payment for the current billing cycle failed. Update your billing info to continue watching: https://netflix-payment-failed.com",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The domain 'netflix-payment-failed.com' is a look-alike domain, attempting to impersonate Netflix. It uses a common scam tactic of claiming payment failure to trick users into revealing sensitive information.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:56:52.4966102+08:00",
+      "response_received_time": "2026-05-24T02:56:58.8818356+08:00",
+      "request_duration_ms": 6385,
+      "match": 1
+    },
+    {
+      "id": 52,
+      "text_payload": "Facebook Security: Your account is scheduled for deletion. Verify immediately at: http://fb-security-appeal.freecluster.eu/login",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The domain 'freecluster.eu' is a non-standard TLD and the subdomain 'fb-security-appeal' mimics a trusted brand (Facebook) to deceive users. This is a common tactic in phishing scams to steal login credentials.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:57:12.8895863+08:00",
+      "response_received_time": "2026-05-24T02:57:16.1618159+08:00",
+      "request_duration_ms": 3272,
+      "match": 1
+    },
+    {
+      "id": 40,
+      "text_payload": "Maxis: Bil bulan ini adalah RM98.00. Anda boleh membuat bayaran terus menerusi aplikasi Hotlink/Maxis.",
+      "expected_label": "legitimate",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 5,
+        "analysis_message": "The message appears to be a legitimate billing notification from Maxis, directing users to their official app for payment. There are no immediate indicators of a scam.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:57:33.1696469+08:00",
+      "response_received_time": "2026-05-24T02:57:36.3452338+08:00",
+      "request_duration_ms": 3176,
+      "match": 1
+    },
+    {
+      "id": 12,
+      "text_payload": "ShopeePay: Sahkan identiti anda untuk terus guna perkhidmatan. Sila log masuk MyKad anda: https://sh0pee-pay.com.my/security",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The domain 'sh0pee-pay.com.my' uses a '0' instead of an 'o', which is a common typosquatting technique to impersonate ShopeePay. The message urges immediate action to 'confirm identity', a typical tactic in phishing scams.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:57:53.3597650+08:00",
+      "response_received_time": "2026-05-24T02:57:56.8463933+08:00",
+      "request_duration_ms": 3487,
+      "match": 1
+    },
+    {
+      "id": 17,
+      "text_payload": "Hi, saya dari kurier. Rumah takde orang ke? Boleh share location kat WhatsApp ni? https://wa.me/60112345678",
+      "expected_label": "suspicious",
+      "predicted_label": "suspicious",
+      "return_json": {
+        "risk_score": 40,
+        "analysis_message": "The message uses a WhatsApp link which is a legitimate platform, but the request to share location via WhatsApp after claiming to be a courier is unusual and could be a tactic to gather personal information or initiate a social engineering attack. The risk score is moderate due to the unusual request and the potential for misuse of the shared location.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:58:13.8531037+08:00",
+      "response_received_time": "2026-05-24T02:58:17.1702891+08:00",
+      "request_duration_ms": 3317,
+      "match": 1
+    },
+    {
+      "id": 3,
+      "text_payload": "Tahniah! Nombor anda terpilih memenangi Cabutan Bertuah Shopee RM10,000. Tuntut hadiah sebelum 12 malam: https://shopee-spin-win.info",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 88,
+        "analysis_message": "The message claims a prize win from Shopee but uses a non-standard TLD (.info) and a look-alike domain (shopee-spin-win.info) instead of the official Shopee domain. This is a common tactic in phishing scams to trick users into clicking malicious links.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:58:34.1782056+08:00",
+      "response_received_time": "2026-05-24T02:58:37.6740591+08:00",
+      "request_duration_ms": 3496,
+      "match": 1
+    },
+    {
+      "id": 51,
+      "text_payload": "Makluman PDRM: Sila muat turun fail APK rasmi saman trafik di pautan: http://103.45.67.89/app/mySaman.apk",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 75,
+        "analysis_message": "The message uses an IP address instead of a domain name, which is highly suspicious for official government communications. Additionally, it prompts the user to download an APK file, a common method for distributing malware.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:58:54.6824253+08:00",
+      "response_received_time": "2026-05-24T02:58:57.6962437+08:00",
+      "request_duration_ms": 3014,
+      "match": 1
+    },
+    {
+      "id": 15,
+      "text_payload": "Bro, tgk gambar lama kita ni, kelakar gila! 😂 https://bit.ly/fb-pic-99",
+      "expected_label": "suspicious",
+      "predicted_label": "suspicious",
+      "return_json": {
+        "risk_score": 35,
+        "analysis_message": "The message contains a shortened URL, which hides the final destination. While the surrounding message is casual, the use of a URL shortener warrants caution.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:59:14.6980997+08:00",
+      "response_received_time": "2026-05-24T02:59:18.5014094+08:00",
+      "request_duration_ms": 3803,
+      "match": 1
+    },
+    {
+      "id": 35,
+      "text_payload": "Klinik Kesihatan Seri Kembangan: Temujanji anda pada 25 Mei, jam 9.00 pagi. Sila bawa buku rekod.",
+      "expected_label": "legitimate",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 5,
+        "analysis_message": "The message appears to be a legitimate appointment reminder from a health clinic. There are no suspicious links or requests for personal information.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:59:35.5131068+08:00",
+      "response_received_time": "2026-05-24T02:59:38.7484131+08:00",
+      "request_duration_ms": 3235,
+      "match": 1
+    },
+    {
+      "id": 41,
+      "text_payload": "Pos Laju: Penghantaran gagal kerana alamat tidak lengkap. Kemas kini alamat penghantaran anda: https://poslaju-tracking-my.com",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The domain 'poslaju-tracking-my.com' is a look-alike domain, attempting to impersonate the legitimate Pos Laju service. The use of a non-standard TLD (.com) in conjunction with a trusted brand name is a common tactic in phishing scams.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T02:59:55.7578958+08:00",
+      "response_received_time": "2026-05-24T03:00:02.7116624+08:00",
+      "request_duration_ms": 6954,
+      "match": 1
+    },
+    {
+      "id": 2,
+      "text_payload": "TNG eWallet: Aktiviti luar biasa dikesan. Sila sahkan akaun anda segera atau baki anda akan disekat: https://tng-ewallet-update.net/verify",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The domain 'tng-ewallet-update.net' is a look-alike domain attempting to impersonate Touch 'n Go eWallet. The use of a non-standard TLD (.net) combined with a deceptive subdomain structure raises significant suspicion.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:00:16.7125154+08:00",
+      "response_received_time": "2026-05-24T03:00:20.0455115+08:00",
+      "request_duration_ms": 3333,
+      "match": 1
+    },
+    {
+      "id": 37,
+      "text_payload": "GitHub: Your 2FA authentication code is 881292. This code expires in 10 minutes.",
+      "expected_label": "legitimate",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 5,
+        "analysis_message": "The message appears to be a legitimate 2FA code from GitHub. There are no suspicious links or requests for personal information.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:00:37.0463401+08:00",
+      "response_received_time": "2026-05-24T03:00:40.1666145+08:00",
+      "request_duration_ms": 3120,
+      "match": 1
+    },
+    {
+      "id": 19,
+      "text_payload": "Your manager has shared a highly confidential document with you via Dropbox: https://dropbox-share-files.net/view",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 75,
+        "analysis_message": "The domain 'dropbox-share-files.net' is a look-alike domain for Dropbox. It uses a non-standard TLD (.net) and a deceptive subdomain structure to mimic the legitimate Dropbox service, potentially leading users to a phishing site.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:00:57.1760031+08:00",
+      "response_received_time": "2026-05-24T03:01:00.6007346+08:00",
+      "request_duration_ms": 3425,
+      "match": 1
+    },
+    {
+      "id": 43,
+      "text_payload": "Hi, i'm Emily from HR recruitment. We saw your resume and have a remote job for you. Salary 3000 USD/m. Reply YES to proceed.",
+      "expected_label": "suspicious",
+      "predicted_label": "unavailable",
+      "return_json": {
+        "risk_score": -1,
+        "analysis_message": "Analysis temporarily unavailable.",
+        "analysis_source": "backend"
+      },
+      "request_start_time": "2026-05-24T03:01:17.6139057+08:00",
+      "response_received_time": "2026-05-24T03:01:20.4329797+08:00",
+      "request_duration_ms": 2819,
+      "match": 0
+    },
+    {
+      "id": 27,
+      "text_payload": "KWSP: Sila kemas kini butiran i-Akaun anda bagi pengeluaran Fleksibel. Layari https://epf-kwsp-withdrawal.com",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The domain 'epf-kwsp-withdrawal.com' is a look-alike domain for EPF (KWSP). It uses a non-standard TLD (.com) and includes the brand name in a way that suggests an official but potentially deceptive link for account updates.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:01:38.4366254+08:00",
+      "response_received_time": "2026-05-24T03:01:41.6794347+08:00",
+      "request_duration_ms": 3243,
+      "match": 1
+    },
+    {
+      "id": 9,
+      "text_payload": "TNB: Lebihan bayaran bil elektrik dikesan. Sila tuntut pemulangan wang (refund) RM120 anda di sini: https://tnb-refund-portal.net",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The domain 'tnb-refund-portal.net' is a look-alike domain, mimicking the official Tenaga Nasional Berhad (TNB) website. The use of a non-standard TLD (.net) combined with the brand name in the domain is a common tactic in phishing scams.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:01:58.6824380+08:00",
+      "response_received_time": "2026-05-24T03:02:01.9043077+08:00",
+      "request_duration_ms": 3222,
+      "match": 1
+    },
+    {
+      "id": 1,
+      "text_payload": "CIMB Amaran: Akaun anda akan dibekukan dalam 30 minit kerana aktiviti mencurigakan. Sahkan identiti segera: https://cimbclicks-verify.com/login",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The domain 'cimbclicks-verify.com' is a look-alike domain designed to mimic the legitimate CIMB website. It uses a non-standard TLD (.com) in conjunction with a trusted brand name to deceive users into providing their login credentials.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:02:18.9184028+08:00",
+      "response_received_time": "2026-05-24T03:02:23.9381999+08:00",
+      "request_duration_ms": 5020,
+      "match": 1
+    },
+    {
+      "id": 8,
+      "text_payload": "Instagram Support: Your account has been reported for copyright violation. Appeal here within 24 hours: https://instagram-support-review.com",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The domain 'instagram-support-review.com' is a look-alike domain designed to impersonate official Instagram support. It uses a non-standard TLD (.com is standard, but the subdomain structure is suspicious) and is likely a phishing attempt to gain account access.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:02:38.9413957+08:00",
+      "response_received_time": "2026-05-24T03:02:42.2242333+08:00",
+      "request_duration_ms": 3283,
+      "match": 1
+    },
+    {
+      "id": 26,
+      "text_payload": "Salam encik, saya tersalah letak nombor fon masa register WhatsApp. Boleh tak encik bagi kod 6 digit SMS tu balik kat saya?",
+      "expected_label": "scam",
+      "predicted_label": "unavailable",
+      "return_json": {
+        "risk_score": -1,
+        "analysis_message": "Analisis sementara tidak tersedia.",
+        "analysis_source": "backend"
+      },
+      "request_start_time": "2026-05-24T03:02:59.2302067+08:00",
+      "response_received_time": "2026-05-24T03:03:02.6571989+08:00",
+      "request_duration_ms": 3427,
+      "match": 0
+    },
+    {
+      "id": 53,
+      "text_payload": "Maybank2u Alert: Your account is locked. Please recover your access via our secure server: https://m2u-recovery.firebaseapp.com",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The domain 'm2u-recovery.firebaseapp.com' is a look-alike domain for Maybank2u, using a non-standard TLD (.firebaseapp.com) and a deceptive subdomain structure to impersonate the legitimate service. This is a common tactic used in phishing scams to trick users into revealing their login credentials.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:03:19.6638833+08:00",
+      "response_received_time": "2026-05-24T03:03:23.2358491+08:00",
+      "request_duration_ms": 3572,
+      "match": 1
+    },
+    {
+      "id": 49,
+      "text_payload": "Bank Negara Malaysia (BNM): Akaun anda terlibat dalam pengubahan wang haram. Muat turun app keselamatan BNM di https://bnm-secure-app.com",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The domain 'bnm-secure-app.com' is a look-alike domain, mimicking the official Bank Negara Malaysia (BNM) website to trick users into downloading a potentially malicious app. The use of a non-standard TLD (.com is standard, but the subdomain structure is suspicious) combined with a trusted brand name raises significant red flags.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:03:40.2439455+08:00",
+      "response_received_time": "2026-05-24T03:03:43.8560391+08:00",
+      "request_duration_ms": 3612,
+      "match": 1
+    },
+    {
+      "id": 4,
+      "text_payload": "J&T Express: Bungkusan anda (Tracking: JT88192) ditahan. Bayar caj insurans RM2.90 untuk teruskan penghantaran: https://jtexpress-my-fee.com",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The domain 'jtexpress-my-fee.com' is a look-alike domain attempting to impersonate J&T Express. The use of a non-standard TLD (.com is standard, but the subdomain structure is suspicious) and the request for a small payment for an 'insurance fee' are common scam tactics.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:04:00.8631810+08:00",
+      "response_received_time": "2026-05-24T03:04:06.9896869+08:00",
+      "request_duration_ms": 6127,
+      "match": 1
+    },
+    {
+      "id": 32,
+      "text_payload": "Tawaran Pinjaman Peribadi Koperasi! Faedah serendah 1%. Lulus segera. Sila hubungi Puan Aisyah: https://wa.me/60181122334",
+      "expected_label": "suspicious",
+      "predicted_label": "suspicious",
+      "return_json": {
+        "risk_score": 40,
+        "analysis_message": "The message uses a WhatsApp link which is a common method for scammers to initiate contact and bypass traditional SMS security. While not inherently a scam, it warrants caution as it leads to an unverified contact.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:04:20.9966069+08:00",
+      "response_received_time": "2026-05-24T03:04:24.6794392+08:00",
+      "request_duration_ms": 3683,
+      "match": 1
+    },
+    {
+      "id": 18,
+      "text_payload": "Penting: Akaun anda sedang disemak untuk pematuhan polisi. Hubungi 1-800-88-XXXX untuk bantuan lanjut.",
+      "expected_label": "suspicious",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 75,
+        "analysis_message": "The message uses a toll-free number which is unusual for official bank communications and could be a tactic to isolate the user from legitimate support channels. The urgency and vague reason for account review are common scam indicators.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:04:41.6936585+08:00",
+      "response_received_time": "2026-05-24T03:04:45.6529890+08:00",
+      "request_duration_ms": 3959,
+      "match": 0
+    },
+    {
+      "id": 23,
+      "text_payload": "Google: Seseorang telah mengetahui kata laluan anda. Semak aktiviti log masuk terkini di https://myaccount.google.com",
+      "expected_label": "legitimate",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 5,
+        "analysis_message": "The message appears to be a legitimate security alert from Google, directing the user to their official account management page. The URL provided is the standard and trusted Google account domain.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:05:02.6580301+08:00",
+      "response_received_time": "2026-05-24T03:05:05.9278141+08:00",
+      "request_duration_ms": 3270,
+      "match": 1
+    },
+    {
+      "id": 39,
+      "text_payload": "Your WhatsApp verification code is 123-456. Do not share this code with anyone.",
+      "expected_label": "legitimate",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 2,
+        "analysis_message": "The message contains a standard verification code format for WhatsApp. There are no suspicious links or requests for personal information.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:05:22.9313411+08:00",
+      "response_received_time": "2026-05-24T03:05:26.3383597+08:00",
+      "request_duration_ms": 3407,
+      "match": 1
+    },
+    {
+      "id": 47,
+      "text_payload": "We detected an unauthorized transaction of RM3000 on your card ending in 9872. Reply 'N' if this wasn't you, or call 1-800-88-FAKE.",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 75,
+        "analysis_message": "The message uses a common scam tactic of creating urgency around an unauthorized transaction. The phone number provided is suspicious as it uses a fake prefix and is not a standard Malaysian bank contact number.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:05:43.3426687+08:00",
+      "response_received_time": "2026-05-24T03:05:47.0834587+08:00",
+      "request_duration_ms": 3741,
+      "match": 1
+    },
+    {
+      "id": 42,
+      "text_payload": "Alert! Your Amazon account has been compromised. Verify your details within 24hrs: https://amazon-security-resolve.net",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The domain 'amazon-security-resolve.net' is a look-alike domain, attempting to impersonate the legitimate Amazon domain. It uses a non-standard TLD (.net) in conjunction with a trusted brand name to create a sense of urgency and legitimacy.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:06:04.0934299+08:00",
+      "response_received_time": "2026-05-24T03:06:07.7148290+08:00",
+      "request_duration_ms": 3621,
+      "match": 1
+    },
+    {
+      "id": 7,
+      "text_payload": "Sumbangan Tunai Rahmah (STR) Fasa 3 kini dikreditkan! Sila kemas kini akaun bank anda untuk terima RM600: https://str-sumbangan-my.org",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The domain 'str-sumbangan-my.org' is a look-alike domain for the official Sumbangan Tunai Rahmah (STR) program, using a non-standard TLD (.org) and a deceptive structure to mimic the official site. This is a common tactic used in phishing scams to trick recipients into providing sensitive information.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:06:24.7285296+08:00",
+      "response_received_time": "2026-05-24T03:06:28.1809797+08:00",
+      "request_duration_ms": 3452,
+      "match": 1
+    },
+    {
+      "id": 20,
+      "text_payload": "Tawaran kerja Part-Time! Gaji RM300-RM500 sehari. Hanya like dan share video YouTube. PM WhatsApp saya segera: https://wa.me/60149876543",
+      "expected_label": "scam",
+      "predicted_label": "unavailable",
+      "return_json": {
+        "risk_score": -1,
+        "analysis_message": "Analisis sementara tidak tersedia.",
+        "analysis_source": "backend"
+      },
+      "request_start_time": "2026-05-24T03:06:45.1900371+08:00",
+      "response_received_time": "2026-05-24T03:06:48.2537872+08:00",
+      "request_duration_ms": 3064,
+      "match": 0
+    },
+    {
+      "id": 5,
+      "text_payload": "Notis MAE: Log masuk dari peranti baharu (iPhone 14) dikesan. Jika ini bukan anda, batal segera: https://maybank2u-sec.com/cancel",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The domain 'maybank2u-sec.com' is a look-alike domain designed to impersonate the legitimate Maybank website. The use of a hyphen and 'sec' in the domain name is a common tactic to deceive users into thinking it is official.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:07:05.2605071+08:00",
+      "response_received_time": "2026-05-24T03:07:08.9717761+08:00",
+      "request_duration_ms": 3711,
+      "match": 1
+    },
+    {
+      "id": 46,
+      "text_payload": "MAB (Malaysia Airlines): Tempahan tiket penerbangan MH123 anda telah disahkan. Sila rujuk emel untuk salinan e-tiket.",
+      "expected_label": "legitimate",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 5,
+        "analysis_message": "The message appears to be a legitimate notification from Malaysia Airlines regarding a flight booking confirmation. There are no suspicious links or indicators of a scam.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:07:25.9795768+08:00",
+      "response_received_time": "2026-05-24T03:07:29.0522806+08:00",
+      "request_duration_ms": 3073,
+      "match": 1
+    },
+    {
+      "id": 45,
+      "text_payload": "Perodua Service Center: Servis kereta anda telah tamat tempoh pada 15 Mei 2026. Hubungi wakil sah kami untuk temujanji.",
+      "expected_label": "legitimate",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 15,
+        "analysis_message": "The message mentions a Perodua Service Center and an expired service date, which could be a pretext for a scam. However, no suspicious links or contact details are provided, making it a low-risk message.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:07:46.0607055+08:00",
+      "response_received_time": "2026-05-24T03:07:49.5245684+08:00",
+      "request_duration_ms": 3464,
+      "match": 1
+    },
+    {
+      "id": 22,
+      "text_payload": "Reminder: All staff must submit their monthly timesheets to https://bamboohr.com by 5 PM today.",
+      "expected_label": "legitimate",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 5,
+        "analysis_message": "The message contains a legitimate domain (bamboohr.com) and a clear call to action. There are no indicators of a scam.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:08:06.5323779+08:00",
+      "response_received_time": "2026-05-24T03:08:15.9389912+08:00",
+      "request_duration_ms": 9407,
+      "match": 1
+    },
+    {
+      "id": 36,
+      "text_payload": "MySejahtera: Status vaksinasi anda perlu diperbaharui. Kemas kini segera di: https://mysejahtera-update.com",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The domain 'mysejahtera-update.com' is a look-alike domain for MySejahtera, potentially designed to trick users into thinking it's official. The message urges immediate action, which is a common tactic in phishing scams.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:08:26.9461566+08:00",
+      "response_received_time": "2026-05-24T03:08:30.2441788+08:00",
+      "request_duration_ms": 3298,
+      "match": 1
+    },
+    {
+      "id": 48,
+      "text_payload": "Hai! Jemput join group WhatsApp komuniti taman kita kat sini: https://chat.whatsapp.com/invite/Ah3sjk921",
+      "expected_label": "legitimate",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 5,
+        "analysis_message": "The message contains a standard WhatsApp group invite link, which is a common and generally safe way to join communities. There are no indicators of malicious intent or suspicious links.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-24T03:08:47.2559014+08:00",
+      "response_received_time": "2026-05-24T03:08:53.1285331+08:00",
+      "request_duration_ms": 5873,
+      "match": 1
+    }
+  ]
+}

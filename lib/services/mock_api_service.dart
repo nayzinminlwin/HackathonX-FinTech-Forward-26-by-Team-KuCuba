@@ -8,6 +8,27 @@ class MockApiService implements AnalysisApiService {
 
     final lowerText = textPayload.toLowerCase();
 
+    if (_containsAny(lowerText, const [
+      'congratulations',
+      'won',
+      'prize',
+      'claim',
+      'reward',
+      'selected',
+      'grant',
+      'fee',
+      'hadiah',
+      'menang',
+      'memenangi',
+      'tuntut',
+    ])) {
+      return const AnalysisResult(
+        riskScore: 88,
+        analysisMessage:
+            'This message matches a prize or reward scam pattern using a fake windfall and an upfront fee or claim request.',
+      );
+    }
+
     if (lowerText.contains('transfer') ||
         lowerText.contains('tac') ||
         lowerText.contains('polis') ||
@@ -34,5 +55,9 @@ class MockApiService implements AnalysisApiService {
       analysisMessage:
           'This message appears to be a normal, safe conversation.',
     );
+  }
+
+  bool _containsAny(String text, List<String> keywords) {
+    return keywords.any(text.contains);
   }
 }

@@ -54,101 +54,125 @@ class _OverlayScreenState extends State<OverlayScreen> {
             const ColoredBox(color: AppColors.overlayScrim),
             Align(
               alignment: Alignment.bottomCenter,
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: AppColors.background,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.sizeOf(context).height * 0.72,
                 ),
-                padding: EdgeInsets.fromLTRB(
-                  24,
-                  16,
-                  24,
-                  24 + MediaQuery.paddingOf(context).bottom,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Center(
-                      child: Container(
-                        width: 40,
-                        height: 4,
-                        margin: const EdgeInsets.only(bottom: 12),
-                        decoration: BoxDecoration(
-                          color: AppColors.divider,
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.shield,
-                          color: AppColors.corporateRed,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            'Scam Analysis',
-                            style: Theme.of(context).textTheme.titleMedium,
+                child: Container(
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: AppColors.background,
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(24)),
+                  ),
+                  padding: EdgeInsets.fromLTRB(
+                    24,
+                    16,
+                    24,
+                    16 + MediaQuery.paddingOf(context).bottom,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Center(
+                        child: Container(
+                          width: 40,
+                          height: 4,
+                          margin: const EdgeInsets.only(bottom: 12),
+                          decoration: BoxDecoration(
+                            color: AppColors.divider,
+                            borderRadius: BorderRadius.circular(2),
                           ),
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.close),
+                      ),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.shield,
+                            color: AppColors.corporateRed,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Scam Analysis',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: widget.onDismiss,
+                            tooltip: 'Close',
+                          ),
+                        ],
+                      ),
+                      const Divider(),
+                      Flexible(
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: AppColors.surfaceCard,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  widget.sharedText,
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              switch (provider.state) {
+                                AnalysisState.loading ||
+                                AnalysisState.idle =>
+                                  SkeletonMeterPlaceholder(
+                                    compact: true,
+                                    messageText: widget.sharedText,
+                                  ),
+                                AnalysisState.complete
+                                    when provider.result != null =>
+                                  Column(
+                                    children: [
+                                      AnalogMeter(
+                                        riskScore: provider.result!.riskScore,
+                                        compact: true,
+                                      ),
+                                      const SizedBox(height: 10),
+                                      AnalysisMessageCard(
+                                        message:
+                                            provider.result!.analysisMessage,
+                                        riskScore: provider.result!.riskScore,
+                                      ),
+                                    ],
+                                  ),
+                                AnalysisState.error => ErrorBanner(
+                                    message: provider.errorMessage ??
+                                        'Could not analyze. Please try again.',
+                                    onRetry: _retry,
+                                  ),
+                                _ => const SizedBox.shrink(),
+                              },
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
                           onPressed: widget.onDismiss,
-                          tooltip: 'Close',
+                          child: const Text('Done'),
                         ),
-                      ],
-                    ),
-                    const Divider(),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: AppColors.surfaceCard,
-                        borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Text(
-                        widget.sharedText,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    switch (provider.state) {
-                      AnalysisState.loading ||
-                      AnalysisState.idle =>
-                        const SkeletonMeterPlaceholder(compact: true),
-                      AnalysisState.complete when provider.result != null =>
-                        Column(
-                          children: [
-                            AnalogMeter(
-                              riskScore: provider.result!.riskScore,
-                              compact: true,
-                            ),
-                            const SizedBox(height: 16),
-                            AnalysisMessageCard(
-                              message: provider.result!.analysisMessage,
-                              riskScore: provider.result!.riskScore,
-                            ),
-                          ],
-                        ),
-                      AnalysisState.error => ErrorBanner(
-                          message: provider.errorMessage ??
-                              'Could not analyze. Please try again.',
-                          onRetry: _retry,
-                        ),
-                      _ => const SizedBox.shrink(),
-                    },
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: widget.onDismiss,
-                        child: const Text('Done'),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

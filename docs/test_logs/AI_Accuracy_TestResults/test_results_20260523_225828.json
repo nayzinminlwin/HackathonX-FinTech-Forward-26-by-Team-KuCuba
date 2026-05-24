@@ -1,0 +1,608 @@
+{
+  "run_at": "2026-05-23T22:58:28",
+  "url": "http://localhost:8080/analyze",
+  "count": 40,
+  "interval_seconds": 20,
+  "results": [
+    {
+      "id": 37,
+      "text_payload": "Delivery issue detected. Track here: www.jnt-express.example/parcel/12345",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 88,
+        "analysis_message": "The message creates urgency with a 'delivery issue' and directs to a suspicious domain (`jnt-express.example`) that impersonates a legitimate courier service. This is a common phishing tactic to trick users into clicking a fake tracking link.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:44:59.5814773+08:00",
+      "response_received_time": "2026-05-23T22:45:07.3320805+08:00",
+      "request_duration_ms": 7751,
+      "match": 1
+    },
+    {
+      "id": 20,
+      "text_payload": "Kawan anda share album gambar dengan anda: hxxps://photos-share.example/view",
+      "expected_label": "suspicious",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 5,
+        "analysis_message": "The message is a benign notification about a shared photo album. The URL uses the reserved 'example.com' domain, indicating it's a placeholder and not a real malicious link.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:45:20.3460394+08:00",
+      "response_received_time": "2026-05-23T22:45:25.6516376+08:00",
+      "request_duration_ms": 5306,
+      "match": 0
+    },
+    {
+      "id": 33,
+      "text_payload": "Congratulations! You have been selected for a government grant. Submit your IC and bank details here: hxxp://grant-claim.example/apply",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 95,
+        "analysis_message": "This message is a high-risk scam attempting to impersonate a government entity to collect sensitive personal and financial details. The unsolicited 'government grant' and request for IC and bank details via a non-official link are classic phishing tactics.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:45:40.6520347+08:00",
+      "response_received_time": "2026-05-23T22:45:46.2037175+08:00",
+      "request_duration_ms": 5552,
+      "match": 1
+    },
+    {
+      "id": 24,
+      "text_payload": "Parcel anda sampai hari ini. Tak perlu buat apa-apa.",
+      "expected_label": "legitimate",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 5,
+        "analysis_message": "The message is a simple notification about a parcel and explicitly states no action is required, which indicates a very low risk of scam. There are no suspicious elements or requests.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:46:01.2057268+08:00",
+      "response_received_time": "2026-05-23T22:46:05.9690248+08:00",
+      "request_duration_ms": 4763,
+      "match": 1
+    },
+    {
+      "id": 23,
+      "text_payload": "Password reset diminta. Kalau bukan anda, abaikan emel ini.",
+      "expected_label": "legitimate",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 5,
+        "analysis_message": "This is a standard security notification for a password reset request, advising the user to ignore it if they did not initiate it. There are no scam indicators like suspicious links, financial requests, or urgency.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:46:21.9762394+08:00",
+      "response_received_time": "2026-05-23T22:46:26.1673835+08:00",
+      "request_duration_ms": 4191,
+      "match": 1
+    },
+    {
+      "id": 5,
+      "text_payload": "E-dompet anda telah disekat. Kemas kini kata laluan sekarang untuk aktif semula: hxxps://wallet-help.example/reset",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 90,
+        "analysis_message": "The message creates urgency by claiming the e-wallet is blocked and demands immediate password reset via a suspicious link, which is a common credential phishing tactic to steal login details.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:46:42.1713031+08:00",
+      "response_received_time": "2026-05-23T22:46:48.0486281+08:00",
+      "request_duration_ms": 5877,
+      "match": 1
+    },
+    {
+      "id": 15,
+      "text_payload": "Kami jumpa isu pada profil you. Buka page ni untuk tengok lebih lanjut: www.account-update.example/help",
+      "expected_label": "suspicious",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The message creates urgency by stating an 'issue with your profile' and directs you to a suspicious link. The domain structure 'account-update.example' is a common phishing tactic to trick users into revealing credentials.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:47:03.0530423+08:00",
+      "response_received_time": "2026-05-23T22:47:10.2856033+08:00",
+      "request_duration_ms": 7233,
+      "match": 0
+    },
+    {
+      "id": 16,
+      "text_payload": "Sila update maklumat anda dalam portal sebelum Jumaat.",
+      "expected_label": "suspicious",
+      "predicted_label": "suspicious",
+      "return_json": {
+        "risk_score": 65,
+        "analysis_message": "The message creates urgency with a deadline and asks for information updates without specifying the portal or sender, which is a common tactic to initiate phishing attempts. This lack of context is highly suspicious.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:47:23.2947919+08:00",
+      "response_received_time": "2026-05-23T22:47:30.8382531+08:00",
+      "request_duration_ms": 7543,
+      "match": 1
+    },
+    {
+      "id": 17,
+      "text_payload": "Order anda dah diproses. Track status di sini: hxxps://track-status.example/order",
+      "expected_label": "suspicious",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 78,
+        "analysis_message": "The message is generic and does not specify the sender or order details, which is a common phishing tactic. It attempts to lure users into clicking a suspicious link under the pretext of tracking an order.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:47:43.8485820+08:00",
+      "response_received_time": "2026-05-23T22:47:52.3771578+08:00",
+      "request_duration_ms": 8529,
+      "match": 0
+    },
+    {
+      "id": 35,
+      "text_payload": "Refund available. Click here to enter your card details and receive your money back: hxxp://refund-center.example/pay",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 90,
+        "analysis_message": "This message is a phishing attempt, using the lure of a 'refund' to trick the recipient into entering sensitive card details on a suspicious link. Providing card details on an unsolicited link is extremely risky and can lead to financial fraud.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:48:04.3849840+08:00",
+      "response_received_time": "2026-05-23T22:48:09.5543817+08:00",
+      "request_duration_ms": 5169,
+      "match": 1
+    },
+    {
+      "id": 12,
+      "text_payload": "ShopeePay: Sahkan identiti anda untuk terus guna perkhidmatan ini: hxxps://sh0peepay.example/security",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 92,
+        "analysis_message": "This is a phishing attempt impersonating ShopeePay, using urgency to prompt identity verification. The URL `sh0peepay.example` is highly suspicious due to the '0' replacing 'o' in 'ShopeePay', a common typosquatting tactic.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:48:24.5581771+08:00",
+      "response_received_time": "2026-05-23T22:48:31.2670792+08:00",
+      "request_duration_ms": 6709,
+      "match": 1
+    },
+    {
+      "id": 6,
+      "text_payload": "Amaran bank: Kami kesan log masuk dari peranti lain. Sahkan TAC anda untuk elak akaun dibekukan.",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 95,
+        "analysis_message": "The message uses urgency and impersonates a bank to pressure the recipient into sharing their TAC, a critical security credential, to prevent account freezing. This is a classic phishing attempt to gain unauthorized access to bank accounts.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:48:45.2768323+08:00",
+      "response_received_time": "2026-05-23T22:48:51.0178437+08:00",
+      "request_duration_ms": 5741,
+      "match": 1
+    },
+    {
+      "id": 30,
+      "text_payload": "Courier notice: Your parcel is on hold due to unpaid fees. Pay RM2.90 to release it: hxxp://parcel-fee.example/track",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 90,
+        "analysis_message": "This message uses urgency and a small financial request to trick the recipient into clicking a suspicious link. The domain 'parcel-fee.example' is not legitimate for any courier service, indicating a phishing attempt to steal payment details.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:49:06.0281945+08:00",
+      "response_received_time": "2026-05-23T22:49:11.8864818+08:00",
+      "request_duration_ms": 5858,
+      "match": 1
+    },
+    {
+      "id": 18,
+      "text_payload": "Penting dari support: setting akaun anda perlukan perhatian.",
+      "expected_label": "suspicious",
+      "predicted_label": "suspicious",
+      "return_json": {
+        "risk_score": 65,
+        "analysis_message": "The message uses vague urgency ('Penting', 'perlukan perhatian') from an unspecified 'support' to prompt action, which is a common tactic for social engineering and phishing attempts. It lacks specific details, making it suspicious.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:49:26.8876099+08:00",
+      "response_received_time": "2026-05-23T22:49:33.2782203+08:00",
+      "request_duration_ms": 6391,
+      "match": 1
+    },
+    {
+      "id": 4,
+      "text_payload": "Notis kurier: Bungkusan anda ditahan kerana caj belum dibayar. Bayar RM2.90 untuk lepaskan bungkusan: hxxp://parcel-fee.example/track",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 92,
+        "analysis_message": "This is a classic parcel scam using urgency and a small payment request. The domain 'parcel-fee.example' is clearly fake and designed to phish for financial details.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:49:47.2929666+08:00",
+      "response_received_time": "2026-05-23T22:49:53.1927444+08:00",
+      "request_duration_ms": 5900,
+      "match": 1
+    },
+    {
+      "id": 31,
+      "text_payload": "Your e-wallet has been restricted. Update your password now to restore access: hxxps://wallet-help.example/reset",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 88,
+        "analysis_message": "The message uses urgency ('restricted', 'now') to pressure the user into updating their password, which is a common credential harvesting tactic. The provided link, while using a placeholder domain, mimics a phishing attempt by implying an e-wallet service and requesting a password reset.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:50:08.1955120+08:00",
+      "response_received_time": "2026-05-23T22:50:14.7598135+08:00",
+      "request_duration_ms": 6564,
+      "match": 1
+    },
+    {
+      "id": 11,
+      "text_payload": "MAYBANK: Kemas kini keselamatan diperlukan. Log masuk di sini: www.mayban-kini.example/login",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 90,
+        "analysis_message": "This message impersonates Maybank with an urgent security update request. The provided link uses a deceptive, look-alike domain (mayban-kini.example) which is a clear phishing attempt to steal login credentials.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:50:28.7683264+08:00",
+      "response_received_time": "2026-05-23T22:50:35.6299847+08:00",
+      "request_duration_ms": 6862,
+      "match": 1
+    },
+    {
+      "id": 32,
+      "text_payload": "Bank alert: We noticed a login from another device. Confirm your TAC to avoid account freeze.",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 95,
+        "analysis_message": "This is a highly suspicious message impersonating a bank. Banks will never ask for your TAC/OTP via SMS, and the request to 'confirm your TAC' to avoid an account freeze is a classic scam tactic to steal your credentials.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:50:49.6418674+08:00",
+      "response_received_time": "2026-05-23T22:50:56.4848328+08:00",
+      "request_duration_ms": 6843,
+      "match": 1
+    },
+    {
+      "id": 13,
+      "text_payload": "Kad hadiah percuma menanti. Buka sekarang: www.google.com/claim-reward-now.example",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 75,
+        "analysis_message": "The message uses emotional manipulation (greed) with a 'free gift' lure and mild urgency. While the URL uses the legitimate 'google.com' domain, the inclusion of '.example' in the path makes it a non-functional link, preventing direct access to a phishing site, but the overall message structure is a classic 'prize/reward' scam attempt.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:51:10.4902776+08:00",
+      "response_received_time": "2026-05-23T22:51:25.3228596+08:00",
+      "request_duration_ms": 14833,
+      "match": 1
+    },
+    {
+      "id": 14,
+      "text_payload": "Bro, cepat semak link ni bila free: hxxps://docs-review.example/file",
+      "expected_label": "suspicious",
+      "predicted_label": "suspicious",
+      "return_json": {
+        "risk_score": 55,
+        "analysis_message": "The message contains mild urgency ('cepat semak') and a link with a potentially deceptive subdomain pattern ('docs-review'). While the domain used is an example, this structure is commonly employed in phishing attempts to mimic legitimate document sharing services.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:51:31.3234414+08:00",
+      "response_received_time": "2026-05-23T22:51:42.6030284+08:00",
+      "request_duration_ms": 11280,
+      "match": 1
+    },
+    {
+      "id": 2,
+      "text_payload": "Amaran: Aktiviti luar biasa dikesan pada akaun anda. Sila sahkan segera atau akaun akan dikunci: www.mpay-security.example/verify",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 90,
+        "analysis_message": "This message uses strong urgency and fear tactics, threatening to lock the account due to 'unusual activity'. The provided link is a classic phishing attempt, designed to impersonate a payment service to steal credentials.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:51:51.6108419+08:00",
+      "response_received_time": "2026-05-23T22:51:58.4445784+08:00",
+      "request_duration_ms": 6834,
+      "match": 1
+    },
+    {
+      "id": 38,
+      "text_payload": "Your bank has sent a new notification. View it in the app.",
+      "expected_label": "legitimate",
+      "predicted_label": "suspicious",
+      "return_json": {
+        "risk_score": 65,
+        "analysis_message": "The message uses generic language ('Your bank') which is a common tactic in phishing to impersonate any bank without specifying one. While it directs to 'the app' (which is generally safer than a link), the lack of specific bank identification makes it suspicious and a potential precursor to a scam.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:52:12.4501637+08:00",
+      "response_received_time": "2026-05-23T22:52:22.4165555+08:00",
+      "request_duration_ms": 9966,
+      "match": 0
+    },
+    {
+      "id": 39,
+      "text_payload": "We noticed a login attempt from a new device. Review activity in settings.",
+      "expected_label": "legitimate",
+      "predicted_label": "suspicious",
+      "return_json": {
+        "risk_score": 62,
+        "analysis_message": "This message uses urgency and fear of account compromise, a common social engineering tactic. While it lacks a direct malicious link or financial request, its generic nature and call to action are often precursors to phishing attempts.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:52:33.4241308+08:00",
+      "response_received_time": "2026-05-23T22:52:42.2873293+08:00",
+      "request_duration_ms": 8863,
+      "match": 0
+    },
+    {
+      "id": 10,
+      "text_payload": "Peringatan terakhir: Bayar penalti cukai yang tertunggak sekarang untuk elak tindakan undang-undang: hxxps://tax-penalty.example/pay",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 92,
+        "analysis_message": "This message uses extreme urgency and fear of legal action to pressure the recipient into paying an alleged tax penalty immediately. It contains a suspicious link, typical of phishing attempts impersonating tax authorities like LHDN.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:52:54.2896535+08:00",
+      "response_received_time": "2026-05-23T22:53:01.0021974+08:00",
+      "request_duration_ms": 6713,
+      "match": 1
+    },
+    {
+      "id": 28,
+      "text_payload": "M-Pay alert: unusual activity detected. Confirm your account immediately or it will be locked: www.mpay-security.example/verify",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 92,
+        "analysis_message": "This is a high-risk phishing attempt using urgency and fear of account locking. The link is designed to impersonate a legitimate service to steal credentials.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:53:15.0028517+08:00",
+      "response_received_time": "2026-05-23T22:53:21.1615568+08:00",
+      "request_duration_ms": 6159,
+      "match": 1
+    },
+    {
+      "id": 27,
+      "text_payload": "Your bank account will be suspended in 30 minutes. Verify your login and OTP now: hxxp://mybank-secure.example/login",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 95,
+        "analysis_message": "This message uses extreme urgency ('suspended in 30 minutes', 'now') and requests sensitive banking credentials (login and OTP) via a suspicious link, which are classic phishing tactics. Sharing your OTP or login details through such a link would compromise your bank account.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:53:35.1690413+08:00",
+      "response_received_time": "2026-05-23T22:53:41.3210708+08:00",
+      "request_duration_ms": 6152,
+      "match": 1
+    },
+    {
+      "id": 9,
+      "text_payload": "Bayaran balik tersedia. Klik di sini untuk masukkan nombor kad anda dan terima wang anda kembali: hxxp://refund-center.example/pay",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 92,
+        "analysis_message": "The message uses a deceptive link to trick users into revealing their card details under the guise of a refund. This is a classic phishing attempt to steal financial information.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:53:55.3259407+08:00",
+      "response_received_time": "2026-05-23T22:54:01.7086948+08:00",
+      "request_duration_ms": 6383,
+      "match": 1
+    },
+    {
+      "id": 26,
+      "text_payload": "Support di sini. Bagi saya OTP anda supaya saya boleh check kenapa transaksi gagal.",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 95,
+        "analysis_message": "This message is a high-risk scam attempt. Legitimate support will never ask for your One-Time Password (OTP), which is meant to authorize transactions and should always be kept confidential.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:54:15.7199852+08:00",
+      "response_received_time": "2026-05-23T22:54:21.3209001+08:00",
+      "request_duration_ms": 5601,
+      "match": 1
+    },
+    {
+      "id": 1,
+      "text_payload": "Akaun bank anda akan dibekukan dalam 30 minit. Sahkan login dan TAC sekarang: hxxp://mybank-secure.example/login",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 93,
+        "analysis_message": "This message uses extreme urgency ('dibekukan dalam 30 minit') and pressure to demand immediate login and TAC verification, which are classic phishing tactics. The request for TAC and login details via a suspicious link is a high-risk indicator of a scam.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:54:36.3206932+08:00",
+      "response_received_time": "2026-05-23T22:54:42.1343205+08:00",
+      "request_duration_ms": 5814,
+      "match": 1
+    },
+    {
+      "id": 3,
+      "text_payload": "Anda telah memenangi RM10,000. Tuntut hadiah anda sebelum tengah malam: hxxps://reward-check.example/win",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 88,
+        "analysis_message": "The message offers an unsolicited large prize with an urgent deadline, a common tactic to induce panic and greed. The generic domain in the link is highly suspicious for claiming such a prize.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:54:57.1365479+08:00",
+      "response_received_time": "2026-05-23T22:55:03.7202687+08:00",
+      "request_duration_ms": 6584,
+      "match": 1
+    },
+    {
+      "id": 36,
+      "text_payload": "Final reminder: Pay your overdue tax penalty now to avoid legal action: hxxps://tax-penalty.example/pay",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 92,
+        "analysis_message": "The message uses strong urgency and fear tactics ('Final reminder', 'pay now', 'avoid legal action') to pressure the recipient into paying a 'tax penalty'. The provided link is suspicious and likely leads to a phishing site designed to collect payments or personal information.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:55:17.7284533+08:00",
+      "response_received_time": "2026-05-23T22:55:23.6386558+08:00",
+      "request_duration_ms": 5910,
+      "match": 1
+    },
+    {
+      "id": 7,
+      "text_payload": "Tahniah! Anda dipilih untuk bantuan kerajaan. Hantar IC dan butiran bank di sini: hxxp://grant-claim.example/apply",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 92,
+        "analysis_message": "This message is a classic phishing attempt, impersonating the government to offer 'bantuan kerajaan'. It deceptively requests sensitive personal (IC) and financial (bank details) information via a suspicious link, which is a high-risk scam indicator.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:55:38.6453640+08:00",
+      "response_received_time": "2026-05-23T22:55:44.8468816+08:00",
+      "request_duration_ms": 6202,
+      "match": 1
+    },
+    {
+      "id": 8,
+      "text_payload": "Akaun anda akan dipadam hari ini jika anda tidak sahkan identiti: hxxps://account-review.example/confirm",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 90,
+        "analysis_message": "The message uses strong urgency and a threat of account deletion to pressure the recipient into clicking a suspicious link for identity verification, which is a common phishing tactic to steal credentials.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:55:58.8515449+08:00",
+      "response_received_time": "2026-05-23T22:56:05.5249115+08:00",
+      "request_duration_ms": 6673,
+      "match": 1
+    },
+    {
+      "id": 19,
+      "text_payload": "Sila sahkan penerimaan dokumen yang dikongsi tadi.",
+      "expected_label": "suspicious",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 5,
+        "analysis_message": "This is a normal request for confirmation of document receipt with no scam indicators like urgency, financial requests, or suspicious links.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:56:19.5380615+08:00",
+      "response_received_time": "2026-05-23T22:56:23.1505030+08:00",
+      "request_duration_ms": 3612,
+      "match": 0
+    },
+    {
+      "id": 29,
+      "text_payload": "You have won RM10,000. Claim your prize before midnight: hxxps://reward-check.example/win",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 88,
+        "analysis_message": "This message is a classic 'lucky draw' scam, using an unsolicited prize notification and urgency ('before midnight') to pressure you into clicking a suspicious link. Such links often lead to phishing sites designed to steal personal or financial information.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:56:40.1612992+08:00",
+      "response_received_time": "2026-05-23T22:56:45.9237120+08:00",
+      "request_duration_ms": 5762,
+      "match": 1
+    },
+    {
+      "id": 21,
+      "text_payload": "Akaun bank anda ada notifikasi baru. Buka dalam app sahaja.",
+      "expected_label": "legitimate",
+      "predicted_label": "suspicious",
+      "return_json": {
+        "risk_score": 48,
+        "analysis_message": "This message is suspicious due to its vague, unsolicited nature regarding a bank account notification without identifying the bank. While advising to open in the app is generally good, the message's intent is to create curiosity or urgency, often a precursor to social engineering attempts.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:57:00.9275249+08:00",
+      "response_received_time": "2026-05-23T22:57:09.7897876+08:00",
+      "request_duration_ms": 8862,
+      "match": 0
+    },
+    {
+      "id": 34,
+      "text_payload": "Your account will be deleted today unless you verify your identity: hxxps://account-review.example/confirm",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 88,
+        "analysis_message": "The message uses strong urgency ('will be deleted today unless you verify') and a threat of account loss to pressure the recipient. The generic 'your account' combined with a request to 'verify identity' via an external link is a common phishing tactic to steal credentials.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:57:21.7990471+08:00",
+      "response_received_time": "2026-05-23T22:57:28.8367835+08:00",
+      "request_duration_ms": 7038,
+      "match": 1
+    },
+    {
+      "id": 22,
+      "text_payload": "Reminder team: hantar timesheet sebelum 5 petang.",
+      "expected_label": "legitimate",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 2,
+        "analysis_message": "This is a standard work reminder with no scam indicators, financial requests, or suspicious links. The deadline is a normal operational request.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:57:41.8373079+08:00",
+      "response_received_time": "2026-05-23T22:57:46.5997671+08:00",
+      "request_duration_ms": 4762,
+      "match": 1
+    },
+    {
+      "id": 25,
+      "text_payload": "Security notice: Kami kesan log masuk dari lokasi baru. Kalau ini anda, tiada tindakan lanjut diperlukan.",
+      "expected_label": "legitimate",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 15,
+        "analysis_message": "This is a standard security notification for a new login detection, which is common for legitimate services. There are no suspicious links, financial requests, or urgency tactics present, making it low risk.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:58:02.6020867+08:00",
+      "response_received_time": "2026-05-23T22:58:08.5173848+08:00",
+      "request_duration_ms": 5915,
+      "match": 1
+    },
+    {
+      "id": 40,
+      "text_payload": "Your verification code is 482913. Do not share this code with anyone.",
+      "expected_label": "legitimate",
+      "predicted_label": "legitimate",
+      "return_json": {
+        "risk_score": 5,
+        "analysis_message": "This is a standard verification code notification with a clear warning not to share it, which is a security best practice. There are no scam indicators present in this message alone.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:58:23.5307561+08:00",
+      "response_received_time": "2026-05-23T22:58:28.6768361+08:00",
+      "request_duration_ms": 5146,
+      "match": 1
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "run_at": "2026-05-23T22:03:02",
+  "url": "http://localhost:8080/analyze",
+  "count": 2,
+  "interval_seconds": 20,
+  "results": [
+    {
+      "id": 11,
+      "text_payload": "MAYBANK: Kemas kini keselamatan diperlukan. Log masuk di sini: www.mayban-kini.example/login",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 90,
+        "analysis_message": "The message impersonates Maybank with an urgent security update request. The provided link uses a deceptive domain (mayban-kini.example) which is a clear phishing attempt to steal login credentials.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:02:47.3059777+08:00",
+      "response_received_time": "2026-05-23T22:02:54.6775603+08:00",
+      "request_duration_ms": 7372,
+      "match": 1
+    },
+    {
+      "id": 33,
+      "text_payload": "Congratulations! You have been selected for a government grant. Submit your IC and bank details here: hxxp://grant-claim.example/apply",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 93,
+        "analysis_message": "This message uses emotional manipulation ('Congratulations!') and impersonates a government entity to offer a 'grant'. It requests sensitive personal (IC) and financial (bank) details via a suspicious, non-official link, which is a common phishing tactic to steal personal information.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:02:54.8272260+08:00",
+      "response_received_time": "2026-05-23T22:03:02.0145829+08:00",
+      "request_duration_ms": 7187,
+      "match": 1
+    }
+  ]
+}

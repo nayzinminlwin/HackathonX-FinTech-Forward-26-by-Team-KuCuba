@@ -6,16 +6,22 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 /// Pipeline Step 3: Called only when Safe Browsing (Step 2) has NOT flagged
 /// a threat. Uses the exact few-shot system prompt from Phase 1 §2.5.
 class GeminiService {
-  final GenerativeModel _model;
+  static const String defaultModelName = 'gemini-2.5-flash-lite';
 
-  GeminiService({required String apiKey})
-      : _model = GenerativeModel(
-          model: 'gemini-2.5-flash',
+  final GenerativeModel _model;
+  final String modelName;
+
+  GeminiService({
+    required String apiKey,
+    this.modelName = defaultModelName,
+  }) : _model = GenerativeModel(
+          model: modelName,
           apiKey: apiKey,
           systemInstruction: Content.text(_systemPrompt),
           generationConfig: GenerationConfig(
             temperature: 0.1,
             responseMimeType: 'application/json',
+            maxOutputTokens: 160,
           ),
         );
 
@@ -23,12 +29,18 @@ class GeminiService {
   static const String _systemPrompt = '''
 You are an expert Malaysian cybersecurity analyst specialising in scam detection.
 Analyse the following text message or conversation. Evaluate for:
-- Urgency tactics and pressure language
-- Financial requests (bank transfers, e-wallet top-ups, TAC/OTP sharing)
-- Emotional manipulation (fear, greed, sympathy)
-- Impersonation of authorities (PDRM, LHDN, Bank Negara, Pos Malaysia)
-- Suspicious links or requests to install apps
+  1. Look-alike or typosquatting domains, including missing letters or number substitutions.
+  2. Deceptive subdomains where a trusted brand appears before the real registered domain.
+  3. URL shorteners or obfuscated links that hide the final destination. A shortener alone is not proof of a scam; treat it as caution/grey-area evidence and focus on the surrounding message intent.
+  4. Non-standard or cheap TLDs used with trusted brand names, such as .xyz, .top, .cc, or .biz.
+  5. Open redirect patterns where a trusted domain contains redirect, url, next, or target parameters to another site.
 
+LANGUAGE:
+- If the input message is in Malay, respond in Malay.
+- If the input message is in English, respond in English.
+- If the input mixes languages, use the dominant language.
+SCORING CALIBRATION:
+- If the only concern is a shortened URL and the message is otherwise normal, score 31-45 (caution/yellow), not green and not high-risk.
 EXAMPLES OF KNOWN MALAYSIAN SCAMS:
 1. "Polis here. Your IC linked to money laundering case. Transfer RM5,000 to this acc to clear your name." → risk_score: 95
 2. "Tahniah! You won RM10,000 Shopee voucher. Click link to claim: bit.ly/xy123" → risk_score: 88
@@ -50,10 +62,17 @@ RESPOND WITH ONLY VALID JSON IN THIS EXACT FORMAT:
   ///
   /// Returns `null` if the API call fails, the response is empty,
   /// or the response cannot be parsed as valid JSON.
-  Future<Map<String, dynamic>?> analyzeText(String text) async {
+  Future<Map<String, dynamic>?> analyzeText(
+    String text, {
+    String? urlContext,
+  }) async {
     try {
+      final promptText = urlContext == null || urlContext.trim().isEmpty
+          ? text
+          : '$text\n\nURL analysis context:\n$urlContext';
+
       final response = await _model.generateContent([
-        Content.text(text),
+        Content.text(promptText),
       ]);
 
       final responseText = response.text;

@@ -4,6 +4,12 @@ Formal **test run reports** and validation notes (checklists, curl/API results, 
 
 This folder is separate from **`docs/dev_logs/`**, which is split by git branch (`dev0` / `dev1` = backend, `dev2` = frontend). See [`../dev_logs/README.md`](../dev_logs/README.md).
 
+## Folders
+
+| Folder | Contents |
+|--------|----------|
+| [`AI_Accuracy_TestResults/`](AI_Accuracy_TestResults/) | Raw JSON result exports from AI accuracy and backend timing runs. |
+
 ## Naming
 
 Prefer: `YYYY-MM-DD_<scope>.md` or a descriptive title (e.g. `Phase_1_and_2_Test_Results.md`).

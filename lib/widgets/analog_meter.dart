@@ -85,8 +85,8 @@ class _AnalogMeterState extends State<AnalogMeter>
   @override
   Widget build(BuildContext context) {
     final c = widget.compact;
-    final double w = c ? 200 : 280;
-    final double h = c ? 125 : 170;
+    final double w = c ? 184 : 280;
+    final double h = c ? 104 : 170;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -107,7 +107,7 @@ class _AnalogMeterState extends State<AnalogMeter>
           ),
         ),
 
-        const SizedBox(height: 10),
+        SizedBox(height: c ? 6 : 10),
 
         // ── Score number ──
         Text(
@@ -119,7 +119,7 @@ class _AnalogMeterState extends State<AnalogMeter>
           ),
         ),
 
-        const SizedBox(height: 2),
+        SizedBox(height: c ? 0 : 2),
 
         // ── Verbal label ──
         Text(
@@ -176,8 +176,7 @@ class _GaugePainter extends CustomPainter {
   }
 
   // ── 1. Seven coloured arc segments with gaps ──
-  void _drawArcSegments(
-      Canvas canvas, Offset center, double r, double thick) {
+  void _drawArcSegments(Canvas canvas, Offset center, double r, double thick) {
     const n = 7;
     const gap = 0.05; // radians between segments (~2.9°)
     const sweep = (pi - (n - 1) * gap) / n; // per-segment arc
@@ -197,8 +196,7 @@ class _GaugePainter extends CustomPainter {
   }
 
   // ── 2. LOW / MEDIUM / HIGH labels ──
-  void _drawLabels(
-      Canvas canvas, Offset center, double r, double thick) {
+  void _drawLabels(Canvas canvas, Offset center, double r, double thick) {
     final style = TextStyle(
       color: _navy,
       fontSize: compact ? 10 : 13,
@@ -207,17 +205,17 @@ class _GaugePainter extends CustomPainter {
     );
     final labelR = r + thick / 2 + (compact ? 10 : 14);
 
-    // LOW — lower-left, rotated 60° CCW so it follows the arc
+    // LOW — lower-left, horizontal
     _paintLabel(canvas, 'LOW', style, center, labelR,
-        posAngle: pi + 0.25, rotation: pi / 3);
+        posAngle: pi + 0.25, rotation: 0);
 
     // MEDIUM — top centre, horizontal
     _paintLabel(canvas, 'MEDIUM', style, center, labelR,
         posAngle: 3 * pi / 2, rotation: 0);
 
-    // HIGH — lower-right, rotated 60° CW
+    // HIGH — lower-right, horizontal
     _paintLabel(canvas, 'HIGH', style, center, labelR,
-        posAngle: 2 * pi - 0.25, rotation: -pi / 3);
+        posAngle: 2 * pi - 0.25, rotation: 0);
   }
 
   void _paintLabel(
@@ -245,8 +243,7 @@ class _GaugePainter extends CustomPainter {
   }
 
   // ── 3. Tapered needle ──
-  void _drawNeedle(
-      Canvas canvas, Offset center, double r, double thick) {
+  void _drawNeedle(Canvas canvas, Offset center, double r, double thick) {
     final nAngle = pi + value * pi; // 0 → π (left), 1 → 2π (right)
     final nLen = r - thick * 0.7; // stop before the arc stroke
 

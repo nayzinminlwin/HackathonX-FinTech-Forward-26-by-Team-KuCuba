@@ -1,0 +1,328 @@
+{
+  "label_categories": ["scam", "suspicious", "legitimate"],
+  "risk_score_ranges": {
+    "legitimate": "0 - 25",
+    "suspicious": "26 - 69",
+    "scam": "70 - 100"
+  },
+  "test_cases": [
+    {
+      "id": 1,
+      "text_payload": "CIMB Amaran: Akaun anda akan dibekukan dalam 30 minit kerana aktiviti mencurigakan. Sahkan identiti segera: https://cimbclicks-verify.com/login",
+      "expected_label": "scam",
+      "expected_analysis": "Impersonasi bank dengan ancaman mendesak. Menggunakan domain typosquatting (cimbclicks-verify.com) berbanding domain rasmi."
+    },
+    {
+      "id": 2,
+      "text_payload": "TNG eWallet: Aktiviti luar biasa dikesan. Sila sahkan akaun anda segera atau baki anda akan disekat: https://tng-ewallet-update.net/verify",
+      "expected_label": "scam",
+      "expected_analysis": "Notis palsu dompet digital dengan elemen ketakutan dan pautan palsu yang meniru jenama rasmi."
+    },
+    {
+      "id": 3,
+      "text_payload": "Tahniah! Nombor anda terpilih memenangi Cabutan Bertuah Shopee RM10,000. Tuntut hadiah sebelum 12 malam: https://shopee-spin-win.info",
+      "expected_label": "scam",
+      "expected_analysis": "Taktik phishing memancing mangsa dengan ganjaran palsu dan tarikh luput yang mendesak."
+    },
+    {
+      "id": 4,
+      "text_payload": "J&T Express: Bungkusan anda (Tracking: JT88192) ditahan. Bayar caj insurans RM2.90 untuk teruskan penghantaran: https://jtexpress-my-fee.com",
+      "expected_label": "scam",
+      "expected_analysis": "Scam kurier yang biasa digunakan untuk mencuri butiran kad kredit melalui bayaran yang kecil (RM2.90)."
+    },
+    {
+      "id": 5,
+      "text_payload": "Notis MAE: Log masuk dari peranti baharu (iPhone 14) dikesan. Jika ini bukan anda, batal segera: https://maybank2u-sec.com/cancel",
+      "expected_label": "scam",
+      "expected_analysis": "Amaran log masuk palsu yang direka untuk mencuri kelayakan perbankan mangsa melalui pautan palsu."
+    },
+    {
+      "id": 6,
+      "text_payload": "Pegawai LHDN: Anda mempunyai tunggakan cukai RM4,500. Sila beri nombor TAC yang dihantar sebentar tadi untuk semakan pembatalan penalti.",
+      "expected_label": "scam",
+      "expected_analysis": "Taktik 'vishing/smishing' di mana scammer terus meminta TAC untuk memintas keselamatan 2FA mangsa."
+    },
+    {
+      "id": 7,
+      "text_payload": "Sumbangan Tunai Rahmah (STR) Fasa 3 kini dikreditkan! Sila kemas kini akaun bank anda untuk terima RM600: https://str-sumbangan-my.org",
+      "expected_label": "scam",
+      "expected_analysis": "Mengeksploitasi inisiatif kerajaan (STR) sebenar menggunakan domain meragukan (.org) bukan domain .gov.my."
+    },
+    {
+      "id": 8,
+      "text_payload": "Instagram Support: Your account has been reported for copyright violation. Appeal here within 24 hours: https://instagram-support-review.com",
+      "expected_label": "scam",
+      "expected_analysis": "Scam pengambilalihan akaun media sosial menggunakan ancaman pemadaman hak cipta dan domain palsu."
+    },
+    {
+      "id": 9,
+      "text_payload": "TNB: Lebihan bayaran bil elektrik dikesan. Sila tuntut pemulangan wang (refund) RM120 anda di sini: https://tnb-refund-portal.net",
+      "expected_label": "scam",
+      "expected_analysis": "Scam bayaran balik yang direka bentuk untuk mencuri maklumat perbankan dalam talian mangsa."
+    },
+    {
+      "id": 10,
+      "text_payload": "PDRM: Terdapat 2 saman trafik tertunggak pada kenderaan anda. Bayar segera untuk elak waran tangkap: https://saman-pdrm-my.com/bayar",
+      "expected_label": "scam",
+      "expected_analysis": "Mengeksploitasi rasa takut terhadap agensi penguatkuasaan undang-undang menggunakan domain yang bukan milik kerajaan."
+    },
+    {
+      "id": 11,
+      "text_payload": "Netflix: Your payment for the current billing cycle failed. Update your billing info to continue watching: https://netflix-payment-failed.com",
+      "expected_label": "scam",
+      "expected_analysis": "Scam langganan perkhidmatan penstriman yang disasarkan untuk mengumpul butiran kad kredit secara global."
+    },
+    {
+      "id": 12,
+      "text_payload": "ShopeePay: Sahkan identiti anda untuk terus guna perkhidmatan. Sila log masuk MyKad anda: https://sh0pee-pay.com.my/security",
+      "expected_label": "scam",
+      "expected_analysis": "Typosquatting yang sangat halus ('sh0pee' dengan angka sifar) untuk memperdaya mata pengguna."
+    },
+    {
+      "id": 13,
+      "text_payload": "Apple ID Locked: We detected unusual activity. Please unlock your account at https://appleid-locked-verify.com",
+      "expected_label": "scam",
+      "expected_analysis": "Impersonasi Apple ID yang lazim digunakan untuk mencuri kata laluan dan data sandaran iCloud pengguna."
+    },
+    {
+      "id": 14,
+      "text_payload": "HR Dept: Sila semak dokumen permohonan cuti terkini di pautan ini: https://docs-google-com.view-file.info/hr-leave",
+      "expected_label": "scam",
+      "expected_analysis": "Pautan kelihatan seperti Google Docs tetapi domain sebenar ialah 'view-file.info', direka untuk mencuri kredensial tempat kerja."
+    },
+    {
+      "id": 15,
+      "text_payload": "Bro, tgk gambar lama kita ni, kelakar gila! 😂 https://bit.ly/fb-pic-99",
+      "expected_label": "suspicious",
+      "expected_analysis": "Sangat mencurigakan. Penyingkat URL (bit.ly) sering digabungkan dengan kejuruteraan sosial untuk menyebarkan malware."
+    },
+    {
+      "id": 16,
+      "text_payload": "Sila kemas kini maklumat HR anda dalam portal dalaman syarikat sebelum jam 5 petang hari Jumaat ini.",
+      "expected_label": "suspicious",
+      "expected_analysis": "Mungkin mesej kerja yang sah (tiada pautan), namun kekurangan nama pengirim atau syarikat menjadikannya meragukan dan berpotensi memulakan smishing."
+    },
+    {
+      "id": 17,
+      "text_payload": "Hi, saya dari kurier. Rumah takde orang ke? Boleh share location kat WhatsApp ni? https://wa.me/60112345678",
+      "expected_label": "suspicious",
+      "expected_analysis": "Kawasan kelabu. Penghantar barang mungkin menggunakan nombor peribadi, tetapi boleh juga menjadi taktik scammer memancing interaksi WhatsApp."
+    },
+    {
+      "id": 18,
+      "text_payload": "Penting: Akaun anda sedang disemak untuk pematuhan polisi. Hubungi 1-800-88-XXXX untuk bantuan lanjut.",
+      "expected_label": "suspicious",
+      "expected_analysis": "Nombor toll-free mungkin sah, tetapi tanpa menyatakan nama syarikat (Bank? Telco?), ia kelihatan seperti amaran generik yang menipu."
+    },
+    {
+      "id": 19,
+      "text_payload": "Your manager has shared a highly confidential document with you via Dropbox: https://dropbox-share-files.net/view",
+      "expected_label": "scam",
+      "expected_analysis": "Penipuan CEO/Pengurus yang menggunakan domain Dropbox palsu untuk mencuri maklumat sulit syarikat."
+    },
+    {
+      "id": 20,
+      "text_payload": "Tawaran kerja Part-Time! Gaji RM300-RM500 sehari. Hanya like dan share video YouTube. PM WhatsApp saya segera: https://wa.me/60149876543",
+      "expected_label": "scam",
+      "expected_analysis": "Scam tawaran pekerjaan (Task Scam) yang memulakan perbualan di WhatsApp sebelum meminta deposit."
+    },
+    {
+      "id": 21,
+      "text_payload": "MAYBANK: Pemindahan RM150.00 kepada ALI BIN ABU berjaya. Sila log masuk ke aplikasi MAE untuk lihat resit.",
+      "expected_label": "legitimate",
+      "expected_analysis": "Notifikasi bank standard yang selamat. Ia mengarahkan pengguna membuka aplikasi rasmi tanpa menyediakan sebarang pautan."
+    },
+    {
+      "id": 22,
+      "text_payload": "Reminder: All staff must submit their monthly timesheets to https://bamboohr.com by 5 PM today.",
+      "expected_label": "legitimate",
+      "expected_analysis": "Peringatan tempat kerja yang menggunakan platform HR sah (BambooHR) tanpa teknik mendesak atau manipulasi."
+    },
+    {
+      "id": 23,
+      "text_payload": "Google: Seseorang telah mengetahui kata laluan anda. Semak aktiviti log masuk terkini di https://myaccount.google.com",
+      "expected_label": "legitimate",
+      "expected_analysis": "Amaran rasmi Google yang mengarahkan ke domain sebenar (myaccount.google.com) tanpa menggunakan pautan terus."
+    },
+    {
+      "id": 24,
+      "text_payload": "Shopee: Bungkusan SPXMY01928374 sedang dalam perjalanan. Semak aplikasi Shopee untuk kemas kini langsung.",
+      "expected_label": "legitimate",
+      "expected_analysis": "Kemas kini status bungkusan yang sah yang mempromosikan penyemakan dalam aplikasi rasmi."
+    },
+    {
+      "id": 25,
+      "text_payload": "Microsoft: Unusual sign-in activity detected. Please review your recent activity at https://aka.ms/mysecurity",
+      "expected_label": "legitimate",
+      "expected_analysis": "Aka.ms adalah domain penyingkat URL rasmi Microsoft, menjadikannya mesej keselamatan yang sah walaupun kelihatan seperti pautan pendek."
+    },
+    {
+      "id": 26,
+      "text_payload": "Salam encik, saya tersalah letak nombor fon masa register WhatsApp. Boleh tak encik bagi kod 6 digit SMS tu balik kat saya?",
+      "expected_label": "scam",
+      "expected_analysis": "Cubaan pengambilalihan akaun WhatsApp melalui serangan kejuruteraan sosial secara peribadi (meminta kod 6-digit)."
+    },
+    {
+      "id": 27,
+      "text_payload": "KWSP: Sila kemas kini butiran i-Akaun anda bagi pengeluaran Fleksibel. Layari https://epf-kwsp-withdrawal.com",
+      "expected_label": "scam",
+      "expected_analysis": "Impersonasi Kumpulan Wang Simpanan Pekerja (KWSP) dengan domain palsu yang memancing data sensitif ahlinya."
+    },
+    {
+      "id": 28,
+      "text_payload": "Binance: Mandatory KYC update required. Failure to verify will result in account suspension: https://binance-kyc-update.com",
+      "expected_label": "scam",
+      "expected_analysis": "Ancaman penggantungan bursa kripto yang berniat untuk mencuri identiti atau dompet mata wang kripto."
+    },
+    {
+      "id": 29,
+      "text_payload": "Panggilan Video Terlepas daripada 'PDRM IPK KL'. Sila klik pautan ini untuk memuat turun app i-Polis: https://app-ipolis-apk.com",
+      "expected_label": "scam",
+      "expected_analysis": "Scam pemasangan malware (fail APK) berkedok polis yang membolehkan penjenayah memintas SMS TAC."
+    },
+    {
+      "id": 30,
+      "text_payload": "Maxis: Bil tertunggak RM120. Bayar dalam 2 jam atau talian anda akan dipotong: https://maxis-pay-portal.net",
+      "expected_label": "scam",
+      "expected_analysis": "Ancaman pemotongan talian palsu. Maxis sebenar tidak akan meminta bayaran melalui domain berakhiran .net yang pelik."
+    },
+    {
+      "id": 31,
+      "text_payload": "AirAsia: Your flight AK511 has been cancelled. Claim your full refund here: https://airasia-refund-claims.net",
+      "expected_label": "scam",
+      "expected_analysis": "Mengeksploitasi kekecewaan pelanggan syarikat penerbangan menggunakan penipuan portal bayaran balik."
+    },
+    {
+      "id": 32,
+      "text_payload": "Tawaran Pinjaman Peribadi Koperasi! Faedah serendah 1%. Lulus segera. Sila hubungi Puan Aisyah: https://wa.me/60181122334",
+      "expected_label": "suspicious",
+      "expected_analysis": "Iklan pinjaman tidak berlesen (Along) atau scam pinjaman palsu yang memancing interaksi melalui WhatsApp."
+    },
+    {
+      "id": 33,
+      "text_payload": "Telegram: Seseorang log masuk ke akaun anda dari Rusia. Batal log masuk ini di: https://telegram-web-cancel.com",
+      "expected_label": "scam",
+      "expected_analysis": "Amaran keselamatan palsu. Jika mangsa mengklik, mereka tanpa sedar akan menyerahkan sesi Telegram web mereka."
+    },
+    {
+      "id": 34,
+      "text_payload": "Grab: Dapatkan diskaun 20% untuk tunggangan seterusnya dengan kod GRAB20 di aplikasi Grab. Sah hingga Ahad.",
+      "expected_label": "legitimate",
+      "expected_analysis": "Mesej promosi rasmi yang mengarahkan pengguna untuk terus menggunakan kod promosi di dalam aplikasi rasmi."
+    },
+    {
+      "id": 35,
+      "text_payload": "Klinik Kesihatan Seri Kembangan: Temujanji anda pada 25 Mei, jam 9.00 pagi. Sila bawa buku rekod.",
+      "expected_label": "legitimate",
+      "expected_analysis": "Peringatan temujanji perubatan yang informatif tanpa memancing interaksi mencurigakan."
+    },
+    {
+      "id": 36,
+      "text_payload": "MySejahtera: Status vaksinasi anda perlu diperbaharui. Kemas kini segera di: https://mysejahtera-update.com",
+      "expected_label": "scam",
+      "expected_analysis": "Impersonasi aplikasi kesihatan nasional menggunakan domain palsu untuk mencuri butiran peribadi identiti."
+    },
+    {
+      "id": 37,
+      "text_payload": "GitHub: Your 2FA authentication code is 881292. This code expires in 10 minutes.",
+      "expected_label": "legitimate",
+      "expected_analysis": "Mesej pengesahan dua faktor (2FA) yang sangat standard dan selamat."
+    },
+    {
+      "id": 38,
+      "text_payload": "LHDN: Pengesahan e-Filing bagi Tahun Taksiran 2025 telah diterima. Sila simpan rekod peribadi anda.",
+      "expected_label": "legitimate",
+      "expected_analysis": "Pemberitahuan automatik berhubung pengesahan cukai tanpa sebarang pautan pihak ketiga."
+    },
+    {
+      "id": 39,
+      "text_payload": "Your WhatsApp verification code is 123-456. Do not share this code with anyone.",
+      "expected_label": "legitimate",
+      "expected_analysis": "Mesej log masuk sah yang disertakan bersama amaran keselamatan yang jelas mengenai kerahsiaan kod."
+    },
+    {
+      "id": 40,
+      "text_payload": "Maxis: Bil bulan ini adalah RM98.00. Anda boleh membuat bayaran terus menerusi aplikasi Hotlink/Maxis.",
+      "expected_label": "legitimate",
+      "expected_analysis": "Penyata bil telco yang selamat, menasihati pelanggan agar membuat bayaran di platform rasmi aplikasi telco."
+    },
+    {
+      "id": 41,
+      "text_payload": "Pos Laju: Penghantaran gagal kerana alamat tidak lengkap. Kemas kini alamat penghantaran anda: https://poslaju-tracking-my.com",
+      "expected_label": "scam",
+      "expected_analysis": "Scam penghantaran yang popular. Domain palsu menyerupai khidmat pos nasional untuk mendapatkan butiran kad kredit/debit."
+    },
+    {
+      "id": 42,
+      "text_payload": "Alert! Your Amazon account has been compromised. Verify your details within 24hrs: https://amazon-security-resolve.net",
+      "expected_label": "scam",
+      "expected_analysis": "Pancingan data log masuk e-dagang skala global yang memanfaatkan panik palsu dan URL menipu."
+    },
+    {
+      "id": 43,
+      "text_payload": "Hi, i'm Emily from HR recruitment. We saw your resume and have a remote job for you. Salary 3000 USD/m. Reply YES to proceed.",
+      "expected_label": "suspicious",
+      "expected_analysis": "Taktik biasa untuk penipuan tawaran pekerjaan 'cold-messaging' luar negara. Walaupun tiada pautan, taktik ini mensasarkan mangsa yang responsif."
+    },
+    {
+      "id": 44,
+      "text_payload": "Zoom: Your upcoming meeting is starting in 5 minutes. Join now: https://zoom-meeting-invite.info/j/8273645",
+      "expected_label": "scam",
+      "expected_analysis": "Pautan undangan mesyuarat palsu yang kebiasaannya direka untuk mengunduh perisian perosak ke dalam sistem pengguna."
+    },
+    {
+      "id": 45,
+      "text_payload": "Perodua Service Center: Servis kereta anda telah tamat tempoh pada 15 Mei 2026. Hubungi wakil sah kami untuk temujanji.",
+      "expected_label": "legitimate",
+      "expected_analysis": "Notifikasi penjagaan perkhidmatan kenderaan yang sah tanpa desakan berbahaya."
+    },
+    {
+      "id": 46,
+      "text_payload": "MAB (Malaysia Airlines): Tempahan tiket penerbangan MH123 anda telah disahkan. Sila rujuk emel untuk salinan e-tiket.",
+      "expected_label": "legitimate",
+      "expected_analysis": "Pengesahan penerbangan biasa yang sah dan merujuk penerima kepada sistem emel rasmi mereka."
+    },
+    {
+      "id": 47,
+      "text_payload": "We detected an unauthorized transaction of RM3000 on your card ending in 9872. Reply 'N' if this wasn't you, or call 1-800-88-FAKE.",
+      "expected_label": "scam",
+      "expected_analysis": "Penipuan pancingan suara (vishing). Pengguna yang membalas akan disasarkan untuk mencuri OTP semasa mereka 'membantu' batalkan transaksi palsu."
+    },
+    {
+      "id": 48,
+      "text_payload": "Hai! Jemput join group WhatsApp komuniti taman kita kat sini: https://chat.whatsapp.com/invite/Ah3sjk921",
+      "expected_label": "legitimate",
+      "expected_analysis": "Standard community WhatsApp group invite. Contains no malicious indicators or deceptive context."
+    },
+    {
+      "id": 49,
+      "text_payload": "Bank Negara Malaysia (BNM): Akaun anda terlibat dalam pengubahan wang haram. Muat turun app keselamatan BNM di https://bnm-secure-app.com",
+      "expected_label": "scam",
+      "expected_analysis": "Impersonasi autoriti pusat tertinggi kewangan negara untuk memaksa muat turun perisian berniat jahat (APK)."
+    },
+    {
+      "id": 50,
+      "text_payload": "Your YouTube Premium subscription will renew automatically tomorrow. View details in your YouTube App settings.",
+      "expected_label": "legitimate",
+      "expected_analysis": "Notifikasi langganan yang telus yang meminta pembaharuan dilakukan terus ke dalam profil aplikasi asal."
+    },
+    {
+      "id": 51,
+      "text_payload": "Makluman PDRM: Sila muat turun fail APK rasmi saman trafik di pautan: http://103.45.67.89/app/mySaman.apk",
+      "expected_label": "scam",
+      "expected_analysis": "Pautan terus ke fail APK menggunakan alamat IP (tanpa domain rasmi) merupakan taktik utama penyebaran malware (Trojan) perbankan yang kerap dikesan dan disenaraihitamkan oleh enjin Google Safe Browsing."
+    },
+    {
+      "id": 52,
+      "text_payload": "Facebook Security: Your account is scheduled for deletion. Verify immediately at: http://fb-security-appeal.freecluster.eu/login",
+      "expected_label": "scam",
+      "expected_analysis": "Penggunaan perkhidmatan pengehosan percuma atau subdomain tahap rendah (seperti .freecluster.eu) untuk menghoskan halaman phishing (credential harvesting). Struktur URL sebegini adalah sasaran utama sekatan Safe Browsing."
+    },
+    {
+      "id": 53,
+      "text_payload": "Maybank2u Alert: Your account is locked. Please recover your access via our secure server: https://m2u-recovery.firebaseapp.com",
+      "expected_label": "scam",
+      "expected_analysis": "Penyalahgunaan infrastruktur awan yang sah (seperti Google Firebase - firebaseapp.com) untuk menghoskan halaman log masuk palsu. Walaupun menggunakan HTTPS, taktik ini kerap dilaporkan dan disekat pantas oleh pangkalan data Safe Browsing."
+    }
+  ]
+}

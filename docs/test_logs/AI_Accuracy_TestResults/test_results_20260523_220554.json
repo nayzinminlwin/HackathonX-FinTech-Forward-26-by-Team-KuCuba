@@ -1,0 +1,38 @@
+{
+  "run_at": "2026-05-23T22:05:54",
+  "url": "http://localhost:8080/analyze",
+  "count": 2,
+  "interval_seconds": 20,
+  "results": [
+    {
+      "id": 13,
+      "text_payload": "Kad hadiah percuma menanti. Buka sekarang: www.google.com/claim-reward-now.example",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 85,
+        "analysis_message": "The message uses a common 'free gift card' lure with urgency ('Buka sekarang'). Although the domain appears to be google.com, the path 'claim-reward-now.example' is highly suspicious and not typical for a legitimate promotion, indicating a social engineering attempt.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:05:27.2928850+08:00",
+      "response_received_time": "2026-05-23T22:05:45.1775216+08:00",
+      "request_duration_ms": 17885,
+      "match": 1
+    },
+    {
+      "id": 27,
+      "text_payload": "Your bank account will be suspended in 30 minutes. Verify your login and OTP now: hxxp://mybank-secure.example/login",
+      "expected_label": "scam",
+      "predicted_label": "scam",
+      "return_json": {
+        "risk_score": 95,
+        "analysis_message": "This message uses extreme urgency and a threat of account suspension to pressure the recipient into sharing login credentials and OTP via a suspicious link. This is a classic phishing attempt designed to steal banking information.",
+        "analysis_source": "gemini"
+      },
+      "request_start_time": "2026-05-23T22:05:48.2333223+08:00",
+      "response_received_time": "2026-05-23T22:05:54.8116772+08:00",
+      "request_duration_ms": 6578,
+      "match": 1
+    }
+  ]
+}
