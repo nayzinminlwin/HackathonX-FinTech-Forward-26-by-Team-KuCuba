@@ -167,36 +167,44 @@ sequenceDiagram
   participant Client as Flutter/Kotlin client
   participant Server as Shelf POST /analyze
   participant Handler as AnalyzeHandler
-  participant Links as LinkExtractor
+  participant Extractor as LinkExtractor
   participant Expander as UrlExpander
   participant Safe as SafeBrowsing
   participant Gemini as GeminiService
 
   Client->>Server: {"text_payload":"..."}
-  Server->>Handler: request body
-  Handler->>Handler: parse JSON and validate text_payload
-  Handler->>Links: extractUrls(text)
-  Links-->>Handler: original URLs
+  Server->>Server: validate x-app-secret header
 
-  par Original URL check
-    Handler->>Safe: checkUrls(original URLs)
-  and Short URL expansion
-    Handler->>Expander: expandAll(shortened URLs)
-  end
+  alt Missing or invalid app secret
+    Server-->>Client: 403 Forbidden
+  else App secret accepted
+    Server->>Handler: request body
+    Handler->>Handler: parse JSON and validate text_payload
+    Handler->>Extractor: extractUrls(text)
+    Extractor-->>Handler: original URLs
 
-  Safe-->>Handler: threat or clear
-  alt Original URL threat
-    Handler-->>Client: risk_score 100, analysis_source safe_browsing
-  else No original threat
-    Expander-->>Handler: expanded URLs or unresolved shorteners
-    Handler->>Safe: checkUrls(expanded URLs)
+    par Original URL check
+      Handler->>Safe: checkUrls(original URLs)
+    and Short URL expansion
+      Handler->>Expander: expandAll(shortened URLs)
+    end
+
     Safe-->>Handler: threat or clear
-    alt Expanded URL threat
+
+    alt Original URL threat
       Handler-->>Client: risk_score 100, analysis_source safe_browsing
-    else No known threat
-      Handler->>Gemini: analyzeText(text, urlContext)
-      Gemini-->>Handler: JSON map or null
-      Handler-->>Client: normalized AnalysisResult
+    else No original threat
+      Expander-->>Handler: expanded URLs or unresolved shorteners
+      Handler->>Safe: checkUrls(expanded URLs)
+      Safe-->>Handler: threat or clear
+
+      alt Expanded URL threat
+        Handler-->>Client: risk_score 100, analysis_source safe_browsing
+      else No known threat
+        Handler->>Gemini: analyzeText(text, urlContext)
+        Gemini-->>Handler: JSON map or null
+        Handler-->>Client: normalized AnalysisResult
+      end
     end
   end
 ```
@@ -231,10 +239,10 @@ flowchart TD
 
 ## 9. Important Boundaries
 
-| Boundary | Rule |
-|----------|------|
-| Flutter to backend | Only `POST /analyze` is required. |
-| Kotlin to backend | Uses the same body and response contract as Flutter. |
-| Flutter to Kotlin | MethodChannel starts/stops the foreground service and passes the backend URL. |
-| Backend to external services | Safe Browsing and Gemini keys stay server-side. |
-| User data | Text is analyzed ephemerally and is not stored by the app or backend. |
+| Boundary                     | Rule                                                                          |
+| ---------------------------- | ----------------------------------------------------------------------------- |
+| Flutter to backend           | Only `POST /analyze` is required.                                             |
+| Kotlin to backend            | Uses the same body, app-secret header, and response contract as Flutter.      |
+| Flutter to Kotlin            | MethodChannel starts/stops the foreground service and passes the backend URL. |
+| Backend to external services | Safe Browsing and Gemini keys stay server-side.                               |
+| User data                    | Text is analyzed ephemerally and is not stored by the app or backend.         |

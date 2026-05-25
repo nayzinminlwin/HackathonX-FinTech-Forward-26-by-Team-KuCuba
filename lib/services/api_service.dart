@@ -36,6 +36,9 @@ class LiveApiService implements AnalysisApiService {
     try {
       final response = await _dio.post<Map<String, dynamic>>(
         AppConfig.analyzeEndpoint,
+        options: Options(
+          headers: {AppConfig.appSecretHeaderName: AppConfig.appSecret},
+        ),
         data: {'text_payload': textPayload},
       );
 
@@ -105,6 +108,9 @@ class LiveApiService implements AnalysisApiService {
     }
     if (statusCode == 404) {
       return 'Backend analyze endpoint was not found. Check API_BASE_URL.';
+    }
+    if (statusCode == 403) {
+      return 'App authentication failed. Please install the latest app version.';
     }
     return 'Backend request failed with HTTP $statusCode. Please try again.';
   }

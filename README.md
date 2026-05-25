@@ -157,6 +157,7 @@ flowchart TD
 
 - **Backend API (`backend/`)**
   - Dart Shelf server exposes one route: `POST /analyze`.
+  - A lightweight app-secret header gate rejects unauthenticated requests before analysis begins.
   - URL extraction and Safe Browsing run before Gemini to reduce latency and cost.
   - Gemini returns strict JSON with `risk_score` and `analysis_message`.
 
@@ -266,6 +267,15 @@ flutter build apk --release --dart-define=API_BASE_URL=https://<your-production-
 
 ### Request
 
+Headers:
+
+```http
+x-app-secret: <app secret>
+Content-Type: application/json
+```
+
+Body:
+
 ```json
 {
   "text_payload": "Your message or suspicious link here"
@@ -290,6 +300,8 @@ flutter build apk --release --dart-define=API_BASE_URL=https://<your-production-
 | `31-70`  | Caution / suspicious                   |
 | `71-100` | High risk / likely scam                |
 | `100`    | Known malicious URL from Safe Browsing |
+
+Requests missing the expected `x-app-secret` header receive `403 Forbidden` and do not enter the analysis pipeline.
 | `-1`     | Analysis temporarily unavailable       |
 
 ## Testing
@@ -367,6 +379,7 @@ docs/test_logs/
 - The prototype does not store scan history, user accounts, or persistent analysis results by design.
 - `analysis_source` is included in backend JSON for internal transparency; clients consume `risk_score` and `analysis_message`.
 - API keys must be configured locally in `backend/.env`; they are never stored in Flutter.
+- The public backend uses a custom `x-app-secret` request header as a lightweight app gate. This is not a replacement for stronger production authentication because APK secrets can be extracted.
 
 ## Why This Matters
 

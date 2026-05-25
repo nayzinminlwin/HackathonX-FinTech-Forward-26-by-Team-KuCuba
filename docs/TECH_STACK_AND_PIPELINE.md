@@ -116,6 +116,7 @@ Safe Browsing and URL expansion use 10-minute in-memory caches to speed repeated
 ```http
 POST /analyze
 Content-Type: application/json
+x-app-secret: <app secret>
 ```
 
 ### Request
@@ -137,6 +138,8 @@ Content-Type: application/json
 ```
 
 Clients should treat `risk_score < 0` as unavailable. `analysis_source` is currently used for transparency and logs; clients can ignore it.
+
+Requests without the expected `x-app-secret` header return `403 Forbidden` before URL extraction, Safe Browsing, or Gemini processing.
 
 ## 7. Runtime Configuration
 
@@ -207,11 +210,14 @@ cd backend && dart analyze
 | Topic | Decision |
 |-------|----------|
 | API keys | Stored only in `backend/.env`; never in Flutter or Android native code. |
+| App request gate | Clients send `x-app-secret`; backend rejects missing or mismatched values before analysis. |
 | User payloads | Not persisted and not intentionally logged. |
 | Scan history | Out of scope for MVP. |
 | Safe Browsing failure | Fail-open to Gemini to preserve availability. |
 | Gemini failure | Return `risk_score: -1` and show an error state. |
 | Local HTTP | Android cleartext traffic is enabled for development backend testing. |
+
+The app-secret header is a lightweight public-endpoint guard. It reduces accidental or casual misuse, but it is not strong authentication because values bundled in APKs can be reverse engineered.
 
 ## 10. Verification
 

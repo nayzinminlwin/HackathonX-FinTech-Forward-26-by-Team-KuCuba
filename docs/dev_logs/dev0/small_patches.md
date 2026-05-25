@@ -1,5 +1,40 @@
 # Small patches
 
+## 2026-05-25 — Architecture Mermaid sequence syntax fix
+
+- Branch: `dev0`
+- Goal: Fix the backend sequence diagram parse error introduced while documenting the app-secret header gate.
+- Files touched:
+  - `docs/ARCHITECTURE_DIAGRAM.md`
+  - `docs/dev_logs/dev0/small_patches.md`
+- Change: Indented the accepted branch under the Mermaid `alt/else/end` block so the sequence diagram parses correctly.
+- Verification:
+  - Re-read the backend sequence diagram block and confirmed the nested `alt`, `par`, and `end` structure is balanced.
+
+## 2026-05-25 — Public backend app-secret header gate
+
+- Branch: `dev0`
+- Goal: Add a lightweight request gate for the public Cloud Run backend so unauthenticated calls are rejected before analysis work starts.
+- Files touched:
+  - `backend/bin/server.dart`
+  - `lib/config/app_config.dart`
+  - `lib/services/api_service.dart`
+  - `android/app/src/main/kotlin/com/kucuba/eternal_guardian/HttpAnalysisClient.kt`
+  - `README.md`
+  - `docs/ARCHITECTURE_DIAGRAM.md`
+  - `docs/TECH_STACK_AND_PIPELINE.md`
+  - `docs/UI_ARCHITECTURE.md`
+  - `docs/Detailed_System_Requirement_Document.md`
+  - `docs/dev_logs/dev0/small_patches.md`
+- Change: Flutter Dio requests and native Kotlin notification requests now send the `x-app-secret` header. Backend middleware checks the header before `/analyze` processing and returns `403 Forbidden` for missing or mismatched values. CORS preflight allows the custom header.
+- Security note: This is a lightweight app gate only; hardcoded APK values can be reverse engineered and should not be treated as strong authentication.
+- Verification:
+  - `flutter analyze lib test` — passed.
+  - `flutter test` — passed.
+  - `dart analyze` from `backend/` — passed.
+  - Backend smoke checks — missing header returned `403`, wrong header returned `403`, correct header returned `200` and entered the analysis pipeline.
+  - `flutter build apk --debug` — passed, built `build/app/outputs/flutter-apk/app-debug.apk`.
+
 ## 2026-05-25 — Android launcher icon replacement
 
 - Branch: `dev0`

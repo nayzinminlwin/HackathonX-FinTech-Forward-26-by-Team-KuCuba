@@ -163,7 +163,7 @@ State fields:
 
 | Service | Responsibility |
 |---------|----------------|
-| `LiveApiService` | Sends Dio `POST /analyze` requests to `AppConfig.backendBaseUrl`. |
+| `LiveApiService` | Sends Dio `POST /analyze` requests to `AppConfig.backendBaseUrl` with the app-secret header. |
 | `NotificationServiceController` | Uses a MethodChannel to start, stop, and query the native foreground service. |
 
 `LiveApiService` treats backend sentinel results (`risk_score < 0`), failed HTTP responses, network errors, timeouts, and malformed responses as `AnalysisUnavailableException`, allowing the UI to show a clean error state instead of a low-risk result.

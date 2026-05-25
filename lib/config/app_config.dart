@@ -1,4 +1,7 @@
 class AppConfig {
+  static const String appSecretHeaderName = 'x-app-secret';
+  static const String appSecret = 'my_custom_project_key_123';
+
   /// Backend base URL.
   ///
   /// Default is Android emulator → host machine. For a physical device, pass

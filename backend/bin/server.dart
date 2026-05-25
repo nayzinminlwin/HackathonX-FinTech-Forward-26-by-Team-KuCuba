@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
@@ -25,8 +26,34 @@ Middleware corsMiddleware() {
 const _corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Headers': 'Content-Type, x-app-secret',
 };
+
+const _appSecretHeaderName = 'x-app-secret';
+const _expectedAppSecret = 'my_custom_project_key_123';
+
+Middleware appSecretMiddleware() {
+  return (Handler innerHandler) {
+    return (Request request) async {
+      if (request.method == 'OPTIONS') {
+        return innerHandler(request);
+      }
+
+      final providedSecret = request.headers[_appSecretHeaderName];
+      if (providedSecret != _expectedAppSecret) {
+        return Response.forbidden(
+          jsonEncode({
+            'error': 'Forbidden',
+            'analysis_message': 'App authentication failed.',
+          }),
+          headers: {'Content-Type': 'application/json'},
+        );
+      }
+
+      return innerHandler(request);
+    };
+  };
+}
 
 void main() async {
   // --- Load .env ---
@@ -79,6 +106,7 @@ void main() async {
   final handler = const Pipeline()
       .addMiddleware(logRequests())
       .addMiddleware(corsMiddleware())
+      .addMiddleware(appSecretMiddleware())
       .addHandler(router.call);
 
   // --- Start server on 0.0.0.0:8080 ---
