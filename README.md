@@ -70,7 +70,7 @@ The backend first extracts URLs and checks Google Safe Browsing. If a known mali
 | **Animated Risk Meter**        | Displays risk from 1-100 with green, yellow, and red zones.                                                     | Turns a backend score into a quick visual decision signal.                |
 | **Share-Sheet Overlay**        | Opens from Android text sharing and auto-analyzes without an extra button.                                      | Lets users check suspicious messages without leaving the source app flow. |
 | **Guardian Mode Notification** | Provides a persistent notification path for manual scam checks.                                                 | Gives users a fallback when sharing is awkward or unavailable.            |
-| **Mock Mode**                  | Uses local demo responses when the live backend is unavailable.                                                 | Keeps the hackathon demo reliable without API keys.                       |
+| **Production API Mode**        | Always calls the configured backend API and shows retryable errors if analysis is unavailable.                  | Avoids misleading local estimates when real services fail.                |
 | **Performance Tightening**     | Uses Flash Lite by default, in-memory caches, concurrent checks, and staged loading labels.                     | Improves both real and perceived latency.                                 |
 
 ## Demo Surfaces
@@ -82,8 +82,7 @@ The implemented prototype includes:
 | Home scan                  | Implemented | Open the app, paste/type text, tap **Analyze**                     |
 | Android share overlay      | Implemented | Share text from another app into Eternal Guardian                  |
 | Guardian Mode notification | Implemented | Toggle Guardian Mode, submit text from the persistent notification |
-| Mock demo mode             | Implemented | `AppConfig.useMockApi = true`                                      |
-| Live backend mode          | Implemented | `AppConfig.useMockApi = false` with backend running                |
+| Live backend mode          | Implemented | Configure `API_BASE_URL` and run or deploy the backend              |
 
 ## Demo and Screenshots
 
@@ -118,10 +117,8 @@ The implemented prototype includes:
 ```mermaid
 flowchart TD
   A["Flutter Android App"] --> B["AnalysisProvider"]
-  B --> C{"Mock Mode?"}
-  C -->|true| D["MockApiService"]
-  C -->|false| E["LiveApiService / Dio"]
-  E --> F["Dart Shelf Backend :8080"]
+  B --> C["LiveApiService / Dio"]
+  C --> F["Dart Shelf Backend :8080"]
 
   G["Android Share Sheet"] --> H["IntentRouter"]
   H --> I["OverlayScreen"]
@@ -146,12 +143,12 @@ flowchart TD
 - **Flutter app (`lib/`)**
   - Home screen, scan flow, result screen, share overlay, Guardian Mode toggle, and reusable scam-analysis widgets.
   - Provider manages the analysis state: idle, loading, complete, and error.
-  - Dio powers the live backend client; mock mode keeps demos stable.
+  - Dio powers the live backend client. Backend, network, and malformed-response failures surface as error states with retry.
 
 - **Android integration (`android/`)**
   - Existing `MainActivity` handles text shares through Android `ACTION_SEND`.
   - Native Kotlin foreground service and notification components support Guardian Mode.
-  - Kotlin notification flow can call the same backend contract directly or use the native mock client when mock mode is enabled.
+  - Kotlin notification flow calls the same backend contract directly and shows notification errors when the service is unavailable.
 
 - **Backend API (`backend/`)**
   - Dart Shelf server exposes one route: `POST /analyze`.
@@ -242,19 +239,19 @@ Build Android debug APK:
 flutter build apk --debug
 ```
 
-### 5. Switch Mock / Live Mode
+### 5. Configure the Live Backend URL
 
-Mock mode is controlled in:
+The app always uses the live backend. For emulator development, the default is:
 
 ```text
-lib/config/app_config.dart
+http://10.0.2.2:8080
 ```
 
-```dart
-static const bool useMockApi = true;
-```
+For a physical device or production APK, build with a reachable backend URL:
 
-Set it to `false` when testing against the live backend.
+```bash
+flutter build apk --release --dart-define=API_BASE_URL=https://<your-production-backend>
+```
 
 ## API Overview
 
@@ -338,7 +335,6 @@ docs/test_logs/
 | Flutter core app                 | Implemented                                                                    |
 | Bank Islam themed UI             | Implemented                                                                    |
 | Analog risk meter                | Implemented                                                                    |
-| Mock analysis mode               | Implemented                                                                    |
 | Live backend API service         | Implemented                                                                    |
 | Dart Shelf backend               | Implemented                                                                    |
 | Safe Browsing integration        | Implemented                                                                    |

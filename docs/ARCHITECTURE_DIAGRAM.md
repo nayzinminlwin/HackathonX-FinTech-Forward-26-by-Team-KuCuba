@@ -2,7 +2,7 @@
 
 **Project:** Eternal Guardian  
 **Status:** Current implementation  
-**Last updated:** 2026-05-24
+**Last updated:** 2026-05-25
 
 ## 1. Application Module Map
 
@@ -26,7 +26,6 @@ lib/
 |   `-- overlay_screen.dart
 |-- services/
 |   |-- api_service.dart
-|   |-- mock_api_service.dart
 |   `-- notification_service_controller.dart
 |-- theme/
 |   |-- app_colors.dart
@@ -54,8 +53,7 @@ android/app/src/main/
 |   |-- ScamDetectorForegroundService.kt
 |   |-- AnalyzeReceiver.kt
 |   |-- NotificationHelper.kt
-|   |-- HttpAnalysisClient.kt
-|   `-- MockAnalysisClient.kt
+|   `-- HttpAnalysisClient.kt
 `-- res/layout/
     |-- notification_idle.xml
     |-- notification_scanning.xml
@@ -96,7 +94,6 @@ flowchart TB
     AnalysisProvider["AnalysisProvider"]
     StatsProvider["StatsProvider"]
     LiveApi["LiveApiService"]
-    MockApi["MockApiService"]
   end
 
   subgraph AndroidNative["Android native"]
@@ -106,7 +103,6 @@ flowchart TB
     Receiver["AnalyzeReceiver"]
     Notification["NotificationHelper RemoteViews"]
     NativeHttp["HttpAnalysisClient"]
-    NativeMock["MockAnalysisClient"]
   end
 
   subgraph Backend["Dart Shelf backend"]
@@ -124,7 +120,6 @@ flowchart TB
   Home --> AnalysisProvider
   Overlay --> AnalysisProvider
   AnalysisProvider --> LiveApi
-  AnalysisProvider --> MockApi
   Home --> StatsProvider
 
   Manifest --> Router
@@ -133,7 +128,6 @@ flowchart TB
   Service --> Notification
   Notification --> Receiver
   Receiver --> NativeHttp
-  Receiver --> NativeMock
 
   LiveApi --> Server
   NativeHttp --> Server
@@ -158,15 +152,11 @@ flowchart LR
   Router --> Overlay["OverlayScreen"]
   Overlay --> Provider
 
-  Provider --> Mode{"Mock mode?"}
-  Mode -->|yes| Mock["MockApiService"]
-  Mode -->|no| Live["LiveApiService"]
+  Provider --> Live["LiveApiService"]
   Live --> Backend["POST /analyze"]
 
   Notify --> Receiver["AnalyzeReceiver.kt"]
-  Receiver --> NativeMode{"Mock mode?"}
-  NativeMode -->|yes| NativeMock["MockAnalysisClient.kt"]
-  NativeMode -->|no| NativeHttp["HttpAnalysisClient.kt"]
+  Receiver --> NativeHttp["HttpAnalysisClient.kt"]
   NativeHttp --> Backend
 ```
 
@@ -235,10 +225,7 @@ flowchart TD
   Idle --> Input["User enters text in RemoteInput"]
   Input --> Receiver["AnalyzeReceiver"]
   Receiver --> Scanning["Update scanning notification"]
-  Receiver --> Mode{"use_mock_api?"}
-  Mode -->|true| Mock["MockAnalysisClient"]
-  Mode -->|false| Http["HttpAnalysisClient POST /analyze"]
-  Mock --> Result["Result or error RemoteViews"]
+  Receiver --> Http["HttpAnalysisClient POST /analyze"]
   Http --> Result
 ```
 
@@ -248,6 +235,6 @@ flowchart TD
 |----------|------|
 | Flutter to backend | Only `POST /analyze` is required. |
 | Kotlin to backend | Uses the same body and response contract as Flutter. |
-| Flutter to Kotlin | MethodChannel starts/stops the foreground service and passes backend/mock settings. |
+| Flutter to Kotlin | MethodChannel starts/stops the foreground service and passes the backend URL. |
 | Backend to external services | Safe Browsing and Gemini keys stay server-side. |
 | User data | Text is analyzed ephemerally and is not stored by the app or backend. |

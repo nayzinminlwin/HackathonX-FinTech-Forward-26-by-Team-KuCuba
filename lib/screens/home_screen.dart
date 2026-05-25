@@ -400,25 +400,6 @@ class _ScamDetectorPageState extends State<ScamDetectorPage> {
                     const SizedBox(height: 12),
                     RiskBadge(riskScore: provider.result!.riskScore),
                     const SizedBox(height: 12),
-                    if (provider.result!.isUnavailable)
-                      Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.only(bottom: 10),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFFBEB),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: const Color(0xFFFDE68A)),
-                        ),
-                        child: const Text(
-                          'Live backend not reachable. Showing local heuristic estimate.',
-                          style: TextStyle(
-                            color: Color(0xFF92400E),
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
                     AnalysisMessageCard(
                       message: provider.result!.analysisMessage,
                       riskScore: provider.result!.riskScore,

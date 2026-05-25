@@ -4,7 +4,7 @@
 **Package:** `eternal_guardian` / `com.kucuba.eternal_guardian`  
 **Backend package:** `kucuba_backend`  
 **Status:** Development complete / demo-ready prototype  
-**Last updated:** 2026-05-24
+**Last updated:** 2026-05-25
 
 ## 1. Implementation Status
 
@@ -17,7 +17,7 @@
 | Safe Browsing integration | Implemented | `backend/lib/services/safe_browsing.dart` |
 | Gemini integration | Implemented | `backend/lib/services/gemini_service.dart` |
 | Short URL expansion | Implemented | `backend/lib/services/url_expander.dart` |
-| Mock/demo mode | Implemented | `lib/services/mock_api_service.dart`, `MockAnalysisClient.kt` |
+| Production API mode | Implemented | `lib/services/api_service.dart`, Kotlin `HttpAnalysisClient.kt` |
 
 ## 2. Technology Stack
 
@@ -76,13 +76,8 @@ flowchart TD
   O --> P
   C["Guardian Mode notification"] --> K["AnalyzeReceiver.kt"]
 
-  P --> S{"AppConfig.useMockApi"}
-  S -->|true| M["MockApiService"]
-  S -->|false| L["LiveApiService / Dio"]
-
-  K --> N{"use_mock_api"}
-  N -->|true| KM["MockAnalysisClient.kt"]
-  N -->|false| KH["HttpAnalysisClient.kt"]
+  P --> L["LiveApiService / Dio"]
+  K --> KH["HttpAnalysisClient.kt"]
 
   L --> BE["Dart Shelf backend POST /analyze"]
   KH --> BE
@@ -151,10 +146,9 @@ Clients should treat `risk_score < 0` as unavailable. `analysis_source` is curre
 
 | Setting | Purpose |
 |---------|---------|
-| `useMockApi` | `true` uses local mock responses; `false` calls the backend. |
 | `API_BASE_URL` | Optional `--dart-define` override for physical-device backend testing. |
 
-Default live backend URL from Android emulator:
+Default backend URL from Android emulator:
 
 ```text
 http://10.0.2.2:8080

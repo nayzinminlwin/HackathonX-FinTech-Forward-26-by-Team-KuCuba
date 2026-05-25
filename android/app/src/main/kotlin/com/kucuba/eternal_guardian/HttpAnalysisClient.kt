@@ -48,7 +48,14 @@ object HttpAnalysisClient {
         }
 
         if (responseCode !in 200..299) {
-            throw IllegalStateException("Backend returned HTTP $responseCode.")
+            val backendMessage = runCatching {
+                JSONObject(responseText).optString("analysis_message")
+                    .ifBlank { JSONObject(responseText).optString("error") }
+            }.getOrDefault("")
+            val message = backendMessage.ifBlank {
+                "Backend returned HTTP $responseCode."
+            }
+            throw IllegalStateException(message)
         }
 
         val json = JSONObject(responseText)

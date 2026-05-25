@@ -1,5 +1,21 @@
 # Small patches
 
+## 2026-05-25 — Android launcher icon replacement
+
+- Branch: `dev0`
+- Goal: Replace the default Flutter launcher icon in installed APKs with the Eternal Guardian logo.
+- Files touched:
+  - `android/app/src/main/res/mipmap-mdpi/ic_launcher.png`
+  - `android/app/src/main/res/mipmap-hdpi/ic_launcher.png`
+  - `android/app/src/main/res/mipmap-xhdpi/ic_launcher.png`
+  - `android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png`
+  - `android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png`
+  - `docs/dev_logs/dev0/small_patches.md`
+- Change: Generated density-specific launcher PNGs from `docs/assets/Eternal_Guardian_Logo_removedBg.png`. The manifest already points to `@mipmap/ic_launcher`, so no manifest change was required.
+- Verification:
+  - Previewed `mipmap-xxxhdpi/ic_launcher.png`.
+  - `flutter build apk --debug` — passed, built `build/app/outputs/flutter-apk/app-debug.apk`.
+
 ## 2026-05-24 — Prize scam quick example mock scoring fix
 
 - Branch: `dev0`
