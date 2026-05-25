@@ -82,13 +82,14 @@ The implemented prototype includes:
 | Home scan                  | Implemented | Open the app, paste/type text, tap **Analyze**                     |
 | Android share overlay      | Implemented | Share text from another app into Eternal Guardian                  |
 | Guardian Mode notification | Implemented | Toggle Guardian Mode, submit text from the persistent notification |
-| Live backend mode          | Implemented | Configure `API_BASE_URL` and run or deploy the backend              |
+| Live backend mode          | Implemented | Configure `API_BASE_URL` and run or deploy the backend             |
 
 ## Demo and Screenshots
 
 ### 0. Main App
 
-| Home Screen                                                                                   | Manual Scan                                                                                   |
+| Home Screen | Manual Scan |
+| Home Screen | Manual Scan |
 | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | <img src="docs/assets/screenshots/0_0HomeScreen.jpeg" alt="0_0HomeScreen.jpeg" width="220" /> | <img src="docs/assets/screenshots/0_1ManualScan.jpeg" alt="0_1ManualScan.jpeg" width="220" /> |
 
@@ -98,13 +99,17 @@ The implemented prototype includes:
 
 ### 1. Overlay (User never needs to exit the source app to analyze a suspicious message)
 
-| Share-via-EternalGuardian                                                                                               | Analysis Overlay                                                                                  |
+### 1. Overlay (User never needs to exit the source app to analyze a suspicious message)
+
+| Share-via-EternalGuardian | Analysis Overlay |
+| Share-via-EternalGuardian | Analysis Overlay |
 | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | <img src="docs/assets/screenshots/1_0ShareViaEternalGuardian.jpeg" alt="1_0ShareViaEternalGuardian.jpeg" width="220" /> | <img src="docs/assets/screenshots/1_1shareOverlay.jpeg" alt="1_1shareOverlay.jpeg" width="220" /> |
 
 ### 2. Notification
 
-| Guardian Notification Step1                                                                                       | Guardian Notification Step2                                                                                       | Guardian Notification Step3                                                                                       |
+| Guardian Notification Step1 | Guardian Notification Step2 | Guardian Notification Step3 |
+| Guardian Notification Step1 | Guardian Notification Step2 | Guardian Notification Step3 |
 | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | <img src="docs/assets/screenshots/2_GuardianNotification0.jpeg" alt="2_GuardianNotification0.jpeg" width="220" /> | <img src="docs/assets/screenshots/2_GuardianNotification1.jpeg" alt="2_GuardianNotification1.jpeg" width="220" /> | <img src="docs/assets/screenshots/2_GuardianNotification2.jpeg" alt="2_GuardianNotification2.jpeg" width="220" /> |
 
