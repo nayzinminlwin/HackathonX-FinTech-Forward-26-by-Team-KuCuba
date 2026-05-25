@@ -4,7 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:eternal_guardian/app.dart';
 import 'package:eternal_guardian/providers/analysis_provider.dart';
 import 'package:eternal_guardian/providers/stats_provider.dart';
-import 'package:eternal_guardian/services/mock_api_service.dart';
+
+import 'support/test_analysis_api_service.dart';
 
 void main() {
   testWidgets('Scam detector home renders', (WidgetTester tester) async {
@@ -12,7 +13,7 @@ void main() {
       MultiProvider(
         providers: [
           ChangeNotifierProvider(
-            create: (_) => AnalysisProvider(MockApiService()),
+            create: (_) => AnalysisProvider(const TestAnalysisApiService()),
           ),
           ChangeNotifierProvider(create: (_) => StatsProvider()),
         ],

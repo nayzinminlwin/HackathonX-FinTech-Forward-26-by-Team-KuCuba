@@ -22,7 +22,7 @@ The backend exposes a single analysis contract used by all three entry points.
 
 Eternal Guardian uses a hybrid rule-based and AI pipeline:
 
-1. Client submits `POST /analyze` with `{"text_payload": "<message>"}`.
+1. Client submits `POST /analyze` with the app-secret header and `{"text_payload": "<message>"}`.
 2. Backend extracts URLs from the submitted text.
 3. Safe Browsing checks original URLs immediately.
 4. Shortened URLs are expanded with tight timeouts and checked again after expansion.

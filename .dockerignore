@@ -1,0 +1,9 @@
+*
+
+!Dockerfile
+!backend/
+!backend/**
+
+backend/.env
+backend/.env.*
+!backend/.env.example

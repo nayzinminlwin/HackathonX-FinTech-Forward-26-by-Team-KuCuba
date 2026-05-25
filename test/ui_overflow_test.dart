@@ -2,12 +2,13 @@ import 'package:eternal_guardian/providers/analysis_provider.dart';
 import 'package:eternal_guardian/providers/stats_provider.dart';
 import 'package:eternal_guardian/screens/home_screen.dart';
 import 'package:eternal_guardian/screens/overlay_screen.dart';
-import 'package:eternal_guardian/services/mock_api_service.dart';
 import 'package:eternal_guardian/theme/bank_islam_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+
+import 'support/test_analysis_api_service.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -88,7 +89,9 @@ Future<void> _setCompactViewport(
 Widget _appShell(Widget home) {
   return MultiProvider(
     providers: [
-      ChangeNotifierProvider(create: (_) => AnalysisProvider(MockApiService())),
+      ChangeNotifierProvider(
+        create: (_) => AnalysisProvider(const TestAnalysisApiService()),
+      ),
       ChangeNotifierProvider(create: (_) => StatsProvider()),
     ],
     child: MaterialApp(

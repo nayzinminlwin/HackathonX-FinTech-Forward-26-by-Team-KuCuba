@@ -70,7 +70,7 @@ The backend first extracts URLs and checks Google Safe Browsing. If a known mali
 | **Animated Risk Meter**        | Displays risk from 1-100 with green, yellow, and red zones.                                                     | Turns a backend score into a quick visual decision signal.                |
 | **Share-Sheet Overlay**        | Opens from Android text sharing and auto-analyzes without an extra button.                                      | Lets users check suspicious messages without leaving the source app flow. |
 | **Guardian Mode Notification** | Provides a persistent notification path for manual scam checks.                                                 | Gives users a fallback when sharing is awkward or unavailable.            |
-| **Mock Mode**                  | Uses local demo responses when the live backend is unavailable.                                                 | Keeps the hackathon demo reliable without API keys.                       |
+| **Production API Mode**        | Always calls the configured backend API and shows retryable errors if analysis is unavailable.                  | Avoids misleading local estimates when real services fail.                |
 | **Performance Tightening**     | Uses Flash Lite by default, in-memory caches, concurrent checks, and staged loading labels.                     | Improves both real and perceived latency.                                 |
 
 ## Demo Surfaces
@@ -82,30 +82,34 @@ The implemented prototype includes:
 | Home scan                  | Implemented | Open the app, paste/type text, tap **Analyze**                     |
 | Android share overlay      | Implemented | Share text from another app into Eternal Guardian                  |
 | Guardian Mode notification | Implemented | Toggle Guardian Mode, submit text from the persistent notification |
-| Mock demo mode             | Implemented | `AppConfig.useMockApi = true`                                      |
-| Live backend mode          | Implemented | `AppConfig.useMockApi = false` with backend running                |
+| Live backend mode          | Implemented | Configure `API_BASE_URL` and run or deploy the backend             |
 
 ## Demo and Screenshots
 
 ### 0. Main App
 
-| Home Screen                                                                                   | Manual Scan                                                                                   |
+| Home Screen | Manual Scan |
+| Home Screen | Manual Scan |
 | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | <img src="docs/assets/screenshots/0_0HomeScreen.jpeg" alt="0_0HomeScreen.jpeg" width="220" /> | <img src="docs/assets/screenshots/0_1ManualScan.jpeg" alt="0_1ManualScan.jpeg" width="220" /> |
 
-| Loading Page 0 (~0.3 seconds)                                                                     | Loading Page 1 (~2.5 seconds)                                                                     | Result Meter                                                                                    |
+| Loading Page (~0.3 seconds)                                                                       | Loading Page (~2.5 seconds)                                                                       | Result Meter                                                                                    |
 | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | <img src="docs/assets/screenshots/0_2LoadingPage0.jpeg" alt="0_2LoadingPage0.jpeg" width="220" /> | <img src="docs/assets/screenshots/0_3LoadingPage1.jpeg" alt="0_3LoadingPage1.jpeg" width="220" /> | <img src="docs/assets/screenshots/0_4ResultMeter.jpeg" alt="0_4ResultMeter.jpeg" width="220" /> |
 
 ### 1. Overlay (User never needs to exit the source app to analyze a suspicious message)
 
-| Share-via-EternalGuardian                                                                                               | Analysis Overlay                                                                                  |
+### 1. Overlay (User never needs to exit the source app to analyze a suspicious message)
+
+| Share-via-EternalGuardian | Analysis Overlay |
+| Share-via-EternalGuardian | Analysis Overlay |
 | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | <img src="docs/assets/screenshots/1_0ShareViaEternalGuardian.jpeg" alt="1_0ShareViaEternalGuardian.jpeg" width="220" /> | <img src="docs/assets/screenshots/1_1shareOverlay.jpeg" alt="1_1shareOverlay.jpeg" width="220" /> |
 
 ### 2. Notification
 
-| Guardian Notification Step1                                                                                       | Guardian Notification Step2                                                                                       | Guardian Notification Step3                                                                                       |
+| Guardian Notification Step1 | Guardian Notification Step2 | Guardian Notification Step3 |
+| Guardian Notification Step1 | Guardian Notification Step2 | Guardian Notification Step3 |
 | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | <img src="docs/assets/screenshots/2_GuardianNotification0.jpeg" alt="2_GuardianNotification0.jpeg" width="220" /> | <img src="docs/assets/screenshots/2_GuardianNotification1.jpeg" alt="2_GuardianNotification1.jpeg" width="220" /> | <img src="docs/assets/screenshots/2_GuardianNotification2.jpeg" alt="2_GuardianNotification2.jpeg" width="220" /> |
 
@@ -118,10 +122,8 @@ The implemented prototype includes:
 ```mermaid
 flowchart TD
   A["Flutter Android App"] --> B["AnalysisProvider"]
-  B --> C{"Mock Mode?"}
-  C -->|true| D["MockApiService"]
-  C -->|false| E["LiveApiService / Dio"]
-  E --> F["Dart Shelf Backend :8080"]
+  B --> C["LiveApiService / Dio"]
+  C --> F["Dart Shelf Backend :8080"]
 
   G["Android Share Sheet"] --> H["IntentRouter"]
   H --> I["OverlayScreen"]
@@ -146,15 +148,16 @@ flowchart TD
 - **Flutter app (`lib/`)**
   - Home screen, scan flow, result screen, share overlay, Guardian Mode toggle, and reusable scam-analysis widgets.
   - Provider manages the analysis state: idle, loading, complete, and error.
-  - Dio powers the live backend client; mock mode keeps demos stable.
+  - Dio powers the live backend client. Backend, network, and malformed-response failures surface as error states with retry.
 
 - **Android integration (`android/`)**
   - Existing `MainActivity` handles text shares through Android `ACTION_SEND`.
   - Native Kotlin foreground service and notification components support Guardian Mode.
-  - Kotlin notification flow can call the same backend contract directly or use the native mock client when mock mode is enabled.
+  - Kotlin notification flow calls the same backend contract directly and shows notification errors when the service is unavailable.
 
 - **Backend API (`backend/`)**
   - Dart Shelf server exposes one route: `POST /analyze`.
+  - A lightweight app-secret header gate rejects unauthenticated requests before analysis begins.
   - URL extraction and Safe Browsing run before Gemini to reduce latency and cost.
   - Gemini returns strict JSON with `risk_score` and `analysis_message`.
 
@@ -210,6 +213,7 @@ SAFE_BROWSING_API_KEY=your_safe_browsing_key
 ```
 
 `SAFE_BROWSING_API_KEY` can be left empty for local fallback testing. The backend will skip Safe Browsing and continue to Gemini.
+For Cloud Run, configure the same names as environment variables or Secret Manager values instead of relying on `.env`.
 
 ### 3. Run the Backend
 
@@ -242,19 +246,33 @@ Build Android debug APK:
 flutter build apk --debug
 ```
 
-### 5. Switch Mock / Live Mode
+### 5. Configure the Live Backend URL
 
-Mock mode is controlled in:
+The app always uses the live backend. For emulator development, the default is:
 
 ```text
-lib/config/app_config.dart
+http://10.0.2.2:8080
 ```
 
-```dart
-static const bool useMockApi = true;
+For a physical device or production APK, build with a reachable backend URL:
+
+```bash
+flutter build apk --release --dart-define=API_BASE_URL=https://<your-production-backend>
 ```
 
-Set it to `false` when testing against the live backend.
+### 6. Deploy Backend to Cloud Run
+
+The repository includes a root `Dockerfile` for Cloud Run source builds. It compiles the Dart backend from `backend/` and starts the service on Cloud Run's `PORT`.
+
+When configuring Cloud Run, set:
+
+```env
+GEMINI_API_KEY=<your Gemini key>
+GEMINI_MODEL=gemini-2.5-flash-lite
+SAFE_BROWSING_API_KEY=<your Safe Browsing key>
+```
+
+`PORT` is provided by Cloud Run automatically.
 
 ## API Overview
 
@@ -263,6 +281,15 @@ Set it to `false` when testing against the live backend.
 | `POST /analyze` | Analyze a suspicious message, conversation block, or URL. |
 
 ### Request
+
+Headers:
+
+```http
+x-app-secret: <app secret>
+Content-Type: application/json
+```
+
+Body:
 
 ```json
 {
@@ -288,6 +315,8 @@ Set it to `false` when testing against the live backend.
 | `31-70`  | Caution / suspicious                   |
 | `71-100` | High risk / likely scam                |
 | `100`    | Known malicious URL from Safe Browsing |
+
+Requests missing the expected `x-app-secret` header receive `403 Forbidden` and do not enter the analysis pipeline.
 | `-1`     | Analysis temporarily unavailable       |
 
 ## Testing
@@ -338,7 +367,6 @@ docs/test_logs/
 | Flutter core app                 | Implemented                                                                    |
 | Bank Islam themed UI             | Implemented                                                                    |
 | Analog risk meter                | Implemented                                                                    |
-| Mock analysis mode               | Implemented                                                                    |
 | Live backend API service         | Implemented                                                                    |
 | Dart Shelf backend               | Implemented                                                                    |
 | Safe Browsing integration        | Implemented                                                                    |
@@ -366,6 +394,7 @@ docs/test_logs/
 - The prototype does not store scan history, user accounts, or persistent analysis results by design.
 - `analysis_source` is included in backend JSON for internal transparency; clients consume `risk_score` and `analysis_message`.
 - API keys must be configured locally in `backend/.env`; they are never stored in Flutter.
+- The public backend uses a custom `x-app-secret` request header as a lightweight app gate. This is not a replacement for stronger production authentication because APK secrets can be extracted.
 
 ## Why This Matters
 

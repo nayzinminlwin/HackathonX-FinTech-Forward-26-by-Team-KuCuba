@@ -4,7 +4,7 @@
 **Package:** `eternal_guardian` / `com.kucuba.eternal_guardian`  
 **Backend package:** `kucuba_backend`  
 **Status:** Development complete / demo-ready prototype  
-**Last updated:** 2026-05-24
+**Last updated:** 2026-05-25
 
 ## 1. Implementation Status
 
@@ -17,7 +17,7 @@
 | Safe Browsing integration | Implemented | `backend/lib/services/safe_browsing.dart` |
 | Gemini integration | Implemented | `backend/lib/services/gemini_service.dart` |
 | Short URL expansion | Implemented | `backend/lib/services/url_expander.dart` |
-| Mock/demo mode | Implemented | `lib/services/mock_api_service.dart`, `MockAnalysisClient.kt` |
+| Production API mode | Implemented | `lib/services/api_service.dart`, Kotlin `HttpAnalysisClient.kt` |
 
 ## 2. Technology Stack
 
@@ -76,13 +76,8 @@ flowchart TD
   O --> P
   C["Guardian Mode notification"] --> K["AnalyzeReceiver.kt"]
 
-  P --> S{"AppConfig.useMockApi"}
-  S -->|true| M["MockApiService"]
-  S -->|false| L["LiveApiService / Dio"]
-
-  K --> N{"use_mock_api"}
-  N -->|true| KM["MockAnalysisClient.kt"]
-  N -->|false| KH["HttpAnalysisClient.kt"]
+  P --> L["LiveApiService / Dio"]
+  K --> KH["HttpAnalysisClient.kt"]
 
   L --> BE["Dart Shelf backend POST /analyze"]
   KH --> BE
@@ -121,6 +116,7 @@ Safe Browsing and URL expansion use 10-minute in-memory caches to speed repeated
 ```http
 POST /analyze
 Content-Type: application/json
+x-app-secret: <app secret>
 ```
 
 ### Request
@@ -143,6 +139,8 @@ Content-Type: application/json
 
 Clients should treat `risk_score < 0` as unavailable. `analysis_source` is currently used for transparency and logs; clients can ignore it.
 
+Requests without the expected `x-app-secret` header return `403 Forbidden` before URL extraction, Safe Browsing, or Gemini processing.
+
 ## 7. Runtime Configuration
 
 ### Flutter
@@ -151,10 +149,9 @@ Clients should treat `risk_score < 0` as unavailable. `analysis_source` is curre
 
 | Setting | Purpose |
 |---------|---------|
-| `useMockApi` | `true` uses local mock responses; `false` calls the backend. |
 | `API_BASE_URL` | Optional `--dart-define` override for physical-device backend testing. |
 
-Default live backend URL from Android emulator:
+Default backend URL from Android emulator:
 
 ```text
 http://10.0.2.2:8080
@@ -162,15 +159,18 @@ http://10.0.2.2:8080
 
 ### Backend
 
-`backend/.env`
+Local development can use `backend/.env`. Cloud Run should use environment variables or Secret Manager values with the same names.
 
 ```env
 GEMINI_API_KEY=your_gemini_key
 GEMINI_MODEL=gemini-2.5-flash-lite
 SAFE_BROWSING_API_KEY=your_safe_browsing_key
+PORT=8080
 ```
 
 `SAFE_BROWSING_API_KEY` may be empty for fallback testing. If `GEMINI_API_KEY` is empty, the backend returns an unavailable sentinel instead of calling Gemini.
+
+Cloud Run builds from the repository root using `Dockerfile`. The Docker image copies and compiles only `backend/`, starts `bin/server.dart` as a native Dart executable, and listens on the `PORT` value provided by Cloud Run.
 
 ## 8. Run Commands
 
@@ -213,11 +213,14 @@ cd backend && dart analyze
 | Topic | Decision |
 |-------|----------|
 | API keys | Stored only in `backend/.env`; never in Flutter or Android native code. |
+| App request gate | Clients send `x-app-secret`; backend rejects missing or mismatched values before analysis. |
 | User payloads | Not persisted and not intentionally logged. |
 | Scan history | Out of scope for MVP. |
 | Safe Browsing failure | Fail-open to Gemini to preserve availability. |
 | Gemini failure | Return `risk_score: -1` and show an error state. |
 | Local HTTP | Android cleartext traffic is enabled for development backend testing. |
+
+The app-secret header is a lightweight public-endpoint guard. It reduces accidental or casual misuse, but it is not strong authentication because values bundled in APKs can be reverse engineered.
 
 ## 10. Verification
 

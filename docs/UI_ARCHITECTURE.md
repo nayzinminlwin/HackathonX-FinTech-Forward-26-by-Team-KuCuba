@@ -2,7 +2,7 @@
 
 **Project:** Eternal Guardian  
 **Status:** Current Android MVP implementation  
-**Last updated:** 2026-05-24
+**Last updated:** 2026-05-25
 
 ## 1. Overview
 
@@ -36,7 +36,6 @@ lib/
 |   `-- overlay_screen.dart
 |-- services/
 |   |-- api_service.dart
-|   |-- mock_api_service.dart
 |   `-- notification_service_controller.dart
 |-- theme/
 |   |-- app_colors.dart
@@ -68,12 +67,7 @@ flowchart TD
   Router --> Overlay["OverlayScreen"]
 ```
 
-`AppConfig.useMockApi` chooses the injected analysis service at startup:
-
-| Value | Service |
-|-------|---------|
-| `true` | `MockApiService` |
-| `false` | `LiveApiService` |
+`main.dart` injects `LiveApiService` into `AnalysisProvider` at startup. If the backend or an external analysis service is unavailable, the provider enters the `error` state and the UI shows `ErrorBanner` with retry instead of rendering a low-risk result.
 
 ## 4. Screen Structure
 
@@ -169,11 +163,10 @@ State fields:
 
 | Service | Responsibility |
 |---------|----------------|
-| `LiveApiService` | Sends Dio `POST /analyze` requests to `AppConfig.backendBaseUrl`. |
-| `MockApiService` | Returns deterministic demo results after a short delay. |
+| `LiveApiService` | Sends Dio `POST /analyze` requests to `AppConfig.backendBaseUrl` with the app-secret header. |
 | `NotificationServiceController` | Uses a MethodChannel to start, stop, and query the native foreground service. |
 
-`LiveApiService` treats backend sentinel results (`risk_score < 0`) as an `AnalysisUnavailableException`, allowing the UI to show a clean error state.
+`LiveApiService` treats backend sentinel results (`risk_score < 0`), failed HTTP responses, network errors, timeouts, and malformed responses as `AnalysisUnavailableException`, allowing the UI to show a clean error state instead of a low-risk result.
 
 ## 7. Visual System
 
@@ -227,7 +220,7 @@ UI validation should prioritize:
 | Text overflow | Home, result, overlay, and notification labels on small screens. |
 | Loading state | Staged labels appear quickly and do not shift layout. |
 | Share overlay | Shared text is truncated safely and auto-analysis runs once. |
-| Mock/live mode | Both app and notification flows respect the configured mode. |
+| Production API mode | App and notification flows call the configured backend and show retryable errors if unavailable. |
 | Error handling | Backend unavailable cases show actionable messages. |
 | Android notification | Physical-device behavior for permission, foreground service, and RemoteInput. |
 

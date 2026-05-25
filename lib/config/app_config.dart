@@ -1,11 +1,11 @@
 class AppConfig {
-  /// Toggle to true to use mock responses (no backend needed).
-  static const bool useMockApi = true;
+  static const String appSecretHeaderName = 'x-app-secret';
+  static const String appSecret = 'my_custom_project_key_123';
 
   /// Backend base URL.
   ///
   /// Default is Android emulator → host machine. For a physical device, pass
-  /// `--dart-define=API_BASE_URL=http://<computer-lan-ip>:8080`.
+  /// `--dart-define=API_BASE_URL=https://<your-production-backend>`.
   static const String backendBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
     defaultValue: 'http://10.0.2.2:8080',
