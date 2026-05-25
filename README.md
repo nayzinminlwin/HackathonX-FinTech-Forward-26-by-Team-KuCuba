@@ -213,6 +213,7 @@ SAFE_BROWSING_API_KEY=your_safe_browsing_key
 ```
 
 `SAFE_BROWSING_API_KEY` can be left empty for local fallback testing. The backend will skip Safe Browsing and continue to Gemini.
+For Cloud Run, configure the same names as environment variables or Secret Manager values instead of relying on `.env`.
 
 ### 3. Run the Backend
 
@@ -258,6 +259,20 @@ For a physical device or production APK, build with a reachable backend URL:
 ```bash
 flutter build apk --release --dart-define=API_BASE_URL=https://<your-production-backend>
 ```
+
+### 6. Deploy Backend to Cloud Run
+
+The repository includes a root `Dockerfile` for Cloud Run source builds. It compiles the Dart backend from `backend/` and starts the service on Cloud Run's `PORT`.
+
+When configuring Cloud Run, set:
+
+```env
+GEMINI_API_KEY=<your Gemini key>
+GEMINI_MODEL=gemini-2.5-flash-lite
+SAFE_BROWSING_API_KEY=<your Safe Browsing key>
+```
+
+`PORT` is provided by Cloud Run automatically.
 
 ## API Overview
 

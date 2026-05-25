@@ -56,29 +56,35 @@ Middleware appSecretMiddleware() {
 }
 
 void main() async {
-  // --- Load .env ---
-  String geminiKey = '';
-  String safeBrowsingKey = '';
-  String geminiModel = GeminiService.defaultModelName;
-
+  // --- Load environment ---
+  final processEnv = Platform.environment;
   final envFile = File('.env');
+  DotEnv? dotEnv;
   if (envFile.existsSync()) {
-    final env = DotEnv()..load(['.env']);
-    geminiKey = env.getOrElse('GEMINI_API_KEY', () => '');
-    safeBrowsingKey = env.getOrElse('SAFE_BROWSING_API_KEY', () => '');
-    geminiModel = env.getOrElse(
-      'GEMINI_MODEL',
-      () => GeminiService.defaultModelName,
-    );
-
-    print(
-        '[server] GEMINI_API_KEY loaded: ${geminiKey.isNotEmpty ? "yes" : "EMPTY"}');
-    print(
-        '[server] SAFE_BROWSING_API_KEY loaded: ${safeBrowsingKey.isNotEmpty ? "yes" : "EMPTY"}');
-    print('[server] GEMINI_MODEL: $geminiModel');
+    dotEnv = DotEnv()..load(['.env']);
   } else {
-    print('[server] No .env file found — running with empty keys.');
+    print('[server] No .env file found — using process environment.');
   }
+
+  String envValue(String key, {String defaultValue = ''}) {
+    final fileValue = dotEnv?.getOrElse(key, () => '');
+    if (fileValue != null && fileValue.isNotEmpty) return fileValue;
+    return processEnv[key] ?? defaultValue;
+  }
+
+  final geminiKey = envValue('GEMINI_API_KEY');
+  final safeBrowsingKey = envValue('SAFE_BROWSING_API_KEY');
+  final geminiModel = envValue(
+    'GEMINI_MODEL',
+    defaultValue: GeminiService.defaultModelName,
+  );
+  final port = int.tryParse(envValue('PORT', defaultValue: '8080')) ?? 8080;
+
+  print(
+      '[server] GEMINI_API_KEY loaded: ${geminiKey.isNotEmpty ? "yes" : "EMPTY"}');
+  print(
+      '[server] SAFE_BROWSING_API_KEY loaded: ${safeBrowsingKey.isNotEmpty ? "yes" : "EMPTY"}');
+  print('[server] GEMINI_MODEL: $geminiModel');
 
   // --- Services ---
   final safeBrowsing = SafeBrowsing(apiKey: safeBrowsingKey);
@@ -109,8 +115,8 @@ void main() async {
       .addMiddleware(appSecretMiddleware())
       .addHandler(router.call);
 
-  // --- Start server on 0.0.0.0:8080 ---
-  final server = await shelf_io.serve(handler, '0.0.0.0', 8080);
+  // --- Start server on the Cloud Run PORT, defaulting to 8080 locally ---
+  final server = await shelf_io.serve(handler, '0.0.0.0', port);
   print(
       '[server] KuCuba backend listening on http://${server.address.host}:${server.port}');
   print(

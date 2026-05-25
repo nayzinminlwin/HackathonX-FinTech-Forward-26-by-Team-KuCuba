@@ -159,15 +159,18 @@ http://10.0.2.2:8080
 
 ### Backend
 
-`backend/.env`
+Local development can use `backend/.env`. Cloud Run should use environment variables or Secret Manager values with the same names.
 
 ```env
 GEMINI_API_KEY=your_gemini_key
 GEMINI_MODEL=gemini-2.5-flash-lite
 SAFE_BROWSING_API_KEY=your_safe_browsing_key
+PORT=8080
 ```
 
 `SAFE_BROWSING_API_KEY` may be empty for fallback testing. If `GEMINI_API_KEY` is empty, the backend returns an unavailable sentinel instead of calling Gemini.
+
+Cloud Run builds from the repository root using `Dockerfile`. The Docker image copies and compiles only `backend/`, starts `bin/server.dart` as a native Dart executable, and listens on the `PORT` value provided by Cloud Run.
 
 ## 8. Run Commands
 

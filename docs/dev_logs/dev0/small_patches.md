@@ -1,5 +1,23 @@
 # Small patches
 
+## 2026-05-25 — Cloud Run backend Dockerfile
+
+- Branch: `dev0`
+- Goal: Fix Cloud Run source build failure caused by the repository root not having a `Dockerfile`.
+- Files touched:
+  - `Dockerfile`
+  - `.dockerignore`
+  - `backend/bin/server.dart`
+  - `README.md`
+  - `docs/TECH_STACK_AND_PIPELINE.md`
+  - `docs/dev_logs/dev0/small_patches.md`
+- Change: Added a root Dockerfile that copies only `backend/`, runs `dart pub get`, compiles `bin/server.dart` to a native executable, and starts it in a slim runtime image. Added `.dockerignore` to keep Flutter/app/docs files and local `.env` files out of the Docker context. Updated the backend server to read keys from either local `.env` or process environment variables, and to listen on the Cloud Run `PORT`.
+- Verification:
+  - `dart analyze` from `backend/` — passed.
+  - `dart compile exe bin/server.dart -o bin/server_test.exe` from `backend/` — passed, then removed the test executable.
+  - Started backend with `PORT=8099` — server listened on `0.0.0.0:8099`.
+  - Local Docker build could not be run in this workspace because Docker CLI is not installed.
+
 ## 2026-05-25 — Architecture Mermaid sequence syntax fix
 
 - Branch: `dev0`
