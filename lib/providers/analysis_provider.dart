@@ -1,8 +1,8 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import '../models/analysis_result.dart';
 import '../services/api_service.dart';
+
 enum AnalysisState { idle, loading, complete, error }
 
 class AnalysisProvider extends ChangeNotifier {
@@ -37,9 +37,6 @@ class AnalysisProvider extends ChangeNotifier {
     } on AnalysisUnavailableException catch (e) {
       _state = AnalysisState.error;
       _errorMessage = e.message;
-    } on DioException {
-      _state = AnalysisState.error;
-      _errorMessage = 'Could not analyze. Please try again.';
     } catch (_) {
       _state = AnalysisState.error;
       _errorMessage = 'Could not analyze. Please try again.';

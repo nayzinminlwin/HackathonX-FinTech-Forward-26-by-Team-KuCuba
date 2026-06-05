@@ -30,7 +30,6 @@ void main() {
       calls.single.arguments,
       <String, Object>{
         'backend_url': AppConfig.backendBaseUrl,
-        'use_mock_api': AppConfig.useMockApi,
       },
     );
   });

@@ -10,7 +10,6 @@ class NotificationServiceController {
   static Future<void> startService() async {
     await _channel.invokeMethod<void>('startService', {
       'backend_url': AppConfig.backendBaseUrl,
-      'use_mock_api': AppConfig.useMockApi,
     });
   }
 

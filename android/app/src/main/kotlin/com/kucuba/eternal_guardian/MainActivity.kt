@@ -23,10 +23,8 @@ class MainActivity : FlutterActivity() {
             when (call.method) {
                 "startService" -> {
                     val backendUrl = call.argument<String>("backend_url")
-                    val useMockApi = call.argument<Boolean>("use_mock_api") ?: false
                     val intent = Intent(this, ScamDetectorForegroundService::class.java).apply {
                         putExtra(ScamDetectorForegroundService.EXTRA_BACKEND_URL, backendUrl)
-                        putExtra(ScamDetectorForegroundService.EXTRA_USE_MOCK_API, useMockApi)
                     }
 
                     try {

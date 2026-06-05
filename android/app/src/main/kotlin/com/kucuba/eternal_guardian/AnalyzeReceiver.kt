@@ -32,12 +32,8 @@ class AnalyzeReceiver : BroadcastReceiver() {
 
         Thread {
             try {
-                val result = if (ScamDetectorForegroundService.useMockApi(context)) {
-                    MockAnalysisClient.analyze(submittedText)
-                } else {
-                    val backendUrl = ScamDetectorForegroundService.getBackendUrl(context)
-                    HttpAnalysisClient.analyze(backendUrl, submittedText)
-                }
+                val backendUrl = ScamDetectorForegroundService.getBackendUrl(context)
+                val result = HttpAnalysisClient.analyze(backendUrl, submittedText)
                 if (result.riskScore in 1..100) {
                     NotificationHelper.updateNotificationResult(context, result)
                 } else {
@@ -61,7 +57,7 @@ class AnalyzeReceiver : BroadcastReceiver() {
 
     private fun errorMessageFor(exception: Exception): String {
         return when (exception) {
-            is ConnectException -> "Cannot reach backend. Start the server or set API_BASE_URL to your computer LAN IP."
+            is ConnectException -> "Cannot reach backend. Check the server URL and try again."
             is SocketTimeoutException -> "Backend connection timed out. Check Wi-Fi and server status."
             is UnknownHostException -> "Backend host not found. Check API_BASE_URL."
             is IOException -> {
@@ -69,7 +65,7 @@ class AnalyzeReceiver : BroadcastReceiver() {
                 if (message.contains("Cleartext", ignoreCase = true)) {
                     "Local HTTP is blocked. Rebuild with dev cleartext enabled."
                 } else {
-                    "Backend connection failed. Check server and API_BASE_URL."
+                    "Backend connection failed. Check server status and API_BASE_URL."
                 }
             }
             else -> "Analysis failed. ${exception.message ?: "Please try again."}"

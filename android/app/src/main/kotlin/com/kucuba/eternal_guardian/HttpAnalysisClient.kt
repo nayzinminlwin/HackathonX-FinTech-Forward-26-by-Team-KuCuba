@@ -6,6 +6,8 @@ import java.net.URL
 
 object HttpAnalysisClient {
     private const val ANALYSIS_TIMEOUT_MS = 12_000
+    private const val APP_SECRET_HEADER_NAME = "x-app-secret"
+    private const val APP_SECRET_VALUE = "my_custom_project_key_123"
 
     data class AnalysisResult(
         val riskScore: Int,
@@ -23,6 +25,7 @@ object HttpAnalysisClient {
             readTimeout = ANALYSIS_TIMEOUT_MS
             setRequestProperty("Content-Type", "application/json")
             setRequestProperty("Accept", "application/json")
+            setRequestProperty(APP_SECRET_HEADER_NAME, APP_SECRET_VALUE)
             doOutput = true
         }
 
@@ -48,7 +51,14 @@ object HttpAnalysisClient {
         }
 
         if (responseCode !in 200..299) {
-            throw IllegalStateException("Backend returned HTTP $responseCode.")
+            val backendMessage = runCatching {
+                JSONObject(responseText).optString("analysis_message")
+                    .ifBlank { JSONObject(responseText).optString("error") }
+            }.getOrDefault("")
+            val message = backendMessage.ifBlank {
+                "Backend returned HTTP $responseCode."
+            }
+            throw IllegalStateException(message)
         }
 
         val json = JSONObject(responseText)

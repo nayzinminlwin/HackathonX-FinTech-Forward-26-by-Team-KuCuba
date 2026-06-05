@@ -2,7 +2,7 @@
 
 **Project:** Eternal Guardian  
 **Status:** Current implementation  
-**Last updated:** 2026-05-24
+**Last updated:** 2026-05-25
 
 ## 1. Application Module Map
 
@@ -26,7 +26,6 @@ lib/
 |   `-- overlay_screen.dart
 |-- services/
 |   |-- api_service.dart
-|   |-- mock_api_service.dart
 |   `-- notification_service_controller.dart
 |-- theme/
 |   |-- app_colors.dart
@@ -54,8 +53,7 @@ android/app/src/main/
 |   |-- ScamDetectorForegroundService.kt
 |   |-- AnalyzeReceiver.kt
 |   |-- NotificationHelper.kt
-|   |-- HttpAnalysisClient.kt
-|   `-- MockAnalysisClient.kt
+|   `-- HttpAnalysisClient.kt
 `-- res/layout/
     |-- notification_idle.xml
     |-- notification_scanning.xml
@@ -96,7 +94,6 @@ flowchart TB
     AnalysisProvider["AnalysisProvider"]
     StatsProvider["StatsProvider"]
     LiveApi["LiveApiService"]
-    MockApi["MockApiService"]
   end
 
   subgraph AndroidNative["Android native"]
@@ -106,7 +103,6 @@ flowchart TB
     Receiver["AnalyzeReceiver"]
     Notification["NotificationHelper RemoteViews"]
     NativeHttp["HttpAnalysisClient"]
-    NativeMock["MockAnalysisClient"]
   end
 
   subgraph Backend["Dart Shelf backend"]
@@ -124,7 +120,6 @@ flowchart TB
   Home --> AnalysisProvider
   Overlay --> AnalysisProvider
   AnalysisProvider --> LiveApi
-  AnalysisProvider --> MockApi
   Home --> StatsProvider
 
   Manifest --> Router
@@ -133,7 +128,6 @@ flowchart TB
   Service --> Notification
   Notification --> Receiver
   Receiver --> NativeHttp
-  Receiver --> NativeMock
 
   LiveApi --> Server
   NativeHttp --> Server
@@ -158,15 +152,11 @@ flowchart LR
   Router --> Overlay["OverlayScreen"]
   Overlay --> Provider
 
-  Provider --> Mode{"Mock mode?"}
-  Mode -->|yes| Mock["MockApiService"]
-  Mode -->|no| Live["LiveApiService"]
+  Provider --> Live["LiveApiService"]
   Live --> Backend["POST /analyze"]
 
   Notify --> Receiver["AnalyzeReceiver.kt"]
-  Receiver --> NativeMode{"Mock mode?"}
-  NativeMode -->|yes| NativeMock["MockAnalysisClient.kt"]
-  NativeMode -->|no| NativeHttp["HttpAnalysisClient.kt"]
+  Receiver --> NativeHttp["HttpAnalysisClient.kt"]
   NativeHttp --> Backend
 ```
 
@@ -177,36 +167,44 @@ sequenceDiagram
   participant Client as Flutter/Kotlin client
   participant Server as Shelf POST /analyze
   participant Handler as AnalyzeHandler
-  participant Links as LinkExtractor
+  participant Extractor as LinkExtractor
   participant Expander as UrlExpander
   participant Safe as SafeBrowsing
   participant Gemini as GeminiService
 
   Client->>Server: {"text_payload":"..."}
-  Server->>Handler: request body
-  Handler->>Handler: parse JSON and validate text_payload
-  Handler->>Links: extractUrls(text)
-  Links-->>Handler: original URLs
+  Server->>Server: validate x-app-secret header
 
-  par Original URL check
-    Handler->>Safe: checkUrls(original URLs)
-  and Short URL expansion
-    Handler->>Expander: expandAll(shortened URLs)
-  end
+  alt Missing or invalid app secret
+    Server-->>Client: 403 Forbidden
+  else App secret accepted
+    Server->>Handler: request body
+    Handler->>Handler: parse JSON and validate text_payload
+    Handler->>Extractor: extractUrls(text)
+    Extractor-->>Handler: original URLs
 
-  Safe-->>Handler: threat or clear
-  alt Original URL threat
-    Handler-->>Client: risk_score 100, analysis_source safe_browsing
-  else No original threat
-    Expander-->>Handler: expanded URLs or unresolved shorteners
-    Handler->>Safe: checkUrls(expanded URLs)
+    par Original URL check
+      Handler->>Safe: checkUrls(original URLs)
+    and Short URL expansion
+      Handler->>Expander: expandAll(shortened URLs)
+    end
+
     Safe-->>Handler: threat or clear
-    alt Expanded URL threat
+
+    alt Original URL threat
       Handler-->>Client: risk_score 100, analysis_source safe_browsing
-    else No known threat
-      Handler->>Gemini: analyzeText(text, urlContext)
-      Gemini-->>Handler: JSON map or null
-      Handler-->>Client: normalized AnalysisResult
+    else No original threat
+      Expander-->>Handler: expanded URLs or unresolved shorteners
+      Handler->>Safe: checkUrls(expanded URLs)
+      Safe-->>Handler: threat or clear
+
+      alt Expanded URL threat
+        Handler-->>Client: risk_score 100, analysis_source safe_browsing
+      else No known threat
+        Handler->>Gemini: analyzeText(text, urlContext)
+        Gemini-->>Handler: JSON map or null
+        Handler-->>Client: normalized AnalysisResult
+      end
     end
   end
 ```
@@ -235,19 +233,16 @@ flowchart TD
   Idle --> Input["User enters text in RemoteInput"]
   Input --> Receiver["AnalyzeReceiver"]
   Receiver --> Scanning["Update scanning notification"]
-  Receiver --> Mode{"use_mock_api?"}
-  Mode -->|true| Mock["MockAnalysisClient"]
-  Mode -->|false| Http["HttpAnalysisClient POST /analyze"]
-  Mock --> Result["Result or error RemoteViews"]
+  Receiver --> Http["HttpAnalysisClient POST /analyze"]
   Http --> Result
 ```
 
 ## 9. Important Boundaries
 
-| Boundary | Rule |
-|----------|------|
-| Flutter to backend | Only `POST /analyze` is required. |
-| Kotlin to backend | Uses the same body and response contract as Flutter. |
-| Flutter to Kotlin | MethodChannel starts/stops the foreground service and passes backend/mock settings. |
-| Backend to external services | Safe Browsing and Gemini keys stay server-side. |
-| User data | Text is analyzed ephemerally and is not stored by the app or backend. |
+| Boundary                     | Rule                                                                          |
+| ---------------------------- | ----------------------------------------------------------------------------- |
+| Flutter to backend           | Only `POST /analyze` is required.                                             |
+| Kotlin to backend            | Uses the same body, app-secret header, and response contract as Flutter.      |
+| Flutter to Kotlin            | MethodChannel starts/stops the foreground service and passes the backend URL. |
+| Backend to external services | Safe Browsing and Gemini keys stay server-side.                               |
+| User data                    | Text is analyzed ephemerally and is not stored by the app or backend.         |
